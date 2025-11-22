@@ -15,11 +15,27 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [inputs, setInputs] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setInputs((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Logique de soumission du formulaire ici
+    console.log("Form submitted with data:", inputs);
+  };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -37,6 +53,8 @@ export function LoginForm({
                 <Input
                   id="email"
                   type="email"
+                  onChange={handleChange}
+                  value={inputs.email}
                   placeholder="m@example.com"
                   required
                 />
@@ -44,17 +62,25 @@ export function LoginForm({
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
-                  <a
-                    href="#"
+                  <Link
+                    to={"/passOublie"}
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
-                    Mot de passe oublié ?
-                  </a>
+                    <span>Mot de passe oublié ?</span>
+                  </Link>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  type="password"
+                  onChange={handleChange}
+                  value={inputs.password}
+                  required
+                />
               </Field>
               <Field>
-                <Button type="submit">Connexion</Button>
+                <Button type="submit" onSubmit={handleSubmit}>
+                  Connexion
+                </Button>
                 <FieldDescription className="text-center">
                   Vous n'avez pas de compte ?{" "}
                   <Link to={"/inscription"}>
