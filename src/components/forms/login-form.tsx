@@ -33,12 +33,18 @@ export function LoginForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Logique de soumission du formulaire ici
     console.log("Form submitted with data:", inputs);
   };
+
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+    <div
+      className={cn(
+        "min-h-screen flex items-center justify-center bg-gray-100 dark:bg-black",
+        className
+      )}
+      {...props}
+    >
+      <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Connectez vous</CardTitle>
           <CardDescription>
@@ -46,7 +52,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -78,9 +84,7 @@ export function LoginForm({
                 />
               </Field>
               <Field>
-                <Button type="submit" onSubmit={handleSubmit}>
-                  Connexion
-                </Button>
+                <Button type="submit">Connexion</Button>
                 <FieldDescription className="text-center">
                   Vous n'avez pas de compte ?{" "}
                   <Link to={"/inscription"}>
@@ -95,3 +99,4 @@ export function LoginForm({
     </div>
   );
 }
+

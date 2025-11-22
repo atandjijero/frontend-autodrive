@@ -34,23 +34,23 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Logique de soumission du formulaire ici
     console.log("Form submitted with data:", inputs);
+    // Ici tu peux appeler ton backend avec fetch/axios
   };
 
   return (
-    <Card {...props}>
+    <Card {...props} className="w-full max-w-lg mx-auto">
       <CardHeader>
-        <CardTitle>Creer un compte</CardTitle>
+        <CardTitle>Créer un compte</CardTitle>
         <CardDescription>
           Entrez vos informations ci-dessous pour créer votre compte.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form onSubmit={handleSubmit}>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="firstname">Prenoms</FieldLabel>
+              <FieldLabel htmlFor="firstname">Prénoms</FieldLabel>
               <Input
                 id="firstname"
                 type="text"
@@ -87,19 +87,15 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               </FieldDescription>
             </Field>
             <Field>
-              <FieldLabel htmlFor="tel">Telephone</FieldLabel>
+              <FieldLabel htmlFor="tel">Téléphone</FieldLabel>
               <Input
                 id="tel"
                 type="tel"
                 onChange={handleChange}
                 value={inputs.tel}
-                placeholder="m@example.com"
+                placeholder="+228 90 00 00 00"
                 required
               />
-              <FieldDescription>
-                Nous utiliserons cette adresse pour vous contacter. Nous ne
-                partagerons pas votre e-mail avec qui que ce soit.
-              </FieldDescription>
             </Field>
             <Field>
               <FieldLabel htmlFor="adresse">Adresse</FieldLabel>
@@ -108,13 +104,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 type="text"
                 onChange={handleChange}
                 value={inputs.adresse}
-                placeholder="m@example.com"
+                placeholder="Rue Exemple, Lomé"
                 required
               />
-              <FieldDescription>
-                Nous utiliserons cette adresse pour vous contacter. Nous ne
-                partagerons pas votre e-mail avec qui que ce soit.
-              </FieldDescription>
             </Field>
             <Field>
               <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
@@ -130,11 +122,11 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               </FieldDescription>
             </Field>
             <Field>
-              <FieldLabel htmlFor="confirm-password">
+              <FieldLabel htmlFor="confirmPassword">
                 Confirmer le mot de passe
               </FieldLabel>
               <Input
-                id="confirm-password"
+                id="confirmPassword"
                 type="password"
                 onChange={handleChange}
                 value={inputs.confirmPassword}
@@ -144,19 +136,17 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 Veuillez confirmer votre mot de passe.
               </FieldDescription>
             </Field>
-            <FieldGroup>
-              <Field>
-                <Button type="submit" onSubmit={handleSubmit}>
-                  Créer un compte
-                </Button>
-                <FieldDescription className="px-6 text-center">
-                  Vous avez déjà un compte ?{" "}
-                  <Link to={"/connexion"}>
-                    <span>Connectez-vous</span>
-                  </Link>
-                </FieldDescription>
-              </Field>
-            </FieldGroup>
+            <Field>
+              <Button type="submit" className="w-full">
+                Créer un compte
+              </Button>
+              <FieldDescription className="px-6 text-center">
+                Vous avez déjà un compte ?{" "}
+                <Link to={"/connexion"}>
+                  <span>Connectez-vous</span>
+                </Link>
+              </FieldDescription>
+            </Field>
           </FieldGroup>
         </form>
       </CardContent>

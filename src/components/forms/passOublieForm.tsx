@@ -26,14 +26,20 @@ export function PassOublieForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Logique de soumission du formulaire ici
     console.log("Form submitted with data:", inputs);
   };
 
   const { email: value } = inputs;
+
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+    <div
+      className={cn(
+        "min-h-screen flex items-center justify-center bg-gray-100 dark:bg-black",
+        className
+      )}
+      {...props}
+    >
+      <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Mot de passe oublié</CardTitle>
           <CardDescription>
@@ -42,7 +48,7 @@ export function PassOublieForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -56,7 +62,7 @@ export function PassOublieForm({
                 />
               </Field>
               <Field>
-                <Button type="submit" onSubmit={handleSubmit}>
+                <Button type="submit" className="w-full">
                   Envoyer
                 </Button>
               </Field>

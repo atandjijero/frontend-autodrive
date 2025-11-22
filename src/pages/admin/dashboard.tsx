@@ -1,9 +1,9 @@
-import { useEffect } from "react";
-import { vehicules } from "./vehiculesListe";
-import { contrats } from "./contrats";
-import { clients } from "./clientsListe";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -11,123 +11,101 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/table"
 
-export default function AdminDashboard() {
-  useEffect(() => {
-    document.title = "Tableau de bord - Admin – AutoDrive";
-  }, []);
-
-  const totalVehicles = Object.keys(vehicules).length;
-  const totalClients = Object.keys(clients).length;
-  const totalReservations = Object.keys(contrats).length;
-
-  const upcomingReservations = Object.entries(contrats)
-    .filter(([, contrat]) => {
-      const reservFrom = new Date(contrat.reservation.from);
-      return reservFrom >= new Date();
-    })
-    .sort(
-      ([, a], [, b]) =>
-        new Date(a.reservation.from).getTime() -
-        new Date(b.reservation.from).getTime()
-    )
-    .slice(0, 5);
-
+export default function DashboardOnly() {
   return (
-    <>
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold">Tableau de bord</h1>
+    <main className="flex-1 p-6 overflow-y-auto bg-white text-gray-900 dark:bg-black dark:text-white">
+      <div className="space-y-8">
+        <h1 className="text-3xl font-bold tracking-tight">Tableau de bord 📊</h1>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* KPIs */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Véhicules totaux
-              </CardTitle>
+            <CardHeader>
+              <CardTitle>Véhicules</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totalVehicles}</div>
+              <p className="text-2xl font-bold">120</p>
+              <p className="text-sm text-muted-foreground">Total enregistrés</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Clients totaux
-              </CardTitle>
+            <CardHeader>
+              <CardTitle>Clients</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totalClients}</div>
+              <p className="text-2xl font-bold">85</p>
+              <p className="text-sm text-muted-foreground">Actifs</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Réservations
-              </CardTitle>
+            <CardHeader>
+              <CardTitle>Réservations</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totalReservations}</div>
+              <p className="text-2xl font-bold">42</p>
+              <p className="text-sm text-muted-foreground">En cours</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Paiements</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">15 000 €</p>
+              <p className="text-sm text-muted-foreground">Ce mois</p>
             </CardContent>
           </Card>
         </div>
 
-        <Separator />
-
-        {/* Upcoming Reservations */}
+        {/* Tableau des réservations */}
         <Card>
           <CardHeader>
-            <CardTitle>Prochaines réservations</CardTitle>
+            <CardTitle>📅 Prochaines réservations</CardTitle>
           </CardHeader>
           <CardContent>
-            {upcomingReservations.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Véhicule</TableHead>
-                    <TableHead>Date de début</TableHead>
-                    <TableHead>Date de fin</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {upcomingReservations.map(([, contrat]) => {
-                    const client = clients[Number(contrat.idClient)];
-                    const vehicule = vehicules[Number(contrat.idVehicule)];
-                    return (
-                      <TableRow key={contrat.idClient}>
-                        <TableCell>
-                          {client?.nom} {client?.prenom}
-                        </TableCell>
-                        <TableCell>
-                          {vehicule?.marque} - {vehicule?.immatriculation}
-                        </TableCell>
-                        <TableCell>
-                          {new Date(
-                            contrat.reservation.from
-                          ).toLocaleDateString("fr-FR")}
-                        </TableCell>
-                        <TableCell>
-                          {new Date(contrat.reservation.to).toLocaleDateString(
-                            "fr-FR"
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            ) : (
-              <p className="text-muted-foreground">
-                Aucune réservation à venir
-              </p>
-            )}
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Client</TableHead>
+                  <TableHead>Véhicule</TableHead>
+                  <TableHead>Date début</TableHead>
+                  <TableHead>Date fin</TableHead>
+                  <TableHead>Statut</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Jean Dupont</TableCell>
+                  <TableCell>Peugeot 208</TableCell>
+                  <TableCell>22/11/2025</TableCell>
+                  <TableCell>25/11/2025</TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center rounded px-2 py-1 text-xs font-semibold bg-green-100 text-green-700">
+                      Confirmée
+                    </span>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Awa K.</TableCell>
+                  <TableCell>Toyota RAV4</TableCell>
+                  <TableCell>23/11/2025</TableCell>
+                  <TableCell>28/11/2025</TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center rounded px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-700">
+                      En attente
+                    </span>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>
-    </>
-  );
+    </main>
+  )
 }
