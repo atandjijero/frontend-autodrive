@@ -20,7 +20,6 @@ function App() {
     <BrowserRouter>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <NavMenu />
-        <Toaster richColors closeButton />{" "}
         <Routes>
           {/* Routes publiques */}
           <Route path="/" element={<HomePage />} />
@@ -34,14 +33,6 @@ function App() {
           <Route path="/otp" element={<OtpForm />} />
           <Route path="/reset-password/:token" element={<PassOublieForm />} />
           <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-
-          
-
-          {/* Routes admin imbriquées */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="profil" element={<Profil />} />
-          </Route>
         </Routes>
       </ThemeProvider>
     </BrowserRouter>
