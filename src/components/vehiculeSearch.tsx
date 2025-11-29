@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { ChevronDownIcon } from "lucide-react";
 
@@ -52,7 +50,7 @@ export function VehiculeSearch({
   const [inputs, setInputs] = useState({
     carrosserie: "",
     marque: "",
-    transmission: "manuelle",
+    transmission: "",
   });
 
   const prices = Object.values(vehicules).map((v) => v.prix);
@@ -116,7 +114,7 @@ export function VehiculeSearch({
 
   return (
     <>
-      <Card className="mt-4 w-150 mx-auto">
+      <Card className="m-0 w-150 mx-auto text-center">
         <CardHeader>
           <CardTitle>Rechercher un véhicule</CardTitle>
           <CardDescription>
@@ -188,7 +186,7 @@ export function Selects({
     <Field>
       <FieldLabel>{ucfirst(attribute)}</FieldLabel>
       <Select
-        onValueChange={(value) => onChange?.(attribute, value)}
+        onValueChange={(value: string) => onChange?.(attribute, value)}
         name={attribute}
         value={inputs?.[attribute]}
       >
