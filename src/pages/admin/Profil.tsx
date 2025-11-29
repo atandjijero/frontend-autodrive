@@ -43,9 +43,8 @@ export default function Profil() {
     <div className="p-6 max-w-2xl mx-auto">
       <Card>
         <CardHeader className="flex flex-col items-center gap-4">
-          {/* Avatar avec initiales */}
           <Avatar className="h-20 w-20">
-            <AvatarImage src="" alt={profile?.nom} />
+            <AvatarImage src={profile?.avatar ?? ""} alt={profile?.nom} />
             <AvatarFallback>
               {profile?.prenom?.[0]}
               {profile?.nom?.[0]}
@@ -57,8 +56,19 @@ export default function Profil() {
               {profile?.prenom} {profile?.nom}
             </CardTitle>
             <p className="text-sm text-muted-foreground">{profile?.email}</p>
-            <Badge variant="outline" className="mt-2">
-              {profile?.role}
+            <Badge
+              variant={
+                profile?.role === "admin"
+                  ? "destructive"
+                  : profile?.role === "client"
+                  ? "default"
+                  : profile?.role === "entreprise"
+                  ? "secondary"
+                  : "outline"
+              }
+              className="mt-2"
+            >
+              {profile?.role ?? "Utilisateur"}
             </Badge>
           </div>
         </CardHeader>
@@ -68,19 +78,21 @@ export default function Profil() {
         <CardContent className="space-y-4 mt-4">
           <div>
             <p className="text-sm font-medium text-muted-foreground">Téléphone</p>
-            <p>{profile?.telephone}</p>
+            <p>{profile?.telephone || "Non renseigné"}</p>
           </div>
-          {profile?.adresse && (
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Adresse</p>
-              <p>{profile?.adresse}</p>
-            </div>
-          )}
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Adresse</p>
+            <p>{profile?.adresse || "Non renseignée"}</p>
+          </div>
           <div>
             <p className="text-sm font-medium text-muted-foreground">Date d’inscription</p>
             <p>
               {profile?.dateInscription
-                ? new Date(profile.dateInscription).toLocaleDateString()
+                ? new Date(profile.dateInscription).toLocaleDateString("fr-FR", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })
                 : "Non disponible"}
             </p>
           </div>

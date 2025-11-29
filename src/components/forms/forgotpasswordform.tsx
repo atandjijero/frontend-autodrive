@@ -71,7 +71,7 @@ export default function ForgotPasswordForm() {
 
               <Field>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Patientez..." : "Envoyer le lien"}
+                  {loading ? "Patientez..." : "réinitialiser"}
                 </Button>
               </Field>
 

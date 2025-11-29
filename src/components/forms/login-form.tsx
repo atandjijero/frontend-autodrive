@@ -49,6 +49,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         // Stockage du token et de l'email
         localStorage.setItem("token", res.data.access_token!);
         localStorage.setItem("email", inputs.email);
+        
 
         setSuccessMessage("Connexion réussie !");
         setTimeout(() => {

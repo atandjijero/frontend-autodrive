@@ -42,6 +42,7 @@ export interface UserProfile {
   adresse?: string;
   role: "admin" | "client" | "entreprise" | "tourist";
   dateInscription?: string;
+  avatar?: string
 }
 
 // Configuration Axios

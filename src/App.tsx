@@ -8,16 +8,16 @@ import Connexion from "@/pages/auth/connexion";
 import { NavMenu } from "./components/layout/navMenu";
 import Inscription from "@/pages/auth/inscription";
 import { OtpForm } from "@/components/forms/otpform";
-import Dashboard from "@/pages/admin/dashboard";
-import AdminLayout from "@/pages/admin/AdminLayout";
-import Profil from "@/pages/admin/Profil";
 import PassOublieForm from "@/components/forms/passOublieForm";
 import ForgotPasswordForm from "@/components/forms/forgotpasswordform";
-
 
 import About from "@/pages/about";
 import Contact from "@/pages/contact";
 import FAQ from "@/pages/faq";
+
+//  Nouveau dashboard shadcn/ui
+import DashboardPage from "@/app/dashboard/page"; 
+import Profil from "@/pages/admin/Profil";
 
 function App() {
   return (
@@ -38,13 +38,9 @@ function App() {
           <Route path="/reset-password/:token" element={<PassOublieForm />} />
           <Route path="/forgot-password" element={<ForgotPasswordForm />} />
 
-          
-
-          {/* Routes admin imbriquées */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="profil" element={<Profil />} />
-          </Route>
+          {/* Routes admin avec le nouveau dashboard */}
+          <Route path="/admin/dashboard" element={<DashboardPage />} />
+          <Route path="/admin/profil" element={<Profil />} />
         </Routes>
       </ThemeProvider>
     </BrowserRouter>
