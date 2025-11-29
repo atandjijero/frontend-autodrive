@@ -15,15 +15,12 @@ import About from "@/pages/about";
 import Contact from "@/pages/contact";
 import FAQ from "@/pages/faq";
 
-//  Nouveau dashboard shadcn/ui
-import DashboardPage from "@/app/dashboard/page"; 
-import Profil from "@/pages/admin/Profil";
-
 function App() {
   return (
     <BrowserRouter>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <NavMenu />
+        <Toaster richColors closeButton />{" "}
         <Routes>
           {/* Routes publiques */}
           <Route path="/" element={<HomePage />} />
@@ -38,9 +35,13 @@ function App() {
           <Route path="/reset-password/:token" element={<PassOublieForm />} />
           <Route path="/forgot-password" element={<ForgotPasswordForm />} />
 
-          {/* Routes admin avec le nouveau dashboard */}
-          <Route path="/admin/dashboard" element={<DashboardPage />} />
-          <Route path="/admin/profil" element={<Profil />} />
+          
+
+          {/* Routes admin imbriquées */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="profil" element={<Profil />} />
+          </Route>
         </Routes>
       </ThemeProvider>
     </BrowserRouter>
