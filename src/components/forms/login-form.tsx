@@ -14,26 +14,57 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { login } from "@/api/apiClient";
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-  const [inputs, setInputs] = useState({
-    email: "",
-    password: "",
-  });
+export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+  const navigate = useNavigate();
+  const [inputs, setInputs] = useState({ email: "", password: "" });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setInputs((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted with data:", inputs);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    try {
+      const res = await login({
+        email: inputs.email,
+        motPasse: inputs.password,
+      });
+
+      if (res.data.requiresOtp) {
+        setSuccessMessage(
+          res.data.message || "Un OTP vous a été envoyé par email !"
+        );
+        navigate("/otp", { state: { email: inputs.email } });
+      } else {
+        // Stockage du token et de l'email
+        localStorage.setItem("token", res.data.access_token!);
+        localStorage.setItem("email", inputs.email);
+
+        setSuccessMessage("Connexion réussie !");
+        setTimeout(() => {
+          const role = res.data.role?.toLowerCase();
+          if (role === "admin") {
+            navigate("/admin/dashboard"); 
+          } else {
+            navigate("/vehicules"); 
+          }
+        }, 1500);
+      }
+    } catch (err: any) {
+      const errorMsg =
+        err.response?.data?.message || "Échec de connexion.";
+      setErrorMessage(errorMsg);
+    }
   };
 
   return (
@@ -46,9 +77,9 @@ export function LoginForm({
     >
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Connectez vous</CardTitle>
+          <CardTitle>Connectez-vous</CardTitle>
           <CardDescription>
-            Entrez votre e-mail ci-dessous pour vous connecter à votre compte
+            Entrez vos identifiants pour accéder à votre compte
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -59,9 +90,9 @@ export function LoginForm({
                 <Input
                   id="email"
                   type="email"
+                  placeholder="exemple@autodrive.com"
                   onChange={handleChange}
                   value={inputs.email}
-                  placeholder="m@example.com"
                   required
                 />
               </Field>
@@ -69,29 +100,41 @@ export function LoginForm({
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
                   <Link
-                    to={"/passOublie"}
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    <span>Mot de passe oublié ?</span>
+                    to="/forgot-password"
+                     className="ml-auto text-sm underline-offset-4 hover:underline"
+>
+                      Mot de passe oublié ?
                   </Link>
+
                 </div>
                 <Input
                   id="password"
                   type="password"
+                  placeholder="••••••••"
                   onChange={handleChange}
                   value={inputs.password}
                   required
                 />
               </Field>
               <Field>
-                <Button type="submit">Connexion</Button>
+                <Button type="submit" className="w-full">
+                  Connexion
+                </Button>
                 <FieldDescription className="text-center">
                   Vous n'avez pas de compte ?{" "}
-                  <Link to={"/inscription"}>
-                    <span>Inscrivez-vous</span>
-                  </Link>
+                  <Link to={"/inscription"}>Inscrivez-vous</Link>
                 </FieldDescription>
               </Field>
+              {errorMessage && (
+                <p className="text-center text-sm mt-2 text-red-600">
+                  {errorMessage}
+                </p>
+              )}
+              {successMessage && (
+                <p className="text-center text-sm mt-2 text-green-600">
+                  {successMessage}
+                </p>
+              )}
             </FieldGroup>
           </form>
         </CardContent>
@@ -99,4 +142,3 @@ export function LoginForm({
     </div>
   );
 }
-

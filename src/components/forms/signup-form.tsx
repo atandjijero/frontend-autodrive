@@ -13,33 +13,69 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select"; 
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { register } from "@/api/apiClient";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
+  const navigate = useNavigate();
+
   const [inputs, setInputs] = useState({
-    firstname: "",
-    lastname: "",
+    prenom: "",
+    nom: "",
     email: "",
-    tel: "",
+    telephone: "",
+    telephoneSecondaire: "",
     adresse: "",
-    password: "",
+    motPasse: "",
     confirmPassword: "",
+    role: "client",
   });
+
+  const [message, setMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setInputs((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted with data:", inputs);
-    // Ici tu peux appeler ton backend avec fetch/axios
+
+    if (inputs.motPasse !== inputs.confirmPassword) {
+      setMessage("Les mots de passe ne correspondent pas.");
+      return;
+    }
+
+    try {
+      const res = await register({
+        nom: inputs.nom,
+        prenom: inputs.prenom,
+        email: inputs.email,
+        motPasse: inputs.motPasse,
+        telephone: inputs.telephone,
+        telephoneSecondaire: inputs.telephoneSecondaire || undefined,
+        adresse: inputs.adresse || undefined,
+        role: inputs.role as "client" | "entreprise" | "tourist",
+      });
+
+      setMessage(res.data.message);
+      setTimeout(() => navigate("/connexion"), 2000);
+    } catch (err: any) {
+      console.error("Erreur:", err.response?.data || err.message);
+      setMessage("Impossible de créer le compte.");
+    }
   };
 
   return (
-    <Card {...props} className="w-full max-w-lg mx-auto">
+    <Card {...props} className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle>Créer un compte</CardTitle>
         <CardDescription>
@@ -47,104 +83,66 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-3">
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="firstname">Prénoms</FieldLabel>
-              <Input
-                id="firstname"
-                type="text"
-                onChange={handleChange}
-                value={inputs.firstname}
-                placeholder="John"
-                required
-              />
+              <FieldLabel htmlFor="prenom">Prénom</FieldLabel>
+              <Input id="prenom" type="text" placeholder="Jean" onChange={handleChange} value={inputs.prenom} required />
             </Field>
             <Field>
-              <FieldLabel htmlFor="lastname">Nom de famille</FieldLabel>
-              <Input
-                id="lastname"
-                type="text"
-                onChange={handleChange}
-                value={inputs.lastname}
-                placeholder="Doe"
-                required
-              />
+              <FieldLabel htmlFor="nom">Nom de famille</FieldLabel>
+              <Input id="nom" type="text" placeholder="Dupont" onChange={handleChange} value={inputs.nom} required />
             </Field>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
-              <Input
-                id="email"
-                type="email"
-                onChange={handleChange}
-                value={inputs.email}
-                placeholder="m@example.com"
-                required
-              />
-              <FieldDescription>
-                Nous utiliserons cette adresse pour vous contacter. Nous ne
-                partagerons pas votre e-mail avec qui que ce soit.
-              </FieldDescription>
+              <Input id="email" type="email" placeholder="jean.dupont@example.com" onChange={handleChange} value={inputs.email} required />
             </Field>
             <Field>
-              <FieldLabel htmlFor="tel">Téléphone</FieldLabel>
-              <Input
-                id="tel"
-                type="tel"
-                onChange={handleChange}
-                value={inputs.tel}
-                placeholder="+228 90 00 00 00"
-                required
-              />
+              <FieldLabel htmlFor="telephone">Téléphone principal</FieldLabel>
+              <Input id="telephone" type="tel" placeholder="+22890123456" onChange={handleChange} value={inputs.telephone} required />
             </Field>
             <Field>
-              <FieldLabel htmlFor="adresse">Adresse</FieldLabel>
-              <Input
-                id="adresse"
-                type="text"
-                onChange={handleChange}
-                value={inputs.adresse}
-                placeholder="Rue Exemple, Lomé"
-                required
-              />
+              <FieldLabel htmlFor="telephoneSecondaire">Téléphone secondaire (optionnel)</FieldLabel>
+              <Input id="telephoneSecondaire" type="tel" placeholder="+22892123456" onChange={handleChange} value={inputs.telephoneSecondaire} />
             </Field>
             <Field>
-              <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
-              <Input
-                id="password"
-                type="password"
-                onChange={handleChange}
-                value={inputs.password}
-                required
-              />
-              <FieldDescription>
-                Doit contenir au moins 8 caractères.
-              </FieldDescription>
+              <FieldLabel htmlFor="adresse">Adresse (optionnelle)</FieldLabel>
+              <Input id="adresse" type="text" placeholder="Rue des fleurs, Lomé" onChange={handleChange} value={inputs.adresse} />
             </Field>
             <Field>
-              <FieldLabel htmlFor="confirmPassword">
-                Confirmer le mot de passe
-              </FieldLabel>
-              <Input
-                id="confirmPassword"
-                type="password"
-                onChange={handleChange}
-                value={inputs.confirmPassword}
-                required
-              />
-              <FieldDescription>
-                Veuillez confirmer votre mot de passe.
-              </FieldDescription>
+              <FieldLabel>Rôle</FieldLabel>
+              <Select
+                value={inputs.role}
+                onValueChange={(value) => setInputs((prev) => ({ ...prev, role: value }))}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Choisissez un rôle" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="client">Client</SelectItem>
+                  <SelectItem value="entreprise">Entreprise</SelectItem>
+                  <SelectItem value="tourist">Touriste</SelectItem>
+                </SelectContent>
+              </Select>
             </Field>
             <Field>
-              <Button type="submit" className="w-full">
-                Créer un compte
-              </Button>
-              <FieldDescription className="px-6 text-center">
+              <FieldLabel htmlFor="motPasse">Mot de passe</FieldLabel>
+              <Input id="motPasse" type="password" placeholder="••••••••" onChange={handleChange} value={inputs.motPasse} required />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="confirmPassword">Confirmer le mot de passe</FieldLabel>
+              <Input id="confirmPassword" type="password" placeholder="••••••••" onChange={handleChange} value={inputs.confirmPassword} required />
+            </Field>
+            <Field>
+              <Button type="submit" className="w-full text-sm py-2">Créer un compte</Button>
+              {message && (
+                <p className="text-center text-xs mt-2 text-green-600 dark:text-green-400">
+                  {message}
+                </p>
+              )}
+              <FieldDescription className="px-4 text-center text-xs">
                 Vous avez déjà un compte ?{" "}
-                <Link to={"/connexion"}>
-                  <span>Connectez-vous</span>
-                </Link>
+                <Link to={"/connexion"}><span>Connectez-vous</span></Link>
               </FieldDescription>
             </Field>
           </FieldGroup>

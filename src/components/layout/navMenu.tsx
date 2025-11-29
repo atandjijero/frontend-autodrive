@@ -13,16 +13,13 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react"; // icône hamburger
-
 export const items = [
   { title: "Accueil", url: "/" },
   { title: "Véhicules", url: "/vehicules" },
-  { title: "Inscription", url: "/inscription" },
   { title: "Connexion", url: "/connexion" },
   { title: "À propos", url: "/about" },
   { title: "Contact", url: "/contact" },
   { title: "FAQ", url: "/faq" },
-  { title: "Dashboard", url: "/admin" },
 ];
 
 export function NavMenu() {
@@ -33,7 +30,7 @@ export function NavMenu() {
         {/* Logo */}
         <h1 className="text-xl font-bold">AutoDrive 🚗</h1>
 
-        {/* Menu desktop aligné à droite avec espace entre les éléments */}
+        {/* Menu desktop */}
         <nav className="hidden md:flex ml-auto">
           <NavigationMenu>
             <NavigationMenuList className="flex gap-8 items-center">
@@ -49,13 +46,12 @@ export function NavMenu() {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               ))}
-              {/* Bouton mode clair/sombre */}
               <ModeToggle />
             </NavigationMenuList>
           </NavigationMenu>
         </nav>
 
-        {/* Menu mobile (hamburger) */}
+        {/* Menu mobile */}
         <div className="md:hidden ml-auto">
           <Sheet>
             <SheetTrigger asChild>
@@ -88,7 +84,7 @@ export function NavMenu() {
         </div>
       </header>
 
-      {/* Décalage du contenu principal pour ne pas passer sous le navbar */}
+      {/* Décalage du contenu principal */}
       <div className="pt-16">
         {/* Ici tu mets ton contenu principal */}
       </div>

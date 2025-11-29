@@ -1,4 +1,4 @@
-import { PassOublieForm } from "@/components/forms/passOublieForm";
+/*import PassOublieForm from "@/components/forms/passOublieForm";
 
 export default function PassOublie() {
   return (
@@ -7,4 +7,4 @@ export default function PassOublie() {
       <PassOublieForm className="w-100 mx-auto" />
     </>
   );
-}
+}*/
