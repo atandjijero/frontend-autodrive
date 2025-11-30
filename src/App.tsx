@@ -14,11 +14,17 @@ import ForgotPasswordForm from "@/components/forms/forgotpasswordform";
 import About from "@/pages/about";
 import Contact from "@/pages/contact";
 import FAQ from "@/pages/faq";
+import { Toaster } from "./components/ui/sonner";
+
+//  Nouveau dashboard shadcn/ui
+import DashboardPage from "@/app/dashboard/page"; 
+import Profil from "@/pages/admin/Profil";
 
 function App() {
   return (
     <BrowserRouter>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+<<<<<<< HEAD
         <div className="w-full min-h-screen">
           <NavMenu />
           <Routes>
@@ -36,6 +42,28 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPasswordForm />} />
           </Routes>
         </div>
+=======
+        <NavMenu />
+        <Toaster richColors closeButton />{" "}
+        <Routes>
+          {/* Routes publiques */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/vehicules" element={<Vehicules />} />
+          <Route path="/vehicules/:id" element={<Vehicule />} />
+          <Route path="/connexion" element={<Connexion />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/inscription" element={<Inscription />} />
+          <Route path="/otp" element={<OtpForm />} />
+          <Route path="/reset-password/:token" element={<PassOublieForm />} />
+          <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+
+          {/* Routes admin avec le nouveau dashboard */}
+          <Route path="/admin/dashboard" element={<DashboardPage />} />
+          <Route path="/admin/profil" element={<Profil />} />
+        </Routes>
+>>>>>>> aef875c (feat: modifications sur App.tsx)
       </ThemeProvider>
     </BrowserRouter>
   );
