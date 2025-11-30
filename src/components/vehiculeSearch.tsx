@@ -35,6 +35,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { contrats } from "@/pages/admin/contrats";
+import { Sidebar } from "./ui/sidebar";
 
 function ucfirst(str: string) {
   if (!str) return str;
@@ -113,49 +114,39 @@ export function VehiculeSearch({
 
   return (
     <>
-      <Card className="m-0 w-100 mx-auto text-center">
-        <CardHeader>
-          <CardTitle>Rechercher un véhicule</CardTitle>
-          <CardDescription>
-            Utilisez les filtres ci-dessous pour affiner votre recherche de
-            véhicules.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleFormSubmit}>
-            <FieldGroup>
-              <Selects
-                attribute="marque"
-                onChange={handleSelect}
-                inputs={inputs}
-              />
-              <Selects
-                attribute="carrosserie"
-                onChange={handleSelect}
-                inputs={inputs}
-              />
-              <Selects
-                attribute="transmission"
-                onChange={handleSelect}
-                inputs={inputs}
-              />
-              <SliderPrix
-                value={priceRange}
-                onChange={setPriceRange}
-                minPrice={minPrice}
-                maxPrice={maxPrice}
-              />
-              <CalendarSearch
-                dateRange={dateRange}
-                setDateRange={setDateRange}
-              />
-            </FieldGroup>
-            <Button type="submit" className="mt-4">
-              Filtrer
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+      <form onSubmit={handleFormSubmit} className="bg-background p-4 border-b">
+        <FieldGroup>
+          <Selects attribute="marque" onChange={handleSelect} inputs={inputs} />
+          <Selects
+            attribute="carrosserie"
+            onChange={handleSelect}
+            inputs={inputs}
+          />
+          <Selects
+            attribute="transmission"
+            onChange={handleSelect}
+            inputs={inputs}
+          />
+          <SliderPrix
+            value={priceRange}
+            onChange={setPriceRange}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+          />
+          <CalendarSearch dateRange={dateRange} setDateRange={setDateRange} />
+        </FieldGroup>
+        <Button type="submit" className="mt-4 w-full">
+          Filtrer
+        </Button>
+      </form>
+      {/* Add some content below to make scrolling visible */}
+      <div className="p-4 space-y-4">
+        <p className="text-sm text-muted-foreground">
+          {Object.keys(filteredResults).length > 0
+            ? `${Object.keys(filteredResults).length} véhicule(s) trouvé(s)`
+            : "Utilisez les filtres ci-dessus pour rechercher des véhicules"}
+        </p>
+      </div>
     </>
   );
 }
