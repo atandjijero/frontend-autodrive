@@ -114,7 +114,7 @@ export function VehiculeSearch({
 
   return (
     <>
-      <Card className="m-0 w-150 mx-auto text-center">
+      <Card className="m-0 w-100 mx-auto text-center">
         <CardHeader>
           <CardTitle>Rechercher un véhicule</CardTitle>
           <CardDescription>
@@ -190,7 +190,7 @@ export function Selects({
         name={attribute}
         value={inputs?.[attribute]}
       >
-        <SelectTrigger className="w-full max-w-md">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder={ucfirst(attribute)} />
         </SelectTrigger>
 
@@ -222,7 +222,7 @@ export function SliderPrix({
   maxPrice: number;
 }) {
   return (
-    <Field className="w-full max-w-md">
+    <Field className="w-full">
       <FieldLabel>Tranchre de prix</FieldLabel>
       <FieldDescription>
         Définissez votre fourchette de budget ($
@@ -252,17 +252,11 @@ export function CalendarSearch({
   const [open, setOpen] = React.useState(false);
 
   return (
-    <div className="flex flex-col gap-3">
-      <Label htmlFor="date" className="px-1">
-        Tranche de dates de disponibilité
-      </Label>
+    <Field className="w-full">
+      <FieldLabel> Tranche de dates de disponibilité</FieldLabel>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            id="date"
-            className="w-48 justify-between font-normal"
-          >
+          <Button variant="outline" id="date" className="w-48 font-normal">
             {dateRange?.from
               ? dateRange.from.toLocaleDateString() +
                 (dateRange.to ? " - " + dateRange.to.toLocaleDateString() : "")
@@ -270,7 +264,7 @@ export function CalendarSearch({
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+        <PopoverContent className="w-auto overflow-hidden p-0">
           <Calendar
             mode="range"
             numberOfMonths={3}
@@ -284,6 +278,6 @@ export function CalendarSearch({
           />
         </PopoverContent>
       </Popover>
-    </div>
+    </Field>
   );
 }
