@@ -7,9 +7,11 @@ import {
   Sidebar,
   SidebarContent,
   SidebarProvider,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { PanelLeftIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 function VehiculesContent({
   dispos,
@@ -18,32 +20,31 @@ function VehiculesContent({
   dispos: typeof vehicules;
   handleSearchResults: (results: typeof vehicules) => void;
 }) {
-  const { isMobile } = useSidebar();
+  const { isMobile, toggleSidebar } = useSidebar();
 
   return (
     <>
-      {isMobile ? (
-        <>
-          <Sidebar className="sticky top-16 p-3" collapsible="offcanvas">
-            <SidebarContent>
-              <VehiculeSearch onResults={handleSearchResults} />
-            </SidebarContent>
-          </Sidebar>
-          <header>
-            <SidebarTrigger />
-          </header>
-        </>
-      ) : (
-        <Sidebar
-          className="sticky top-16 h-[calc(100vh-4rem)] w-[300px] p-3"
-          collapsible="none"
-        >
-          <SidebarContent>
-            <VehiculeSearch onResults={handleSearchResults} />
-          </SidebarContent>
-        </Sidebar>
-      )}
-      <div className="p-0 mx-10 w-[calc(100%-300px)] mt-20 mb-10">
+      <Sidebar
+        className={cn(
+          "sticky top-16 p-3",
+          !isMobile && "h-[calc(100vh-4rem)] w-[300px]"
+        )}
+        collapsible={isMobile ? "offcanvas" : "none"}
+      >
+        <SidebarContent>
+          <VehiculeSearch onResults={handleSearchResults} />
+        </SidebarContent>
+      </Sidebar>
+
+      <div className="flex-1 p-6 pt-16 md:p-10">
+        {isMobile && (
+          <div className="mb-4 fixed top-16 left-0 w-full bg-background z-40 p-4 border-b">
+            <Button variant="outline" size="default" onClick={toggleSidebar}>
+              <PanelLeftIcon className="mr-2 h-4 w-4" />
+              Filtres
+            </Button>
+          </div>
+        )}
         <h1 className="text-2xl font-bold">Véhicules</h1>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
