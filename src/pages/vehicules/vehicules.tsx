@@ -23,7 +23,7 @@ function VehiculesContent({
   const { isMobile, toggleSidebar } = useSidebar();
 
   return (
-    <>
+    <div className="flex w-full">
       <Sidebar
         className={cn(
           "sticky top-16 p-3",
@@ -36,7 +36,7 @@ function VehiculesContent({
         </SidebarContent>
       </Sidebar>
 
-      <div className="flex-1 p-6 pt-16 md:p-10">
+      <div className="flex-1 p-6 pt-16 md:p-10 w-full">
         {isMobile && (
           <div className="mb-4 fixed top-16 left-0 w-full bg-background z-40 p-4 border-b">
             <Button variant="outline" size="default" onClick={toggleSidebar}>
@@ -73,7 +73,7 @@ function VehiculesContent({
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

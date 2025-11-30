@@ -19,21 +19,23 @@ function App() {
   return (
     <BrowserRouter>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <NavMenu />
-        <Routes>
-          {/* Routes publiques */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/vehicules" element={<Vehicules />} />
-          <Route path="/vehicules/:id" element={<Vehicule />} />
-          <Route path="/connexion" element={<Connexion />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/inscription" element={<Inscription />} />
-          <Route path="/otp" element={<OtpForm />} />
-          <Route path="/reset-password/:token" element={<PassOublieForm />} />
-          <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-        </Routes>
+        <div className="w-full min-h-screen">
+          <NavMenu />
+          <Routes>
+            {/* Routes publiques */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/vehicules" element={<Vehicules />} />
+            <Route path="/vehicules/:id" element={<Vehicule />} />
+            <Route path="/connexion" element={<Connexion />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/inscription" element={<Inscription />} />
+            <Route path="/otp" element={<OtpForm />} />
+            <Route path="/reset-password/:token" element={<PassOublieForm />} />
+            <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+          </Routes>
+        </div>
       </ThemeProvider>
     </BrowserRouter>
   );
