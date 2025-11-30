@@ -14,6 +14,7 @@ type Vehicules = {
   [id: string]: {
     carrosserie: string;
     marque: string;
+    modele: string;
     transmission: "manuelle" | "automatique";
     prix: number;
     imageUrl: string;
@@ -22,101 +23,185 @@ type Vehicules = {
 };
 
 export const vehicules: Vehicules = {
-  1: {
-    carrosserie: "berline",
-    marque: "Peugeot",
-    transmission: "manuelle",
-    prix: 50, // prix location / jour
-    imageUrl: "/peugeot-308.jpg",
-    immatriculation: "AA-123-BB",
-  },
-  2: {
+  "1": {
     carrosserie: "SUV",
     marque: "Toyota",
+    modele: "RAV4",
     transmission: "automatique",
-    prix: 80, // prix location / jour
-    imageUrl: "/toyota-rav4.jpg",
-    immatriculation: "BC-456-CD",
+    prix: 42000,
+    imageUrl: "https://example.com/toyota_rav4.jpg",
+    immatriculation: "AA-123-AA",
   },
-  3: {
-    carrosserie: "moto",
+  "2": {
+    carrosserie: "berline",
     marque: "Honda",
+    modele: "Civic",
     transmission: "manuelle",
-    prix: 30, // prix location / jour
-    imageUrl: "/honda-cb500.jpg",
-    immatriculation: "DD-789-EE",
+    prix: 24000,
+    imageUrl: "https://example.com/honda_civic.jpg",
+    immatriculation: "BB-456-BB",
   },
-  4: {
-    carrosserie: "camion",
+  "3": {
+    carrosserie: "SUV",
+    marque: "Hyundai",
+    modele: "Tucson",
+    transmission: "automatique",
+    prix: 35000,
+    imageUrl: "https://example.com/hyundai_tucson.jpg",
+    immatriculation: "CC-789-CC",
+  },
+  "4": {
+    carrosserie: "citadine",
+    marque: "Renault",
+    modele: "Clio",
+    transmission: "manuelle",
+    prix: 18000,
+    imageUrl: "https://example.com/renault_clio.jpg",
+    immatriculation: "DD-321-DD",
+  },
+  "5": {
+    carrosserie: "pickup",
+    marque: "Ford",
+    modele: "Ranger",
+    transmission: "automatique",
+    prix: 48000,
+    imageUrl: "https://example.com/ford_ranger.jpg",
+    immatriculation: "EE-654-EE",
+  },
+  "6": {
+    carrosserie: "berline",
+    marque: "BMW",
+    modele: "320i",
+    transmission: "automatique",
+    prix: 54000,
+    imageUrl: "https://example.com/bmw_320i.jpg",
+    immatriculation: "FF-987-FF",
+  },
+  "7": {
+    carrosserie: "SUV",
     marque: "Mercedes",
-    transmission: "manuelle",
-    prix: 110, // prix location / jour
-    imageUrl: "/mercedes-actros.jpg",
-    immatriculation: "EF-910-FG",
+    modele: "GLA 200",
+    transmission: "automatique",
+    prix: 58000,
+    imageUrl: "https://example.com/mercedes_gla200.jpg",
+    immatriculation: "GG-741-GG",
   },
-  5: {
+  "8": {
     carrosserie: "citadine",
-    marque: "Renault",
+    marque: "Peugeot",
+    modele: "208",
     transmission: "manuelle",
-    prix: 35, // prix location / jour
-    imageUrl: "/renault-clio.jpg",
-    immatriculation: "GH-112-IJ",
+    prix: 19000,
+    imageUrl: "https://example.com/peugeot_208.jpg",
+    immatriculation: "HH-852-HH",
   },
-  6: {
-    carrosserie: "citadine",
-    marque: "Renault",
-    transmission: "manuelle",
-    prix: 35, // prix location / jour
-    imageUrl: "/renault-clio.jpg",
-    immatriculation: "GH-112-IJ",
+  "9": {
+    carrosserie: "berline",
+    marque: "Audi",
+    modele: "A4",
+    transmission: "automatique",
+    prix: 56000,
+    imageUrl: "https://example.com/audi_a4.jpg",
+    immatriculation: "II-963-II",
   },
-  7: {
-    carrosserie: "citadine",
-    marque: "Renault",
+  "10": {
+    carrosserie: "SUV",
+    marque: "Kia",
+    modele: "Sportage",
     transmission: "manuelle",
-    prix: 35, // prix location / jour
-    imageUrl: "/renault-clio.jpg",
-    immatriculation: "GH-112-IJ",
+    prix: 30000,
+    imageUrl: "https://example.com/kia_sportage.jpg",
+    immatriculation: "JJ-147-JJ",
   },
-  8: {
-    carrosserie: "citadine",
-    marque: "Renault",
-    transmission: "manuelle",
-    prix: 35, // prix location / jour
-    imageUrl: "/renault-clio.jpg",
-    immatriculation: "GH-112-IJ",
+  "11": {
+    carrosserie: "monospace",
+    marque: "Volkswagen",
+    modele: "Touran",
+    transmission: "automatique",
+    prix: 41000,
+    imageUrl: "https://example.com/vw_touran.jpg",
+    immatriculation: "KK-258-KK",
   },
-  9: {
-    carrosserie: "citadine",
-    marque: "Renault",
+  "12": {
+    carrosserie: "pickup",
+    marque: "Nissan",
+    modele: "Navara",
     transmission: "manuelle",
-    prix: 35, // prix location / jour
-    imageUrl: "/renault-clio.jpg",
-    immatriculation: "GH-112-IJ",
+    prix: 45000,
+    imageUrl: "https://example.com/nissan_navara.jpg",
+    immatriculation: "LL-369-LL",
   },
-  10: {
-    carrosserie: "citadine",
-    marque: "Renault",
-    transmission: "manuelle",
-    prix: 35, // prix location / jour
-    imageUrl: "/renault-clio.jpg",
-    immatriculation: "GH-112-IJ",
+  "13": {
+    carrosserie: "SUV",
+    marque: "Mazda",
+    modele: "CX-5",
+    transmission: "automatique",
+    prix: 47000,
+    imageUrl: "https://example.com/mazda_cx5.jpg",
+    immatriculation: "MM-951-MM",
   },
-  11: {
-    carrosserie: "citadine",
-    marque: "Renault",
+  "14": {
+    carrosserie: "berline",
+    marque: "Toyota",
+    modele: "Corolla",
     transmission: "manuelle",
-    prix: 35, // prix location / jour
-    imageUrl: "/renault-clio.jpg",
-    immatriculation: "GH-112-IJ",
+    prix: 23000,
+    imageUrl: "https://example.com/toyota_corolla.jpg",
+    immatriculation: "NN-753-NN",
   },
-  12: {
+  "15": {
     carrosserie: "citadine",
-    marque: "Renault",
+    marque: "Fiat",
+    modele: "500",
+    transmission: "automatique",
+    prix: 17000,
+    imageUrl: "https://example.com/fiat_500.jpg",
+    immatriculation: "OO-852-OO",
+  },
+  "16": {
+    carrosserie: "SUV",
+    marque: "Jeep",
+    modele: "Renegade",
     transmission: "manuelle",
-    prix: 35, // prix location / jour
-    imageUrl: "/renault-clio.jpg",
-    immatriculation: "GH-112-IJ",
+    prix: 28000,
+    imageUrl: "https://example.com/jeep_renegade.jpg",
+    immatriculation: "PP-159-PP",
+  },
+  "17": {
+    carrosserie: "berline",
+    marque: "Tesla",
+    modele: "Model 3",
+    transmission: "automatique",
+    prix: 50000,
+    imageUrl: "https://example.com/tesla_model3.jpg",
+    immatriculation: "QQ-357-QQ",
+  },
+  "18": {
+    carrosserie: "SUV",
+    marque: "Volvo",
+    modele: "XC60",
+    transmission: "automatique",
+    prix: 62000,
+    imageUrl: "https://example.com/volvo_xc60.jpg",
+    immatriculation: "RR-468-RR",
+  },
+  "19": {
+    carrosserie: "pickup",
+    marque: "Mitsubishi",
+    modele: "L200",
+    transmission: "manuelle",
+    prix: 42000,
+    imageUrl: "https://example.com/mitsubishi_l200.jpg",
+    immatriculation: "SS-579-SS",
+  },
+  "20": {
+    carrosserie: "citadine",
+    marque: "Citroën",
+    modele: "C3",
+    transmission: "manuelle",
+    prix: 18500,
+    imageUrl: "https://example.com/citroen_c3.jpg",
+    immatriculation: "TT-680-TT",
   },
 };
 

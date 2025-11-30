@@ -34,7 +34,7 @@ export default function Vehicules() {
                 className="mt-2 h-40 w-auto object-cover"
               />
               <h2 className="text-xl font-semibold">
-                {id} - {dispo.marque} - {dispo.immatriculation}
+                {id} - {dispo.marque} - {dispo.modele}
               </h2>
               <p>Carrosserie: {dispo.carrosserie}</p>
               <p>Transmission: {dispo.transmission}</p>
