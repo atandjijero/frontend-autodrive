@@ -1,6 +1,6 @@
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { vehicules } from "@/pages/admin/vehiculesListe";
 import { useParams } from "react-router-dom";
 
@@ -8,19 +8,62 @@ export function VehiculeForm() {
   const { id } = useParams();
   const vehicule = id ? vehicules[Number(id)] : null;
 
-  const [inputs, setInputs] = useState({
+  type Inputs = {
+    carrosserie: string;
+    marque: string;
+    transmission: string;
+    prix: number;
+    imageUrl: string;
+    immatriculation: string;
+    imageFile: File | null;
+  };
+
+  const [inputs, setInputs] = useState<Inputs>({
     carrosserie: vehicule?.carrosserie ?? "",
     marque: vehicule?.marque ?? "",
     transmission: vehicule?.transmission ?? "",
     prix: vehicule?.prix ?? 0,
     imageUrl: vehicule?.imageUrl ?? "",
     immatriculation: vehicule?.immatriculation ?? "",
+    imageFile: null,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setInputs((prev) => ({ ...prev, [id]: value }));
+    setInputs(
+      (prev) =>
+        ({
+          ...prev,
+          [id]: id === "prix" ? Number(value) : value,
+        }) as unknown as Inputs
+    );
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    setInputs((prev) => {
+      // Revoke previous object URL if it was created from a File
+      if (prev.imageFile && prev.imageUrl) {
+        try {
+          URL.revokeObjectURL(prev.imageUrl);
+        } catch {}
+      }
+
+      const imageUrl = file ? URL.createObjectURL(file) : "";
+      return { ...prev, imageFile: file, imageUrl };
+    });
+  };
+
+  // Revoke object URL when component unmounts or when imageFile/imageUrl change
+  useEffect(() => {
+    return () => {
+      if (inputs.imageFile && inputs.imageUrl) {
+        try {
+          URL.revokeObjectURL(inputs.imageUrl);
+        } catch {}
+      }
+    };
+  }, [inputs.imageFile, inputs.imageUrl]);
 
   return (
     <FieldGroup>
@@ -28,8 +71,28 @@ export function VehiculeForm() {
       <InputTextCarrosserie inputs={inputs} handleChange={handleChange} />
       <InputTextImmatriculation inputs={inputs} handleChange={handleChange} />
       <InputNumberPrix inputs={inputs} handleChange={handleChange} />
-      <InputTextImageUrl inputs={inputs} handleChange={handleChange} />
-      <InputTextTransmission inputs={inputs} handleChange={handleChange} />
+      <InputTextTransmission inputs={inputs} handleChange={handleChange} />{" "}
+      <Field>
+        <FieldLabel htmlFor="image">Image</FieldLabel>
+        <Input
+          id="image"
+          type="file"
+          onChange={handleFileChange}
+          accept="image/*"
+          placeholder="Upload une image"
+          required
+        />
+        {inputs.imageUrl ? (
+          // simple preview when an image is selected or an existing URL is present
+          // keep styling minimal; consumers can style as needed
+          // eslint-disable-next-line jsx-a11y/img-redundant-alt
+          <img
+            src={inputs.imageUrl}
+            alt="vehicle preview"
+            style={{ maxWidth: 200, marginTop: 8 }}
+          />
+        ) : null}
+      </Field>
     </FieldGroup>
   );
 }
