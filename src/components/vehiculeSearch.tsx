@@ -35,7 +35,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { contrats } from "@/pages/admin/contrats";
-import { Sidebar } from "./ui/sidebar";
 
 function ucfirst(str: string) {
   if (!str) return str;
@@ -117,6 +116,7 @@ export function VehiculeSearch({
       <form onSubmit={handleFormSubmit} className="bg-background p-4 border-b">
         <FieldGroup>
           <Selects attribute="marque" onChange={handleSelect} inputs={inputs} />
+          <Selects attribute="modele" onChange={handleSelect} inputs={inputs} />
           <Selects
             attribute="carrosserie"
             onChange={handleSelect}
@@ -171,6 +171,14 @@ export function Selects({
   let distinctValues = [...new Set(allValues)].sort((a, b) =>
     String(a).localeCompare(String(b))
   );
+
+  if (attribute === "modele" && inputs?.marque) {
+    distinctValues = distinctValues.filter((value) => {
+      return Object.values(vehicules).some(
+        (v) => v.marque === inputs.marque && v.modele === value
+      );
+    });
+  }
 
   return (
     <Field>
