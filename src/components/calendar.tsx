@@ -4,14 +4,18 @@ import * as React from "react";
 import { type DateRange } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
 import { contrats } from "@/pages/admin/contrats";
+import { useParams } from "react-router-dom";
 
 export default function CalendarVehicule() {
+  const { id } = useParams();
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
     from: new Date(),
     to: new Date(),
   });
 
-  const reservations = Object.values(contrats).map((v) => v.reservation);
+  const reservations = Object.values(contrats)
+    .filter((c) => c.idVehicule === id)
+    .map((c) => c.reservation);
 
   const disabledRanges = reservations.map((r) => ({
     from: new Date(r.from),
