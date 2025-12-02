@@ -10,15 +10,15 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string
-    url: string
-    icon?: Icon
-  }[]
-}) {
+// Définition du type NavItem
+export type NavItem = {
+  title: string
+  url: string
+  icon?: Icon
+  children?: NavItem[]   
+}
+
+export function NavMain({ items }: { items: NavItem[] }) {
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -53,6 +53,22 @@ export function NavMain({
                   <span>{item.title}</span>
                 </Link>
               </SidebarMenuButton>
+
+              {/*  gestion des sous-menus */}
+              {item.children && (
+                <SidebarMenu className="ml-4">
+                  {item.children.map((child) => (
+                    <SidebarMenuItem key={child.title}>
+                      <SidebarMenuButton asChild tooltip={child.title}>
+                        <Link to={child.url}>
+                          {child.icon && <child.icon className="size-4" />}
+                          <span>{child.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              )}
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

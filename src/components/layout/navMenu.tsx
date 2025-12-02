@@ -11,7 +11,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react"; // icône hamburger
 export const items = [
   { title: "Accueil", url: "/" },
-  { title: "Véhicules", url: "/vehicules" },
   { title: "Connexion", url: "/connexion" },
   { title: "À propos", url: "/about" },
   { title: "Contact", url: "/contact" },

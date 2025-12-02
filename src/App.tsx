@@ -10,6 +10,9 @@ import Inscription from "@/pages/auth/inscription";
 import { OtpForm } from "@/components/forms/otpform";
 import PassOublieForm from "@/components/forms/passOublieForm";
 import ForgotPasswordForm from "@/components/forms/forgotpasswordform";
+import ReservationForm from "@/components/forms/reservationForm";
+import PaymentForm from "./components/forms/PaymentForm";
+
 
 import About from "@/pages/about";
 import Contact from "@/pages/contact";
@@ -19,6 +22,8 @@ import { Toaster } from "./components/ui/sonner";
 //  Nouveau dashboard shadcn/ui
 import DashboardPage from "@/app/dashboard/page"; 
 import Profil from "@/pages/admin/Profil";
+import VehiculesAjout from "./pages/admin/vehiculesAjout";
+import VehiculesListe from "./pages/admin/vehiculesListe"; 
 
 function App() {
   return (
@@ -32,6 +37,8 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/vehicules" element={<Vehicules />} />
             <Route path="/vehicules/:id" element={<Vehicule />} />
+            <Route path="/reservation/:vehicleId" element={<ReservationForm />} />
+            <Route path="/paiement" element={<PaymentForm />} />
             <Route path="/connexion" element={<Connexion />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
@@ -44,6 +51,8 @@ function App() {
             {/* Routes admin avec le nouveau dashboard */}
             <Route path="/admin/dashboard" element={<DashboardPage />} />
             <Route path="/admin/profil" element={<Profil />} />
+            <Route path="/admin/vehicules/ajouter" element={<VehiculesAjout />} />
+            <Route path="/admin/vehicules/liste" element={<VehiculesListe />} /> {/* correction */}
           </Routes>
         </div>
       </ThemeProvider>

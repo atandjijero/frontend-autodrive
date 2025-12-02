@@ -11,6 +11,12 @@ import {
   IconUsers,
   IconHelp,
   IconSearch,
+  IconPlus,
+  IconEye,
+  IconEdit,
+  IconTrash,
+  IconX,
+  IconCheck,
 } from "@tabler/icons-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -69,7 +75,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain
           items={[
             { title: "Tableau de bord", url: "/admin/dashboard", icon: IconDashboard },
-            { title: "Véhicules", url: "/admin/vehicules", icon: IconCar },
+            {
+            title: "Véhicules",
+             url: "/admin/vehicules",
+             icon: IconCar,
+             children: [
+              { title: "Ajouter", url: "/admin/vehicules/ajouter", icon: IconPlus },
+              { title: "Afficher", url: "/admin/vehicules/liste", icon: IconEye },
+              { title: "Modifier", url: "/admin/vehicules/modifier", icon: IconEdit },
+              { title: "Supprimer", url: "/admin/vehicules/supprimer", icon: IconTrash },
+              { title: "Indisponible", url: "/admin/vehicules/indisponible", icon: IconX },
+              { title: "Disponible", url: "/admin/vehicules/disponible", icon: IconCheck },
+              ],
+               }
+              ,
             { title: "Réservations", url: "/admin/reservations", icon: IconCalendar },
             { title: "Clients", url: "/admin/clients", icon: IconUsers },
             { title: "Paiements", url: "/admin/paiements", icon: IconCreditCard },

@@ -1,235 +1,227 @@
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { useState, useEffect } from "react";
-import { vehicules } from "@/pages/admin/vehiculesListe";
-import { useParams } from "react-router-dom";
+"use client"
+
+import { useForm } from "react-hook-form"
+import type { SubmitHandler } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { toast } from "sonner"
+import { addVehicle } from "@/api/apiClient"
+
+// Schéma Zod conforme au DTO
+const vehicleSchema = z.object({
+  carrosserie: z.string().min(2),
+  modele: z.string().min(2),
+  marque: z.string().min(2),
+  transmission: z.enum(["automatique", "manuelle"]),
+  prix: z.coerce.number().min(1),
+  immatriculation: z.string().min(2),
+  photos: z
+    .custom<FileList>((val) => val instanceof FileList)
+    .optional(),
+})
+
+type VehicleFormValues = z.infer<typeof vehicleSchema>
 
 export function VehiculeForm() {
-  const { id } = useParams();
-  const vehicule = id ? vehicules[Number(id)] : null;
+  const form = useForm<VehicleFormValues>({
+    resolver: zodResolver(vehicleSchema),
+    defaultValues: {
+      carrosserie: "",
+      modele: "",
+      marque: "",
+      transmission: "automatique",
+      prix: 80,
+      immatriculation: "",
+      photos: undefined,
+    },
+    mode: "onSubmit",
+  })
 
-  type Inputs = {
-    carrosserie: string;
-    marque: string;
-    transmission: string;
-    prix: number;
-    imageUrl: string;
-    immatriculation: string;
-    imageFile: File | null;
-  };
+  const onSubmit: SubmitHandler<VehicleFormValues> = async (values) => {
+    try {
+      // Construire FormData pour envoyer fichiers + champs texte
+      const formData = new FormData()
+      formData.append("carrosserie", values.carrosserie)
+      formData.append("modele", values.modele)
+      formData.append("marque", values.marque)
+      formData.append("transmission", values.transmission)
+      formData.append("prix", values.prix.toString())
+      formData.append("immatriculation", values.immatriculation)
 
-  const [inputs, setInputs] = useState<Inputs>({
-    carrosserie: vehicule?.carrosserie ?? "",
-    marque: vehicule?.marque ?? "",
-    transmission: vehicule?.transmission ?? "",
-    prix: vehicule?.prix ?? 0,
-    imageUrl: vehicule?.imageUrl ?? "",
-    immatriculation: vehicule?.immatriculation ?? "",
-    imageFile: null,
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setInputs(
-      (prev) =>
-        ({
-          ...prev,
-          [id]: id === "prix" ? Number(value) : value,
-        }) as unknown as Inputs
-    );
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-    setInputs((prev) => {
-      // Revoke previous object URL if it was created from a File
-      if (prev.imageFile && prev.imageUrl) {
-        try {
-          URL.revokeObjectURL(prev.imageUrl);
-        } catch {}
+      if (values.photos) {
+        Array.from(values.photos).forEach((file) => {
+          formData.append("file", file) // correspond au champ attendu par FileInterceptor
+        })
       }
 
-      const imageUrl = file ? URL.createObjectURL(file) : "";
-      return { ...prev, imageFile: file, imageUrl };
-    });
-  };
-
-  // Revoke object URL when component unmounts or when imageFile/imageUrl change
-  useEffect(() => {
-    return () => {
-      if (inputs.imageFile && inputs.imageUrl) {
-        try {
-          URL.revokeObjectURL(inputs.imageUrl);
-        } catch {}
-      }
-    };
-  }, [inputs.imageFile, inputs.imageUrl]);
+      await addVehicle(formData)
+      toast.success("Véhicule ajouté avec succès ")
+      form.reset()
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message ?? "Impossible d’ajouter le véhicule ❌")
+    }
+  }
 
   return (
-    <FieldGroup>
-      <InputTextMarque inputs={inputs} handleChange={handleChange} />
-      <InputTextCarrosserie inputs={inputs} handleChange={handleChange} />
-      <InputTextImmatriculation inputs={inputs} handleChange={handleChange} />
-      <InputNumberPrix inputs={inputs} handleChange={handleChange} />
-      <InputTextTransmission inputs={inputs} handleChange={handleChange} />{" "}
-      <Field>
-        <FieldLabel htmlFor="image">Image</FieldLabel>
-        <Input
-          id="image"
-          type="file"
-          onChange={handleFileChange}
-          accept="image/*"
-          placeholder="Upload une image"
-          required
-        />
-        {inputs.imageUrl ? (
-          // simple preview when an image is selected or an existing URL is present
-          // keep styling minimal; consumers can style as needed
-          // eslint-disable-next-line jsx-a11y/img-redundant-alt
-          <img
-            src={inputs.imageUrl}
-            alt="vehicle preview"
-            style={{ maxWidth: 200, marginTop: 8 }}
-          />
-        ) : null}
-      </Field>
-    </FieldGroup>
-  );
-}
+    <div className="flex items-center justify-center min-h-screen">
+      <Card className="w-full max-w-lg">
+        <CardHeader>
+          <CardTitle>Ajouter un véhicule</CardTitle>
+          <CardDescription>Entrez les informations du véhicule</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {/* Carrosserie */}
+              <FormField
+                control={form.control}
+                name="carrosserie"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Carrosserie</FormLabel>
+                    <FormControl>
+                      <Input placeholder="SUV" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-export function InputTextMarque({
-  inputs,
-  handleChange,
-}: {
-  inputs: { marque: string };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-  return (
-    <Field>
-      <FieldLabel htmlFor="marque">Marque</FieldLabel>
-      <Input
-        id="marque"
-        type="text"
-        onChange={handleChange}
-        value={inputs.marque}
-        placeholder="Toyota"
-        required
-      />
-      <p>{inputs.marque}</p>
-    </Field>
-  );
-}
+              {/* Modèle */}
+              <FormField
+                control={form.control}
+                name="modele"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Modèle</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Corolla" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-export function InputTextCarrosserie({
-  inputs,
-  handleChange,
-}: {
-  inputs: { carrosserie: string };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-  return (
-    <Field>
-      <FieldLabel htmlFor="carrosserie">Carrosserie</FieldLabel>
-      <Input
-        id="carrosserie"
-        type="text"
-        onChange={handleChange}
-        value={inputs.carrosserie}
-        placeholder="SUV"
-        required
-      />
-      <p>{inputs.carrosserie}</p>
-    </Field>
-  );
-}
+              {/* Marque */}
+              <FormField
+                control={form.control}
+                name="marque"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Marque</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Toyota" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-export function InputTextImmatriculation({
-  inputs,
-  handleChange,
-}: {
-  inputs: { immatriculation: string };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-  return (
-    <Field>
-      <FieldLabel htmlFor="immatriculation">Immatriculation</FieldLabel>
-      <Input
-        id="immatriculation"
-        type="text"
-        onChange={handleChange}
-        value={inputs.immatriculation}
-        placeholder="AB-123-CD"
-        required
-      />
-      <p>{inputs.immatriculation}</p>
-    </Field>
-  );
-}
+              {/* Transmission */}
+              <FormField
+                control={form.control}
+                name="transmission"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Transmission</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choisir la transmission" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="manuelle">Manuelle</SelectItem>
+                          <SelectItem value="automatique">Automatique</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-export function InputNumberPrix({
-  inputs,
-  handleChange,
-}: {
-  inputs: { prix: number };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-  return (
-    <Field>
-      <FieldLabel htmlFor="prix">Prix</FieldLabel>
-      <Input
-        id="prix"
-        type="number"
-        onChange={handleChange}
-        value={inputs.prix}
-        placeholder="20000"
-        required
-      />
-    </Field>
-  );
-}
+              {/* Prix */}
+              <FormField
+                control={form.control}
+                name="prix"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Prix</FormLabel>
+                    <FormControl>
+                      <div className="flex items-center">
+                        <Input
+                          type="number"
+                          placeholder="80"
+                          value={Number.isFinite(field.value as number) ? field.value : ""}
+                          onChange={(e) => {
+                            const val = e.target.value
+                            field.onChange(val === "" ? "" : Number(val))
+                          }}
+                          className="flex-1"
+                        />
+                        <span className="ml-2 text-muted-foreground">€</span>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-export function InputTextImageUrl({
-  inputs,
-  handleChange,
-}: {
-  inputs: { imageUrl: string };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-  return (
-    <Field>
-      <FieldLabel htmlFor="imageUrl">imageUrl</FieldLabel>
-      <Input
-        id="imageUrl"
-        type="text"
-        onChange={handleChange}
-        value={inputs.imageUrl}
-        placeholder="/images/voiture1.jpg"
-        required
-      />
-      <p>{inputs.imageUrl}</p>
-    </Field>
-  );
-}
+              {/* Immatriculation */}
+              <FormField
+                control={form.control}
+                name="immatriculation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Immatriculation</FormLabel>
+                    <FormControl>
+                      <Input placeholder="AB-123-CD" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-export function InputTextTransmission({
-  inputs,
-  handleChange,
-}: {
-  inputs: { transmission: string };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) {
-  return (
-    <Field>
-      <FieldLabel htmlFor="transmission">Transmission</FieldLabel>
-      <Input
-        id="transmission"
-        type="text"
-        onChange={handleChange}
-        value={inputs.transmission}
-        placeholder="Automatique"
-        required
-      />
-      <p>{inputs.transmission}</p>
-    </Field>
-  );
+              {/* Photos */}
+              <FormField
+                control={form.control}
+                name="photos"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Photos</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={(e) => field.onChange(e.target.files)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button type="submit" disabled={form.formState.isSubmitting} className="w-full">
+                {form.formState.isSubmitting ? "Ajout en cours..." : "Ajouter le véhicule"}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
+  )
 }

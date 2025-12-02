@@ -1,5 +1,4 @@
 import { VehiculeForm } from "@/components/forms/vehiculeForm";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,30 +8,21 @@ import {
 } from "@/components/ui/card";
 
 export default function VehiculesAjout() {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Logique de soumission du formulaire ici
-    console.log("Form submitted.");
-  };
   return (
     <>
       <title>Ajouter un véhicule - Admin – AutoDrive</title>
 
-      <h1 className="text-2xl font-bold">Ajouter un nouveau véhicule</h1>
-      <Card className="mt-4 w-150">
-        <CardHeader>
-          <CardTitle>Ajouter un véhicule</CardTitle>
-          <CardDescription>Entrez les informations du véhicule</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <VehiculeForm />{" "}
-            <Button type="submit" className="mt-4" onClick={handleSubmit}>
-              Ajouter le véhicule
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center min-h-screen bg-background text-foreground">
+        <Card className="w-full max-w-lg bg-background border border-border shadow-lg">
+          <CardHeader>
+            <CardTitle>Ajouter un véhicule</CardTitle>
+            <CardDescription>Entrez les informations du véhicule</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <VehiculeForm /> {/* le formulaire complet est déjà ici */}
+          </CardContent>
+        </Card>
+      </div>
     </>
   );
 }

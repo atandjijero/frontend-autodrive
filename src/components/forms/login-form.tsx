@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { login } from "@/api/apiClient";
+import type { LoginResponse } from "@/api/apiClient";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
@@ -40,30 +41,46 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         motPasse: inputs.password,
       });
 
-      if (res.data.requiresOtp) {
+      const data: LoginResponse = res.data;
+      console.log("Réponse backend login:", data); // 👀 debug
+
+      if (data.requiresOtp) {
         setSuccessMessage(
-          res.data.message || "Un OTP vous a été envoyé par email !"
+          data.message || "Un OTP vous a été envoyé par email !"
         );
         navigate("/otp", { state: { email: inputs.email } });
       } else {
-        // Stockage du token et de l'email
-        localStorage.setItem("token", res.data.access_token!);
-        localStorage.setItem("email", inputs.email);
-        
+        // ✅ Stockage du token
+        if (data.access_token) {
+          localStorage.setItem("token", data.access_token);
+        }
+
+        // ✅ Stockage de l'ID utilisateur (id ou _id)
+        const userId = data._id || data.id;
+        console.log("userId stocké :", userId); // 👀 debug
+        if (userId) {
+          localStorage.setItem("userId", userId);
+        } else {
+          console.error("⚠️ Aucun ID utilisateur trouvé dans la réponse backend");
+        }
+
+        // ✅ Autres infos
+        if (data.nom) localStorage.setItem("userName", data.nom);
+        if (data.email) localStorage.setItem("email", data.email);
+        if (data.role) localStorage.setItem("role", data.role);
 
         setSuccessMessage("Connexion réussie !");
         setTimeout(() => {
-          const role = res.data.role?.toLowerCase();
+          const role = data.role?.toLowerCase();
           if (role === "admin") {
-            navigate("/admin/dashboard"); 
+            navigate("/admin/dashboard");
           } else {
-            navigate("/vehicules"); 
+            navigate("/vehicules");
           }
         }, 1500);
       }
     } catch (err: any) {
-      const errorMsg =
-        err.response?.data?.message || "Échec de connexion.";
+      const errorMsg = err.response?.data?.message || "Échec de connexion.";
       setErrorMessage(errorMsg);
     }
   };
@@ -102,11 +119,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
                   <Link
                     to="/forgot-password"
-                     className="ml-auto text-sm underline-offset-4 hover:underline"
->
-                      Mot de passe oublié ?
+                    className="ml-auto text-sm underline-offset-4 hover:underline"
+                  >
+                    Mot de passe oublié ?
                   </Link>
-
                 </div>
                 <Input
                   id="password"

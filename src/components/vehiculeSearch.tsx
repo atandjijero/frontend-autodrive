@@ -11,15 +11,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Slider } from "@/components/ui/slider";
-import { useState } from "react";
-import { vehicules } from "@/pages/admin/vehiculesListe";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { useState, useEffect } from "react";
+import { getVehicles } from "@/api/apiClient";   
+import type { Vehicle } from "@/api/apiClient";  
 import {
   Select,
   SelectContent,
@@ -34,7 +28,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { contrats } from "@/pages/admin/contrats";
 
 function ucfirst(str: string) {
   if (!str) return str;
@@ -44,25 +37,35 @@ function ucfirst(str: string) {
 export function VehiculeSearch({
   onResults,
 }: {
-  onResults?: (results: typeof vehicules) => void;
+  onResults?: (results: Vehicle[]) => void;
 }) {
+  const [vehicules, setVehicules] = useState<Vehicle[]>([]);
   const [inputs, setInputs] = useState({
     carrosserie: "",
     marque: "",
     transmission: "",
   });
 
-  const prices = Object.values(vehicules).map((v) => v.prix);
-  const minPrice = Math.min(...prices);
-  const maxPrice = Math.max(...prices);
-
-  const [priceRange, setPriceRange] = useState([minPrice, maxPrice]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(),
     to: new Date(),
   });
 
-  const [filteredResults, setFilteredResults] = useState<typeof vehicules>({});
+  const [filteredResults, setFilteredResults] = useState<Vehicle[]>([]);
+
+  // Charger les véhicules depuis l’API
+  useEffect(() => {
+    getVehicles()
+      .then((res) => {
+        setVehicules(res.data);
+        if (res.data.length > 0) {
+          const prices = res.data.map((v) => v.prix);
+          setPriceRange([Math.min(...prices), Math.max(...prices)]);
+        }
+      })
+      .catch((err) => console.error("Erreur API :", err));
+  }, []);
 
   const handleSelect = (attribute: string, value: string) => {
     setInputs((prev) => ({ ...prev, [attribute]: value }));
@@ -71,41 +74,16 @@ export function VehiculeSearch({
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const results = Object.fromEntries(
-      Object.entries(vehicules).filter(([id, v]) => {
-        const matchesFilters =
-          (inputs.marque === "" || v.marque === inputs.marque) &&
-          (inputs.carrosserie === "" || v.carrosserie === inputs.carrosserie) &&
-          (inputs.transmission === "" ||
-            v.transmission === inputs.transmission) &&
-          v.prix >= priceRange[0] &&
-          v.prix <= priceRange[1];
+    const results = vehicules.filter((v) => {
+      const matchesFilters =
+        (inputs.marque === "" || v.marque === inputs.marque) &&
+        (inputs.carrosserie === "" || v.carrosserie === inputs.carrosserie) &&
+        (inputs.transmission === "" || v.transmission === inputs.transmission) &&
+        v.prix >= priceRange[0] &&
+        v.prix <= priceRange[1];
 
-        // Add date range filtering
-        if (dateRange?.from && dateRange?.to) {
-          const rangesOverlap = (a: DateRange, b: DateRange) => {
-            if (!a.from || !a.to || !b.from || !b.to) return false;
-            return a.from <= b.to && b.from <= a.to;
-          };
-
-          // Check if vehicle is available (not reserved in the date range)
-          const isAvailable = !Object.values(contrats).some((c) => {
-            if (String(c.idVehicule) !== String(id)) return false;
-
-            const reservRange: DateRange = {
-              from: new Date(c.reservation.from),
-              to: new Date(c.reservation.to),
-            };
-
-            return rangesOverlap(dateRange, reservRange);
-          });
-
-          return matchesFilters && isAvailable;
-        }
-
-        return matchesFilters;
-      })
-    );
+      return matchesFilters;
+    });
 
     setFilteredResults(results);
     onResults?.(results);
@@ -115,23 +93,15 @@ export function VehiculeSearch({
     <>
       <form onSubmit={handleFormSubmit} className="bg-background p-4 border-b">
         <FieldGroup>
-          <Selects attribute="marque" onChange={handleSelect} inputs={inputs} />
-          <Selects attribute="modele" onChange={handleSelect} inputs={inputs} />
-          <Selects
-            attribute="carrosserie"
-            onChange={handleSelect}
-            inputs={inputs}
-          />
-          <Selects
-            attribute="transmission"
-            onChange={handleSelect}
-            inputs={inputs}
-          />
+          <Selects attribute="marque" onChange={handleSelect} inputs={inputs} vehicules={vehicules} />
+          <Selects attribute="modele" onChange={handleSelect} inputs={inputs} vehicules={vehicules} />
+          <Selects attribute="carrosserie" onChange={handleSelect} inputs={inputs} vehicules={vehicules} />
+          <Selects attribute="transmission" onChange={handleSelect} inputs={inputs} vehicules={vehicules} />
           <SliderPrix
             value={priceRange}
             onChange={setPriceRange}
-            minPrice={minPrice}
-            maxPrice={maxPrice}
+            minPrice={priceRange[0]}
+            maxPrice={priceRange[1]}
           />
           <CalendarSearch dateRange={dateRange} setDateRange={setDateRange} />
         </FieldGroup>
@@ -139,11 +109,10 @@ export function VehiculeSearch({
           Filtrer
         </Button>
       </form>
-      {/* Add some content below to make scrolling visible */}
       <div className="p-4 space-y-4">
         <p className="text-sm text-muted-foreground">
-          {Object.keys(filteredResults).length > 0
-            ? `${Object.keys(filteredResults).length} véhicule(s) trouvé(s)`
+          {filteredResults.length > 0
+            ? `${filteredResults.length} véhicule(s) trouvé(s)`
             : "Utilisez les filtres ci-dessus pour rechercher des véhicules"}
         </p>
       </div>
@@ -156,25 +125,22 @@ export function VehiculeSearch({
 export function Selects({
   inputs,
   attribute,
+  vehicules,
   onChange,
 }: {
-  inputs?: { [attribute]: string };
+  inputs?: { [attribute: string]: string };
   attribute: string;
+  vehicules: Vehicle[];
   onChange?: (attribute: string, value: string) => void;
 }) {
-  // 1. Extract all values for the selected attribute
-  const allValues = Object.values(vehicules).map(
-    (v) => v[attribute as keyof typeof v]
-  );
-
-  // 2. Remove duplicates using Set
+  const allValues = vehicules.map((v) => v[attribute as keyof Vehicle]);
   let distinctValues = [...new Set(allValues)].sort((a, b) =>
     String(a).localeCompare(String(b))
   );
 
   if (attribute === "modele" && inputs?.marque) {
     distinctValues = distinctValues.filter((value) => {
-      return Object.values(vehicules).some(
+      return vehicules.some(
         (v) => v.marque === inputs.marque && v.modele === value
       );
     });
@@ -195,7 +161,6 @@ export function Selects({
         <SelectContent>
           <SelectGroup>
             <SelectLabel>{ucfirst(attribute)}</SelectLabel>
-            {/* 3. Now map the DISTINCT values */}
             {distinctValues.map((value) => (
               <SelectItem key={String(value)} value={String(value)}>
                 {ucfirst(String(value))}
@@ -214,16 +179,16 @@ export function SliderPrix({
   minPrice,
   maxPrice,
 }: {
-  value: number[];
-  onChange: (value: number[]) => void;
+  value: [number, number];
+  onChange: (value: [number, number]) => void;
   minPrice: number;
   maxPrice: number;
 }) {
   return (
     <Field className="w-full">
-      <FieldLabel>Tranchre de prix</FieldLabel>
+      <FieldLabel>Tranche de prix</FieldLabel>
       <FieldDescription>
-        Définissez votre fourchette de budget ($
+        Définissez votre fourchette de budget (€
         <span className="font-medium tabular-nums">{value[0]}</span> -{" "}
         <span className="font-medium tabular-nums">{value[1]}</span>).
       </FieldDescription>

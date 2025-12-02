@@ -1,8 +1,6 @@
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { VehiculeSearch } from "@/components/vehiculeSearch";
-import { vehicules } from "../admin/vehiculesListe";
-import { Card } from "@/components/ui/card";
-import { Link } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -12,13 +10,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { PanelLeftIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
+import { getVehicles } from "@/api/apiClient";
+import type { Vehicle } from "@/api/apiClient";
 
 function VehiculesContent({
   dispos,
   handleSearchResults,
 }: {
-  dispos: typeof vehicules;
-  handleSearchResults: (results: typeof vehicules) => void;
+  dispos: Vehicle[];
+  handleSearchResults: (results: Vehicle[]) => void;
 }) {
   const { isMobile, toggleSidebar } = useSidebar();
 
@@ -45,31 +47,46 @@ function VehiculesContent({
             </Button>
           </div>
         )}
-        <h1 className="text-2xl font-bold">Véhicules</h1>
+        <h1 className="text-2xl font-bold">Véhicules disponibles</h1>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {Object.entries(dispos).map(([id, dispo]) => (
-            <Link
-              to={`/vehicules/${id}`}
-              key={id}
-              className="no-underline text-inherit"
+          {dispos.map((dispo) => (
+            <Card
+              key={dispo._id}
+              className="mb-4 p-4 shadow hover:shadow-lg transition-shadow"
             >
-              <Card className="mb-4 pb-4">
+              <CardHeader>
+                <CardTitle>
+                  {dispo.marque} - {dispo.modele}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <img
-                  src={dispo.imageUrl}
+                  src={dispo.photos?.[0] || "/placeholder.png"}
                   alt={`${dispo.marque} image`}
-                  className="mt-2 h-40 w-auto object-cover"
+                  className="mt-2 h-40 w-full object-cover rounded-md"
                 />
-                <h2 className="text-xl font-semibold">
-                  {id} - {dispo.marque} - {dispo.modele}
-                </h2>
-                <p>
+                <p className="mt-2 text-sm text-muted-foreground">
                   Carrosserie: {dispo.carrosserie}
                   <br /> Transmission: {dispo.transmission}
                   <br /> Prix: {dispo.prix} €
                 </p>
-              </Card>
-            </Link>
+
+                {/* Bouton Réserver → redirection */}
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="
+                    mt-3 mx-auto block w-full font-semibold px-6
+                    bg-white text-black border hover:bg-gray-200
+                    dark:bg-black dark:text-white dark:hover:bg-gray-800
+                  "
+                  asChild
+                >
+                  <Link to={`/reservation/${dispo._id}`}>Réserver</Link>
+                </Button>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
@@ -78,13 +95,18 @@ function VehiculesContent({
 }
 
 export default function Vehicules() {
-  const [dispos, setDispos] = useState(vehicules);
+  const [dispos, setDispos] = useState<Vehicle[]>([]);
 
   useEffect(() => {
     document.title = "Véhicules – AutoDrive";
+    getVehicles()
+      .then((res) => setDispos(res.data))
+      .catch((err) =>
+        console.error("Erreur lors du chargement des véhicules :", err)
+      );
   }, []);
 
-  const handleSearchResults = (results: typeof vehicules) => {
+  const handleSearchResults = (results: Vehicle[]) => {
     setDispos(results);
   };
 
