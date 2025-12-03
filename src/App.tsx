@@ -10,7 +10,7 @@ import Inscription from "@/pages/auth/inscription";
 import { OtpForm } from "@/components/forms/otpform";
 import PassOublieForm from "@/components/forms/passOublieForm";
 import ForgotPasswordForm from "@/components/forms/forgotpasswordform";
-import ReservationForm from "@/components/forms/reservationForm";
+import ReservationForm from "@/components/forms/ReservationForm";
 import PaymentForm from "./components/forms/PaymentForm";
 
 
