@@ -31,7 +31,8 @@ export default function Vehicule() {
     }
   }, [id]);
 
-  if (!vehicule) return <p className="text-center text-muted-foreground">Chargement...</p>;
+  if (!vehicule)
+    return <p className="text-center text-muted-foreground">Chargement...</p>;
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -47,7 +48,9 @@ export default function Vehicule() {
             />
           </div>
         ) : (
-          <p className="p-4 text-muted-foreground text-center">Pas d'image disponible</p>
+          <p className="p-4 text-muted-foreground text-center">
+            Pas d'image disponible
+          </p>
         )}
 
         <CardHeader className="text-center">
@@ -58,16 +61,27 @@ export default function Vehicule() {
 
         <CardContent>
           {/* Détails avec Accordion */}
-          <Accordion type="single" collapsible className="w-full" defaultValue="item-2">
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full"
+            defaultValue="item-2"
+          >
             <AccordionItem value="item-2">
               <AccordionTrigger className="text-lg font-semibold">
                 Détails
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-2 p-4">
-                  <p><b>Carrosserie</b>: {vehicule.carrosserie}</p>
-                  <p><b>Transmission</b>: {vehicule.transmission}</p>
-                  <p><b>Prix</b>: {vehicule.prix} € / jour</p>
+                  <p>
+                    <b>Carrosserie</b>: {vehicule.carrosserie}
+                  </p>
+                  <p>
+                    <b>Transmission</b>: {vehicule.transmission}
+                  </p>
+                  <p>
+                    <b>Prix</b>: {vehicule.prix} € / jour
+                  </p>
                 </div>
               </AccordionContent>
             </AccordionItem>
@@ -78,21 +92,20 @@ export default function Vehicule() {
           {/* Bouton Réserver toujours visible */}
           <div className="p-4 text-center">
             <p className="mb-4 text-sm text-muted-foreground">
-               Connectez-vous pour pouvoir réserver ce véhicule.
+              Connectez-vous pour pouvoir réserver ce véhicule.
             </p>
             <Link to="/connexion">
-  <Button
-    size="lg"
-    className="
+              <Button
+                size="lg"
+                className="
       mx-auto block font-semibold px-6
       bg-white text-black hover:bg-gray-200
       dark:bg-black dark:text-white dark:hover:bg-gray-800
     "
-  >
-    Se connecter pour réserver
-  </Button>
-</Link>
-
+              >
+                Se connecter pour réserver
+              </Button>
+            </Link>
           </div>
         </CardContent>
       </Card>

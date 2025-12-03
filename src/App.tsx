@@ -10,9 +10,8 @@ import Inscription from "@/pages/auth/inscription";
 import { OtpForm } from "@/components/forms/otpform";
 import PassOublieForm from "@/components/forms/passOublieForm";
 import ForgotPasswordForm from "@/components/forms/forgotpasswordform";
-import ReservationForm from "@/components/forms/reservationForm";
+import ReservationForm from "@/components/forms/ReservationForm";
 import PaymentForm from "./components/forms/PaymentForm";
-
 
 import About from "@/pages/about";
 import Contact from "@/pages/contact";
@@ -20,10 +19,11 @@ import FAQ from "@/pages/faq";
 import { Toaster } from "./components/ui/sonner";
 
 //  Nouveau dashboard shadcn/ui
-import DashboardPage from "@/app/dashboard/page"; 
+import DashboardPage from "@/app/dashboard/page";
 import Profil from "@/pages/admin/Profil";
 import VehiculesAjout from "./pages/admin/vehiculesAjout";
-import VehiculesListe from "./pages/admin/vehiculesListe"; 
+import VehiculesListe from "./pages/admin/vehiculesListe";
+import Admin from "./pages/admin/admin";
 
 function App() {
   return (
@@ -37,7 +37,10 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/vehicules" element={<Vehicules />} />
             <Route path="/vehicules/:id" element={<Vehicule />} />
-            <Route path="/reservation/:vehicleId" element={<ReservationForm />} />
+            <Route
+              path="/reservation/:vehicleId"
+              element={<ReservationForm />}
+            />
             <Route path="/paiement" element={<PaymentForm />} />
             <Route path="/connexion" element={<Connexion />} />
             <Route path="/about" element={<About />} />
@@ -47,12 +50,16 @@ function App() {
             <Route path="/otp" element={<OtpForm />} />
             <Route path="/reset-password/:token" element={<PassOublieForm />} />
             <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-
             {/* Routes admin avec le nouveau dashboard */}
-            <Route path="/admin/dashboard" element={<DashboardPage />} />
-            <Route path="/admin/profil" element={<Profil />} />
-            <Route path="/admin/vehicules/ajouter" element={<VehiculesAjout />} />
-            <Route path="/admin/vehicules/liste" element={<VehiculesListe />} /> {/* correction */}
+            <Route path="/admin" element={<Admin />}>
+              <Route path="profil" element={<Profil />} />
+              <Route path="vehicules/ajouter" element={<VehiculesAjout />} />
+              <Route path="vehicules/liste" element={<VehiculesListe />} />{" "}
+              <Route path="dashboard" element={<DashboardPage />} />
+            </Route>
+            {/* Routes pour le dashboard */}
+
+            {/* correction */}
           </Routes>
         </div>
       </ThemeProvider>

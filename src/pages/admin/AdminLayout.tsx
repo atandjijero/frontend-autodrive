@@ -1,19 +1,30 @@
-import { Outlet } from "react-router-dom"
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
 
-export default function AdminLayout() {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen">
-        {/* Sidebar avec largeur fixe */}
-        <AppSidebar className="w-64" />
-
-        {/* Zone centrale qui change */}
-        <main className="flex-1 w-full min-h-screen p-6 bg-background text-foreground">
-          <Outlet />
-        </main>
-      </div>
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as React.CSSProperties
+      }
+    >
+      <AppSidebar variant="inset" />
+      <SidebarInset>
+        <SiteHeader />
+        <div className="flex flex-1 flex-col">
+          <div className="@container/main flex flex-1 flex-col gap-2">
+            {children}
+          </div>
+        </div>
+      </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
