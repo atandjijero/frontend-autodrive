@@ -2,9 +2,16 @@ import { useEffect, useState } from "react";
 import { getVehicles } from "@/api/apiClient";
 import type { Vehicle } from "@/api/apiClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { Icon } from "lucide-react";
+import { IconEdit, IconTrash } from "@tabler/icons-react";
 
 export default function VehiculesListe() {
   const [vehicules, setVehicules] = useState<Vehicle[]>([]);
@@ -53,10 +60,18 @@ export default function VehiculesListe() {
                 </div>
               )}
               <div className="mt-4 space-y-2">
-                <p><strong>Carrosserie :</strong> {vehicule.carrosserie}</p>
-                <p><strong>Transmission :</strong> {vehicule.transmission}</p>
-                <p><strong>Prix :</strong> {vehicule.prix} €</p>
-                <p><strong>Immatriculation :</strong> {vehicule.immatriculation}</p>
+                <p>
+                  <strong>Carrosserie :</strong> {vehicule.carrosserie}
+                </p>
+                <p>
+                  <strong>Transmission :</strong> {vehicule.transmission}
+                </p>
+                <p>
+                  <strong>Prix :</strong> {vehicule.prix} €
+                </p>
+                <p>
+                  <strong>Immatriculation :</strong> {vehicule.immatriculation}
+                </p>
               </div>
               <div className="mt-4 flex justify-end">
                 <DropdownMenu>
@@ -66,11 +81,13 @@ export default function VehiculesListe() {
                   <DropdownMenuContent>
                     <DropdownMenuItem asChild>
                       <Link to={`/admin/vehicules/modifier/${vehicule._id}`}>
+                        <IconEdit />
                         Modifier
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to={`/admin/vehicules/supprimer/${vehicule._id}`}>
+                        <IconTrash />
                         Supprimer
                       </Link>
                     </DropdownMenuItem>
