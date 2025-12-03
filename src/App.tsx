@@ -54,10 +54,10 @@ function App() {
             <Route path="/admin" element={<Admin />}>
               <Route path="profil" element={<Profil />} />
               <Route path="vehicules/ajouter" element={<VehiculesAjout />} />
-              <Route path="vehicules/liste" element={<VehiculesListe />} />{" "}
+              <Route path="vehicules/liste" element={<VehiculesListe />} />
+              {/* Routes pour le dashboard */}
               <Route path="dashboard" element={<DashboardPage />} />
             </Route>
-            {/* Routes pour le dashboard */}
 
             {/* correction */}
           </Routes>
