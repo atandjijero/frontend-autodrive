@@ -34,7 +34,7 @@ export interface ResetPasswordDto {
 }
 
 export interface UserProfile {
-  id: string; // ⚠️ ton backend renvoie "id" et non "_id"
+  id: string; //  backend renvoie "id" et non "_id"
   nom: string;
   prenom: string;
   email: string;
@@ -94,7 +94,7 @@ export interface LoginResponse {
   email?: string;
   nom?: string;
   prenom?: string;
-  id?: string;   // ⚠️ backend renvoie "id"
+  id?: string;   //  backend renvoie "id"
   _id?: string;  // garder pour compatibilité si jamais backend change
 }
 
@@ -172,20 +172,54 @@ export const markVehicleAvailable = (id: string) =>
   apiClient.put<Vehicle>(`/vehicles/${id}/available`);
 
 // ---------------- RESERVATIONS ----------------
+// ---------------- RESERVATIONS ----------------
+export interface ReservationVehicle {
+  _id: string;
+  carrosserie: string;
+  modele: string;
+  marque: string;
+  transmission: string;
+  prix: number;
+  photos: string[];
+  immatriculation: string;
+  disponible: boolean;
+  deleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReservationClient {
+  _id: string;
+  role: "client" | "admin" | "entreprise" | "tourist";
+  nom: string;
+  prenom: string;
+  email: string;
+  telephone: string;
+  adresse?: string;
+  isVerified: boolean;
+  deleted: boolean;
+  deletedAt?: string | null;
+  dateInscription?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CreateReservationDto {
-  vehicleId: string;
-  clientId: string;
+  vehicleId: string; 
+  clientId: string;  
   dateDebut: string;
   dateFin: string;
 }
 
 export interface Reservation {
   _id: string;
-  vehicleId: string;
-  clientId: string;
+  vehicleId: ReservationVehicle;   // objet complet renvoyé par le backend
+  clientId: ReservationClient;     // objet complet renvoyé par le backend
   dateDebut: string;
   dateFin: string;
   statut: "en cours" | "terminée" | "annulée";
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export const addReservation = (data: CreateReservationDto) =>
@@ -200,4 +234,3 @@ export const getReservationById = (id: string) =>
 export const deleteReservation = (id: string) =>
   apiClient.delete<Reservation>(`/reservations/${id}`);
 
-export default apiClient;

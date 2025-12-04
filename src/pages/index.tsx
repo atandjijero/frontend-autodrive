@@ -37,10 +37,10 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="flex gap-4 p-4">
-        <Skeleton className="h-40 w-60 rounded-md" />
-        <Skeleton className="h-40 w-60 rounded-md" />
-        <Skeleton className="h-40 w-60 rounded-md" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+        <Skeleton className="h-40 w-full rounded-md" />
+        <Skeleton className="h-40 w-full rounded-md" />
+        <Skeleton className="h-40 w-full rounded-md" />
       </div>
     );
   }
@@ -70,14 +70,14 @@ export default function HomePage() {
           <h2 className="text-xl font-semibold">
             Parcourez les véhicules disponibles aujourd'hui
           </h2>
-          <div className="mt-8 flex overflow-auto">
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {dispos.map((vehicule) => (
               <Link
                 to={`/vehicules/${vehicule._id}`}
                 key={vehicule._id}
                 className="no-underline text-inherit"
               >
-                <Card className="m-4 w-72 hover:shadow-lg transition-shadow">
+                <Card className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <CardTitle>
                       {vehicule.marque} - {vehicule.immatriculation}
@@ -125,7 +125,7 @@ export default function HomePage() {
           <h2 className="text-xl font-semibold">
             Parcourez les véhicules en promotion
           </h2>
-          <div className="mt-8 flex overflow-auto">
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {dispos
               .filter((v) => v.prix < 50)
               .map((vehicule) => (
@@ -134,7 +134,7 @@ export default function HomePage() {
                   key={vehicule._id}
                   className="no-underline text-inherit"
                 >
-                  <Card className="m-4 w-72 hover:shadow-lg transition-shadow">
+                  <Card className="hover:shadow-lg transition-shadow">
                     <CardHeader>
                       <CardTitle>
                         {vehicule.marque} - {vehicule.immatriculation}

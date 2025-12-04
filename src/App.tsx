@@ -23,6 +23,7 @@ import DashboardPage from "@/app/dashboard/page";
 import Profil from "@/pages/admin/Profil";
 import VehiculesAjout from "./pages/admin/vehiculesAjout";
 import VehiculesListe from "./pages/admin/vehiculesListe";
+import ReservationList from "./pages/reservations/ReservationList";
 import Admin from "./pages/admin/admin";
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
               <Route path="profil" element={<Profil />} />
               <Route path="vehicules/ajouter" element={<VehiculesAjout />} />
               <Route path="vehicules/liste" element={<VehiculesListe />} />
+              <Route path="reservations/liste" element={<ReservationList />} />
               {/* Routes pour le dashboard */}
               <Route path="dashboard" element={<DashboardPage />} />
             </Route>

@@ -30,7 +30,7 @@ export default function PaymentForm() {
       return;
     }
 
-    // 👉 Ici tu peux intégrer Stripe, PayPal ou ton API de paiement
+    // Ici tu peux intégrer Stripe, PayPal ou ton API de paiement
     console.log("Infos paiement envoyées :", {
       name,
       email,
