@@ -24,20 +24,23 @@ export default function Articles() {
           </h1>
           <Badge
             className={cn(
-              "absolute top-1 left-1 z-10",
-              articles[String(id)].categorie === "Actualité" &&
+              "",
+              articles[String(id)]?.categorie === "Actualité" &&
                 "bg-blue-500 text-white",
-              articles[String(id)].categorie === "Conseils" &&
+              articles[String(id)]?.categorie === "Conseils" &&
                 "bg-green-500 text-white",
-              articles[String(id)].categorie === "Promo" &&
+              articles[String(id)]?.categorie === "Promo" &&
                 "bg-yellow-500 text-white"
             )}
           >
-            {articles[String(id)].categorie}
-          </Badge>{" "}
+            {articles[String(id)]?.categorie}
+          </Badge>
           <br />
           <p className="py-1">
-            {/* Nom de l'auteur */ articles[String(id)]?.idAdmin + ": un admin"}
+            {
+              /* Nom de l'auteur */ articles[String(id)]?.idAdmin +
+                ": admin redacteur"
+            }
           </p>
           <p className="text-sm text-gray-500">
             Date de rédaction: {articles[String(id)]?.dateRedaction}
