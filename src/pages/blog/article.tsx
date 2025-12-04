@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { articles } from "./blog";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default function Articles() {
   const { id } = useParams();
@@ -21,8 +22,19 @@ export default function Articles() {
           <h1 className="text-2xl font-bold text-left py-1">
             {articles[String(id)]?.titre}
           </h1>
-
-          <Badge className="py-1">{articles[String(id)]?.categorie}</Badge>
+          <Badge
+            className={cn(
+              "absolute top-1 left-1 z-10",
+              articles[String(id)].categorie === "Actualité" &&
+                "bg-blue-500 text-white",
+              articles[String(id)].categorie === "Conseils" &&
+                "bg-green-500 text-white",
+              articles[String(id)].categorie === "Promo" &&
+                "bg-yellow-500 text-white"
+            )}
+          >
+            {articles[String(id)].categorie}
+          </Badge>{" "}
           <br />
           <p className="py-1">
             {/* Nom de l'auteur */ articles[String(id)]?.idAdmin + ": un admin"}
@@ -42,8 +54,12 @@ export default function Articles() {
               Pas d'image
             </div>
           )}
-          <div className="py-10">
-            <p>{articles[String(id)]?.corps}</p>
+          <div className="py-10 space-y-4">
+            {articles[String(id)]?.corps
+              .split("\n\n")
+              .map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
           </div>
         </div>
       </div>
