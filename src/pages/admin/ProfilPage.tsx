@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 
 export default function ProfilPage() {
-  const adminEmail = "admin@autodrive.com" // ⚠️ à remplacer par ton auth réel
+  const adminEmail = "admin@autodrive.com" //  à remplacer par ton auth réel
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
