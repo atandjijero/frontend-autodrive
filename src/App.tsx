@@ -26,6 +26,9 @@ import VehiculesListe from "./pages/admin/vehiculesListe";
 import ReservationList from "./pages/reservations/ReservationList";
 import Admin from "./pages/admin/admin";
 
+import Blog from "./pages/blog/blog";
+import Article from "./pages/blog/article";
+
 function App() {
   return (
     <BrowserRouter>
@@ -60,6 +63,9 @@ function App() {
               {/* Routes pour le dashboard */}
               <Route path="dashboard" element={<DashboardPage />} />
             </Route>
+
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/article/:id" element={<Article />} />
 
             {/* correction */}
           </Routes>

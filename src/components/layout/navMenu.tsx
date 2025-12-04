@@ -15,6 +15,7 @@ export const items = [
   { title: "À propos", url: "/about" },
   { title: "Contact", url: "/contact" },
   { title: "FAQ", url: "/faq" },
+  { title: "Blog", url: "/blog" },
 ];
 
 export function NavMenu() {
