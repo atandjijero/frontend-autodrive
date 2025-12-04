@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { ar } from "date-fns/locale";
 import { Link } from "react-router-dom";
 
 type Articles = {
@@ -393,7 +394,10 @@ export default function Blog() {
               <div className="mt-4 space-y-2 text-left">
                 <p>{article.extrait}</p>
               </div>
-              <div className="mt-4 flex justify-end">
+              <div className="mt-4 flex justify-between items-center">
+                <p className="text-sm text-gray-500">
+                  Date de rédaction: {articles[String(id)]?.dateRedaction}
+                </p>
                 <Link to={`article/${id}`}>
                   <Button variant="outline">Lire</Button>
                 </Link>

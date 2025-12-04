@@ -39,6 +39,9 @@ export default function Articles() {
           <p className="py-1">
             {/* Nom de l'auteur */ articles[String(id)]?.idAdmin + ": un admin"}
           </p>
+          <p className="text-sm text-gray-500">
+            Date de rédaction: {articles[String(id)]?.dateRedaction}
+          </p>
         </header>
         <Separator />
         <div className="py-10">
