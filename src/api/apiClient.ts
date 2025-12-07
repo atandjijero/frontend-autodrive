@@ -159,8 +159,10 @@ export const getVehicles = () =>
 export const getVehicleById = (id: string) =>
   apiClient.get<Vehicle>(`/vehicles/${id}`);
 
-export const updateVehicle = (id: string, data: Partial<CreateVehicleDto>) =>
-  apiClient.put<Vehicle>(`/vehicles/${id}`, data);
+export const updateVehicle = (id: string, data: FormData) =>
+  apiClient.put<Vehicle>(`/vehicles/${id}`, data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 
 export const deleteVehicle = (id: string) =>
   apiClient.delete<Vehicle>(`/vehicles/${id}`);
@@ -276,4 +278,17 @@ export const downloadReservationReceipt = (id: string) =>
     responseType: "blob", 
   });
 
+// ---------------- STATS ----------------
+export interface ClientStats {
+  totalClients: number;
+  totalClientsByRole: {
+    client: number;
+    entreprise: number;
+    tourist: number;
+  };
+  clientsWithReservations: number;
+  clientsWithPayments: number;
+}
 
+export const getClientStats = () =>
+  apiClient.get<ClientStats>("/stats/clients");

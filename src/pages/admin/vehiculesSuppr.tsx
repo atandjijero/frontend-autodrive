@@ -41,7 +41,7 @@ export default function VehiculesSuppr() {
 
     try {
       await deleteVehicle(id);
-      alert("✅ Véhicule supprimé avec succès !");
+      alert(" Véhicule supprimé avec succès !");
       navigate("/admin/vehicules"); 
     } catch (err: any) {
       alert(

@@ -122,14 +122,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/admin/reservations/liste", // correspond à GET /reservations
         icon: IconEye,
       },
+    ],
+  },
+    {
+    title: "Clients",
+    url: "/admin/clients",
+    icon: IconUsers,
+    children: [
       {
-        title: "Supprimer une réservation",
-        url: "/admin/reservations/supprimer", // correspond à DELETE /reservations/:id
-        icon: IconX,
+        title: "Liste des clients",
+        url: "/admin/clients/liste",
+        icon: IconEye,
       },
     ],
   },
-    { title: "Clients", url: "/admin/clients", icon: IconUsers },
     {
    title: "Paiements",
    url: "/admin/paiements",

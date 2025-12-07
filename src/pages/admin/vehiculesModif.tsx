@@ -1,4 +1,9 @@
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+
+import { getVehicleById, updateVehicle } from "@/api/apiClient";
 import { VehiculeForm } from "@/components/forms/vehiculeForm";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,43 +12,105 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useEffect } from "react";
-import { vehicules } from "./vehiculesListe";
-import { useParams } from "react-router-dom";
+
+import { toast } from "sonner";
 
 export default function VehiculesModif() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Logique de soumission du formulaire ici
-    console.log("Form submitted.");
+  const [vehicle, setVehicle] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Charger les infos du véhicule
+  useEffect(() => {
+    const fetchVehicle = async () => {
+      try {
+        const res = await getVehicleById(id!);
+        setVehicle(res.data);
+
+        document.title = `Modifier ${res.data.marque} ${res.data.modele} – Admin AutoDrive`;
+      } catch (err) {
+        setErrorMessage("Véhicule introuvable.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicle();
+  }, [id]);
+
+  //  Soumission du formulaire
+  const handleUpdate = async (values: any) => {
+    try {
+      const formData = new FormData();
+
+      //  Champs texte
+      formData.append("carrosserie", values.carrosserie);
+      formData.append("modele", values.modele);
+      formData.append("marque", values.marque);
+      formData.append("transmission", values.transmission);
+      formData.append("prix", values.prix.toString());
+      formData.append("immatriculation", values.immatriculation);
+
+      //  Anciennes photos (URL)
+      if (Array.isArray(values.photos)) {
+        values.photos.forEach((url: string) => {
+          formData.append("photos", url);
+        });
+      }
+
+      //  Nouvelle photo uploadée
+      if (values.photos instanceof FileList && values.photos.length > 0) {
+        formData.append("file", values.photos[0]);
+      }
+
+      await updateVehicle(id!, formData);
+
+      toast.success("✅ Le véhicule a été modifié avec succès.", {
+        style: { background: "#e6f4ea", color: "#1e7e34" },
+      });
+
+      // Redirection professionnelle
+      navigate("/admin/vehicules/liste");
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message ||
+          "❌ Une erreur est survenue lors de la mise à jour du véhicule.",
+        {
+          style: { background: "#fdecea", color: "#b71c1c" },
+        }
+      );
+    }
   };
 
-  useEffect(() => {
-    const marque = vehicules[Number(id)]?.marque;
-    document.title = `Modifier la ${marque} - Admin – AutoDrive`;
-  }, [id]);
+  if (loading) return <p>Chargement...</p>;
+  if (errorMessage)
+    return <p className="text-red-600 font-semibold">{errorMessage}</p>;
 
   return (
     <>
-      <h1 className="text-2xl font-bold">
-        Modifier la {vehicules[Number(id)]?.marque}
+      <h1 className="text-2xl font-bold mb-4">
+        Modifier {vehicle.marque} {vehicle.modele}
       </h1>
-      <Card className="mt-4 w-150">
+
+      <Card className="mt-4 w-full max-w-2xl">
         <CardHeader>
-          <CardTitle>Modifier la {vehicules[Number(id)]?.marque}</CardTitle>
+          <CardTitle>
+            Modifier {vehicle.marque} {vehicle.modele}
+          </CardTitle>
           <CardDescription>
-            Modifier les informations du véhicule
+            Mettez à jour les informations du véhicule puis enregistrez.
           </CardDescription>
         </CardHeader>
+
         <CardContent>
-          <form>
-            <VehiculeForm />
-            <Button type="submit" className="mt-4" onClick={handleSubmit}>
-              Modifier le véhicule
-            </Button>
-          </form>
+          <VehiculeForm defaultValues={vehicle} onSubmit={handleUpdate} />
+
+          <Button form="vehicule-form" type="submit" className="mt-4">
+            Enregistrer les modifications
+          </Button>
         </CardContent>
       </Card>
     </>

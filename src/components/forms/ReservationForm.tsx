@@ -103,7 +103,7 @@ export default function ReservationForm() {
             </div>
 
             <Button type="submit" className="w-full">
-              Confirmer la réservation
+              Envoyer la réservation
             </Button>
 
             {errorMessage && (

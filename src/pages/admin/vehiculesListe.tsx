@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Icon } from "lucide-react";
+//import { Icon } from "lucide-react";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 
 export default function VehiculesListe() {

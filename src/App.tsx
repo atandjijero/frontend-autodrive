@@ -25,12 +25,14 @@ import DashboardPage from "@/app/dashboard/page";
 import Profil from "@/pages/admin/Profil";
 import VehiculesAjout from "./pages/admin/vehiculesAjout";
 import VehiculesListe from "./pages/admin/vehiculesListe";
+import VehiculesModif from "./pages/admin/vehiculesModif";
 import ReservationList from "./pages/reservations/ReservationList";
 import PaiementsList from "./pages/admin/paiements/paiementsListe";
 import Admin from "./pages/admin/admin";
 
 import Blog from "./pages/blog/blog";
 import Article from "./pages/blog/article";
+import ClientsListe from "./pages/admin/clientsListe";
 
 function App() {
   return (
@@ -63,14 +65,17 @@ function App() {
               <Route path="profil" element={<Profil />} />
               <Route path="vehicules/ajouter" element={<VehiculesAjout />} />
               <Route path="vehicules/liste" element={<VehiculesListe />} />
+              <Route path="/admin/vehicules/modifier/:id" element={<VehiculesModif />} />
               <Route path="reservations/liste" element={<ReservationList />} />
               <Route path="paiements/liste" element={<PaiementsList />} />
+              <Route path="clients/liste" element={<ClientsListe />} />
               {/* Routes pour le dashboard */}
               <Route path="dashboard" element={<DashboardPage />} />
             </Route>
 
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/article/:id" element={<Article />} />
+            
 
             {/* correction */}
           </Routes>
