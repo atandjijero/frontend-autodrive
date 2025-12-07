@@ -218,6 +218,7 @@ export interface Reservation {
   dateDebut: string;
   dateFin: string;
   statut: "en cours" | "terminée" | "annulée";
+  numeroReservation: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -233,4 +234,46 @@ export const getReservationById = (id: string) =>
 
 export const deleteReservation = (id: string) =>
   apiClient.delete<Reservation>(`/reservations/${id}`);
+// ---------------- PAIEMENTS ----------------
+
+export interface CreatePaiementDto {
+  reservationId: string;
+  nom: string;
+  email: string;
+  montant: number;
+  numeroCarte: string;
+  expiration: string;
+  cvv: string;
+}
+
+export interface Paiement {
+  _id: string;
+  reservationId: Reservation; 
+  nom: string;
+  email: string;
+  montant: number;
+  numeroCarte: string;
+  expiration: string;
+  cvv: string;
+  statut: "reussi" | "echoue";
+  createdAt: string;
+  updatedAt: string;
+}
+
+//  Créer un paiement
+export const addPaiement = (data: CreatePaiementDto) =>
+  apiClient.post<Paiement>("/paiements", data);
+
+//  Récupérer tous les paiements
+export const getPaiements = () =>
+  apiClient.get<Paiement[]>("/paiements");
+
+// Récupérer un paiement par ID
+export const getPaiementById = (id: string) =>
+  apiClient.get<Paiement>(`/paiements/${id}`);
+export const downloadReservationReceipt = (id: string) =>
+  apiClient.get(`/reservations/${id}/recu`, {
+    responseType: "blob", 
+  });
+
 

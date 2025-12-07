@@ -13,6 +13,8 @@ import ForgotPasswordForm from "@/components/forms/forgotpasswordform";
 import ReservationForm from "@/components/forms/ReservationForm";
 import PaymentForm from "./components/forms/PaymentForm";
 
+
+
 import About from "@/pages/about";
 import Contact from "@/pages/contact";
 import FAQ from "@/pages/faq";
@@ -24,6 +26,7 @@ import Profil from "@/pages/admin/Profil";
 import VehiculesAjout from "./pages/admin/vehiculesAjout";
 import VehiculesListe from "./pages/admin/vehiculesListe";
 import ReservationList from "./pages/reservations/ReservationList";
+import PaiementsList from "./pages/admin/paiements/paiementsListe";
 import Admin from "./pages/admin/admin";
 
 import Blog from "./pages/blog/blog";
@@ -45,7 +48,8 @@ function App() {
               path="/reservation/:vehicleId"
               element={<ReservationForm />}
             />
-            <Route path="/paiement" element={<PaymentForm />} />
+            <Route path="/paiement/:reservationId" element={<PaymentForm />} />
+            
             <Route path="/connexion" element={<Connexion />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
@@ -60,6 +64,7 @@ function App() {
               <Route path="vehicules/ajouter" element={<VehiculesAjout />} />
               <Route path="vehicules/liste" element={<VehiculesListe />} />
               <Route path="reservations/liste" element={<ReservationList />} />
+              <Route path="paiements/liste" element={<PaiementsList />} />
               {/* Routes pour le dashboard */}
               <Route path="dashboard" element={<DashboardPage />} />
             </Route>

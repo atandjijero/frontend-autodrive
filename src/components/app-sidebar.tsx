@@ -130,7 +130,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     ],
   },
     { title: "Clients", url: "/admin/clients", icon: IconUsers },
-    { title: "Paiements", url: "/admin/paiements", icon: IconCreditCard },
+    {
+   title: "Paiements",
+   url: "/admin/paiements",
+   icon: IconCreditCard,
+   children: [
+    {
+      title: "Voir les paiements",
+      url: "/admin/paiements/liste",
+      icon: IconEye,
+     },
+    ],
+    },
+
     { title: "Promotions", url: "/admin/promotions", icon: IconDiscount },
     { title: "Blog / Actualités", url: "/admin/blog", icon: IconArticle },
     { title: "Agences", url: "/admin/agences", icon: IconMapPin },

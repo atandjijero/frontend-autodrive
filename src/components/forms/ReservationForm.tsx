@@ -16,20 +16,18 @@ import type { CreateReservationDto } from "@/api/apiClient";
 export default function ReservationForm() {
   const { vehicleId } = useParams();
   const navigate = useNavigate();
+
   const [dateDebut, setDateDebut] = useState("");
   const [dateFin, setDateFin] = useState("");
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const nom = localStorage.getItem("userName") || "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMessage(null);
     setErrorMessage(null);
 
     const clientId = localStorage.getItem("userId");
-
     if (!clientId) {
       setErrorMessage("Veuillez vous connecter pour effectuer une réservation.");
       return;
@@ -39,6 +37,7 @@ export default function ReservationForm() {
       setErrorMessage("Veuillez sélectionner une date de début et une date de fin.");
       return;
     }
+
     if (new Date(dateDebut) >= new Date(dateFin)) {
       setErrorMessage("La date de fin doit être postérieure à la date de début.");
       return;
@@ -53,18 +52,15 @@ export default function ReservationForm() {
 
     try {
       const res = await addReservation(payload);
-      setSuccessMessage(`✅ Merci ${nom}, votre réservation a été confirmée avec succès.`);
-      console.log("Réservation créée :", res.data);
+
+      //  Redirection automatique vers paiement
+      navigate(`/paiement/${res.data._id}`);
     } catch (err: any) {
       setErrorMessage(
         err.response?.data?.message ||
-          "❌ Une erreur est survenue lors de la réservation. Veuillez réessayer."
+          "❌ Une erreur est survenue lors de la réservation."
       );
     }
-  };
-
-  const handlePaymentRedirect = () => {
-    navigate("/paiement");
   };
 
   return (
@@ -76,12 +72,14 @@ export default function ReservationForm() {
             Remplissez les informations pour réserver votre véhicule
           </CardDescription>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="nom">Nom</Label>
               <Input id="nom" value={nom} readOnly />
             </div>
+
             <div>
               <Label htmlFor="dateDebut">Date début</Label>
               <Input
@@ -92,6 +90,7 @@ export default function ReservationForm() {
                 required
               />
             </div>
+
             <div>
               <Label htmlFor="dateFin">Date fin</Label>
               <Input
@@ -102,22 +101,11 @@ export default function ReservationForm() {
                 required
               />
             </div>
-            <Button type="submit" className="w-full" variant="default">
+
+            <Button type="submit" className="w-full">
               Confirmer la réservation
             </Button>
 
-            {successMessage && (
-              <div className="text-center mt-3">
-                <p className="text-green-600 font-medium">{successMessage}</p>
-                <Button
-                  onClick={handlePaymentRedirect}
-                  className="mt-4 w-full"
-                  variant="secondary"
-                >
-                  Procéder au paiement
-                </Button>
-              </div>
-            )}
             {errorMessage && (
               <p className="text-red-600 text-center mt-3 font-medium">
                 {errorMessage}
