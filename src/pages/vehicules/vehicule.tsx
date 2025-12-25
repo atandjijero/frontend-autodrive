@@ -6,7 +6,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { getVehicleById } from "@/api/apiClient";
 import type { Vehicle } from "@/api/apiClient";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -98,10 +104,10 @@ export default function Vehicule() {
               <Button
                 size="lg"
                 className="
-      mx-auto block font-semibold px-6
-      bg-white text-black hover:bg-gray-200
-      dark:bg-black dark:text-white dark:hover:bg-gray-800
-    "
+                  mx-auto block font-semibold px-6
+                  bg-white text-black hover:bg-gray-200
+                  dark:bg-black dark:text-white dark:hover:bg-gray-800
+                "
               >
                 Se connecter pour réserver
               </Button>
@@ -112,7 +118,16 @@ export default function Vehicule() {
 
       {/* Modal zoom avec Dialog shadcn */}
       <Dialog open={zoom} onOpenChange={setZoom}>
-        <DialogContent className="max-w-5xl flex justify-center items-center bg-black">
+        <DialogContent className="max-w-5xl flex flex-col items-center bg-black">
+          {/* Titre obligatoire pour l’accessibilité */}
+          <VisuallyHidden>
+            <DialogTitle>Aperçu du véhicule</DialogTitle>
+          </VisuallyHidden>
+
+          <DialogDescription className="text-gray-400 mb-4">
+            Image en grand format du véhicule sélectionné
+          </DialogDescription>
+
           {vehicule.photos?.[0] && (
             <img
               src={vehicule.photos[0]}

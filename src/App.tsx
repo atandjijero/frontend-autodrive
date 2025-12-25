@@ -1,5 +1,6 @@
 import "./App.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "@/pages";
 import Vehicules from "@/pages/vehicules/vehicules";
@@ -36,12 +37,13 @@ import ClientsListe from "./pages/admin/clientsListe";
 
 function App() {
   return (
-    <BrowserRouter>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <NavMenu />
-        <Toaster richColors closeButton />
-        <div className="w-full min-h-screen">
-          <Routes>
+    <HelmetProvider>
+      <BrowserRouter>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <NavMenu />
+          <Toaster richColors closeButton />
+          <div className="w-full min-h-screen">
+            <Routes>
             {/* Routes publiques */}
             <Route path="/" element={<HomePage />} />
             <Route path="/vehicules" element={<Vehicules />} />
@@ -82,6 +84,7 @@ function App() {
         </div>
       </ThemeProvider>
     </BrowserRouter>
+    </HelmetProvider>
   );
 }
 

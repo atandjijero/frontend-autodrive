@@ -14,31 +14,71 @@ import {
 
 export function CarouselPlugin() {
   const plugin = React.useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: true })
+    Autoplay({ delay: 4000, stopOnInteraction: true })
   );
 
+  const slides = [
+    {
+      title: "Location Flexible",
+      description: "Réservez votre véhicule en quelques clics pour vos déplacements professionnels ou personnels.",
+      icon: "🚗"
+    },
+    {
+      title: "Assurance Complète Incluse",
+      description: "Conduisez l'esprit tranquille avec notre assurance tous risques et assistance 24/7.",
+      icon: "🛡️"
+    },
+    {
+      title: "GPS Intégré Gratuit",
+      description: "Naviguez facilement dans toutes vos destinations avec notre système GPS illimité.",
+      icon: "🗺️"
+    },
+    {
+      title: "Véhicules Révisés et Nettoyés",
+      description: "Tous nos véhicules sont régulièrement entretenus et nettoyés pour votre confort et sécurité.",
+      icon: "🔧"
+    },
+    {
+      title: "Tarifs Compétitifs",
+      description: "Profitez de nos meilleurs prix sur le marché de la location de véhicules.",
+      icon: "💰"
+    }
+  ];
+
   return (
-    <Carousel
-      plugins={[plugin.current]}
-      className="w-full "
-      onMouseEnter={plugin.current.stop}
-      onMouseLeave={() => plugin.current.play()}
-    >
-      <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <CarouselItem key={index}>
-            <div className="p-1">
-              <Card>
-                <CardContent className="flex aspect-square h-150 items-center justify-center p-6">
-                  <span className="text-4xl font-semibold">{index + 1}</span>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
+    <div className="relative">
+      <Carousel
+        plugins={[plugin.current]}
+        className="w-full max-w-6xl mx-auto"
+        onMouseEnter={plugin.current.stop}
+        onMouseLeave={() => plugin.current.play()}
+      >
+        <CarouselContent>
+          {slides.map((slide, index) => (
+            <CarouselItem key={index}>
+              <div className="p-1">
+                <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <CardContent className="flex flex-col md:flex-row items-center justify-between p-8 h-48">
+                    <div className="flex-1 text-center md:text-left">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-3xl">{slide.icon}</span>
+                        <h3 className="text-xl font-bold text-gray-800">{slide.title}</h3>
+                      </div>
+                      <p className="text-gray-600">{slide.description}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+
+        {/* Boutons centrés au milieu */}
+        <div className="absolute inset-0 flex items-center justify-between pointer-events-none">
+          <CarouselPrevious className="relative left-4 pointer-events-auto bg-white/80 hover:bg-white shadow-lg border-0" />
+          <CarouselNext className="relative right-4 pointer-events-auto bg-white/80 hover:bg-white shadow-lg border-0" />
+        </div>
+      </Carousel>
+    </div>
   );
 }

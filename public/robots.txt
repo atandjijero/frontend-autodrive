@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Bloquer l'accès aux fichiers sensibles
+Disallow: /admin/
+Disallow: /api/
+Disallow: /backend/
+
+# Autoriser l'indexation des pages principales
+Allow: /
+Allow: /vehicules
+Allow: /contact
+Allow: /about
+Allow: /faq
+
+# Sitemap
+Sitemap: https://autodrive.com/sitemap.xml

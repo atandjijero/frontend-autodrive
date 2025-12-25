@@ -11,6 +11,7 @@ import {
   CardContent,
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { Helmet } from "react-helmet-async"
 
 export default function Contact() {
   const [nom, setNom] = useState("")
@@ -30,7 +31,19 @@ export default function Contact() {
   }
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-10">
+    <>
+      <Helmet>
+        <title>Contact AutoDrive - Nous Contacter | Location Véhicules</title>
+        <meta name="description" content="Contactez AutoDrive pour vos questions sur la location de véhicules. Service client disponible 7j/7. Réservation en ligne, support technique, informations pratiques." />
+        <meta name="keywords" content="contact AutoDrive, location voiture contact, support client, réservation véhicule, service client location" />
+        <meta property="og:title" content="Contact AutoDrive - Location de Véhicules" />
+        <meta property="og:description" content="Contactez AutoDrive pour vos questions sur la location de véhicules. Service client disponible 7j/7." />
+        <meta property="og:url" content="https://autodrive.com/contact" />
+        <meta name="twitter:card" content="summary" />
+        <link rel="canonical" href="https://autodrive.com/contact" />
+      </Helmet>
+
+      <div className="p-6 max-w-3xl mx-auto space-y-10">
       <h1 className="text-4xl font-bold text-center mb-6">Contact 📩</h1>
 
       {/* Formulaire */}
@@ -98,5 +111,6 @@ export default function Contact() {
         </CardContent>
       </Card>
     </div>
+    </>
   )
 }

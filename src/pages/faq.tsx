@@ -4,10 +4,23 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion"
+import { Helmet } from "react-helmet-async"
 
 export default function FAQ() {
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6">
+    <>
+      <Helmet>
+        <title>FAQ AutoDrive - Questions Fréquentes | Location Véhicules</title>
+        <meta name="description" content="Trouvez les réponses à vos questions sur la location de véhicules AutoDrive. Réservation, tarifs, assurance, conditions générales - Tout ce que vous devez savoir." />
+        <meta name="keywords" content="FAQ location voiture, questions location véhicule, tarif AutoDrive, assurance auto, conditions location" />
+        <meta property="og:title" content="FAQ AutoDrive - Questions Fréquentes" />
+        <meta property="og:description" content="Trouvez les réponses à vos questions sur la location de véhicules AutoDrive." />
+        <meta property="og:url" content="https://autodrive.com/faq" />
+        <meta name="twitter:card" content="summary" />
+        <link rel="canonical" href="https://autodrive.com/faq" />
+      </Helmet>
+
+      <div className="p-6 max-w-3xl mx-auto space-y-6">
       {/* Titre principal */}
       <h1 className="text-4xl font-bold text-center">FAQ ❓</h1>
       <p className="text-center text-muted-foreground">
@@ -56,5 +69,6 @@ export default function FAQ() {
         </AccordionItem>
       </Accordion>
     </div>
+    </>
   )
 }

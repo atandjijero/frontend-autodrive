@@ -129,13 +129,13 @@ export default function ReservationDashboard() {
     window.location.reload();
   };
 
-  if (loading) return <p>Chargement du dashboard...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading) return <p className="text-muted-foreground">Chargement du dashboard...</p>;
+  if (error) return <p className="text-destructive">{error}</p>;
 
   return (
     <div className="p-6 space-y-8">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-3xl font-bold">Dashboard des Réservations</h2>
+        <h2 className="text-3xl font-bold text-foreground">Dashboard des Réservations</h2>
 
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleExportCSV}>
@@ -261,7 +261,7 @@ export default function ReservationDashboard() {
                 </thead>
                 <tbody>
                   {reservations.slice(0, 10).map((res) => (
-                    <tr key={res._id} className="border-b hover:bg-gray-50">
+                    <tr key={res._id} className="border-b hover:bg-muted/50 transition-colors">
                       <td className="p-2 flex items-center gap-3">
                         <img
                           src={res.vehicleId?.photos?.[0] || "/placeholder.png"}
@@ -274,7 +274,7 @@ export default function ReservationDashboard() {
                               ? `${res.vehicleId.marque} ${res.vehicleId.modele}`
                               : "Véhicule supprimé"}
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-muted-foreground">
                             {res.vehicleId?.immatriculation}
                           </p>
                         </div>
@@ -286,7 +286,7 @@ export default function ReservationDashboard() {
                             ? `${res.clientId.nom} ${res.clientId.prenom}`
                             : "Client inconnu"}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           {res.clientId?.email}
                         </p>
                       </td>

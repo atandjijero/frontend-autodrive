@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardContent,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { getProfile } from "@/api/apiClient";
 import type { UserProfile } from "@/api/apiClient";
 
@@ -35,11 +32,11 @@ export default function Profil() {
   }, []);
 
   if (loading) {
-    return <p className="p-6">Chargement du profil...</p>;
+    return <p className="p-6 text-muted-foreground">Chargement du profil...</p>;
   }
 
   if (error) {
-    return <p className="p-6 text-red-600">{error}</p>;
+    return <p className="p-6 text-destructive">{error}</p>;
   }
 
   // Initiales de l'utilisateur
@@ -48,79 +45,86 @@ export default function Profil() {
     (profile?.nom?.[0] ?? "").toUpperCase();
 
   return (
-    <div className="p-8 max-w-4xl mx-auto"> {/* largeur augmentée */}
-      <Card className="p-10 shadow-xl space-y-8">
-        {/* Avatar + infos principales */}
-        <CardHeader className="flex flex-col items-center gap-6">
-          <Avatar className="h-28 w-28 text-xl">
-            <AvatarImage src={profile?.avatar ?? ""} alt={profile?.nom} />
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
+    <div className="p-8 max-w-6xl mx-auto">
+      <Card className="p-8 shadow-xl">
+        <CardContent className="p-0">
+          <div className="flex flex-col md:flex-row gap-8">
+            {/* Section gauche: Avatar et infos principales */}
+            <div className="flex flex-col items-center md:items-start gap-6 md:w-1/3">
+              <Avatar className="h-32 w-32 text-2xl">
+                <AvatarImage src={profile?.avatar ?? ""} alt={profile?.nom} />
+                <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
+              </Avatar>
 
-          <CardTitle className="text-3xl font-bold text-center">
-            {profile?.prenom} {profile?.nom}
-          </CardTitle>
+              <div className="text-center md:text-left">
+                <h1 className="text-3xl font-bold text-foreground mb-2">
+                  {profile?.prenom} {profile?.nom}
+                </h1>
 
-          {/* Email en bleu comme lien */}
-          <div className="flex items-center gap-2 justify-center text-lg">
-            <Mail className="h-5 w-5 text-muted-foreground" />
-            <a
-              href={`mailto:${profile?.email}`}
-              className="text-blue-600 underline"
-            >
-              {profile?.email}
-            </a>
-          </div>
+                <div className="flex items-center gap-2 justify-center md:justify-start mb-4">
+                  <Mail className="h-5 w-5 text-muted-foreground" />
+                  <a
+                    href={`mailto:${profile?.email}`}
+                    className="text-primary hover:underline"
+                  >
+                    {profile?.email}
+                  </a>
+                </div>
 
-          <Badge
-            variant={
-              profile?.role === "admin"
-                ? "destructive"
-                : profile?.role === "client"
-                ? "default"
-                : profile?.role === "entreprise"
-                ? "secondary"
-                : "outline"
-            }
-            className="mt-3 text-base px-4 py-2"
-          >
-            {profile?.role ?? "Utilisateur"}
-          </Badge>
-        </CardHeader>
-
-        <Separator />
-
-        {/* Infos détaillées en colonne */}
-        <CardContent className="space-y-6 text-lg">
-          <div className="flex items-center gap-4">
-            <Phone className="h-6 w-6 text-muted-foreground" />
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Téléphone</p>
-              <p>{profile?.telephone || "Non renseigné"}</p>
+                <Badge
+                  variant={
+                    profile?.role === "admin"
+                      ? "destructive"
+                      : profile?.role === "client"
+                      ? "default"
+                      : profile?.role === "entreprise"
+                      ? "secondary"
+                      : "outline"
+                  }
+                  className="text-sm px-3 py-1"
+                >
+                  {profile?.role ?? "Utilisateur"}
+                </Badge>
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-center gap-4">
-            <MapPin className="h-6 w-6 text-muted-foreground" />
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Adresse</p>
-              <p>{profile?.adresse || "Non renseignée"}</p>
-            </div>
-          </div>
+            {/* Section droite: Détails */}
+            <div className="md:w-2/3">
+              <h2 className="text-2xl font-semibold text-foreground mb-6">Informations détaillées</h2>
 
-          <div className="flex items-center gap-4">
-            <Calendar className="h-6 w-6 text-muted-foreground" />
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Date d’inscription</p>
-              <p>
-                {profile?.dateInscription
-                  ? new Date(profile.dateInscription).toLocaleDateString("fr-FR", {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                    })
-                  : "Non disponible"}
-              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex items-start gap-4 p-4 bg-muted/50 rounded-lg">
+                  <Phone className="h-6 w-6 text-muted-foreground mt-1" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Téléphone</p>
+                    <p className="text-foreground font-medium">{profile?.telephone || "Non renseigné"}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 p-4 bg-muted/50 rounded-lg">
+                  <MapPin className="h-6 w-6 text-muted-foreground mt-1" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Adresse</p>
+                    <p className="text-foreground font-medium">{profile?.adresse || "Non renseignée"}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 p-4 bg-muted/50 rounded-lg md:col-span-2">
+                  <Calendar className="h-6 w-6 text-muted-foreground mt-1" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Date d'inscription</p>
+                    <p className="text-foreground font-medium">
+                      {profile?.dateInscription
+                        ? new Date(profile.dateInscription).toLocaleDateString("fr-FR", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                          })
+                        : "Non disponible"}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>

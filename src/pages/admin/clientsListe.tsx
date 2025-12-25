@@ -37,6 +37,34 @@ import {
   Legend,
 } from "recharts";
 
+// Données mock des clients pour les opérations CRUD
+export const clients = [
+  {
+    id: 1,
+    nom: "Dupont",
+    prenom: "Jean",
+    email: "jean.dupont@email.com",
+    telephone: "+228 90 00 00 01",
+    adresse: "123 Rue de la Paix, Lomé"
+  },
+  {
+    id: 2,
+    nom: "Martin",
+    prenom: "Marie",
+    email: "marie.martin@email.com",
+    telephone: "+228 90 00 00 02",
+    adresse: "456 Avenue des Affaires, Lomé"
+  },
+  {
+    id: 3,
+    nom: "Koffi",
+    prenom: "Paul",
+    email: "paul.koffi@email.com",
+    telephone: "+228 90 00 00 03",
+    adresse: "789 Boulevard du Commerce, Lomé"
+  }
+];
+
 export default function DashboardClients() {
   const [stats, setStats] = useState<any>(null);
 
