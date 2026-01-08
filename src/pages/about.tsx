@@ -5,52 +5,44 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
 export default function About() {
+  const { t } = useTranslation();
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-8">
-      <h1 className="text-4xl font-bold text-center mb-6">
-        À propos d’AutoDrive 🚗
-      </h1>
+      <h1 className="text-4xl font-bold text-center mb-6">{t('about.title')}</h1>
 
       <Card className="shadow-md hover:shadow-lg transition-shadow">
         <CardHeader>
-          <CardTitle>Notre mission</CardTitle>
-          <CardDescription>
-            Simplifier la mobilité pour tous nos clients
-          </CardDescription>
+          <CardTitle>{t('about.mission.title')}</CardTitle>
+          <CardDescription>{t('about.mission.desc')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground leading-relaxed">
-            AutoDrive est une plateforme de location de véhicules modernes et fiables,
-            conçue pour répondre aux besoins des particuliers comme des professionnels.
-            Notre objectif est de rendre la mobilité simple, accessible et agréable.
-          </p>
+          <p className="text-muted-foreground leading-relaxed">{t('about.mission.content')}</p>
         </CardContent>
       </Card>
 
       <Card className="shadow-md hover:shadow-lg transition-shadow">
         <CardHeader>
-          <CardTitle>Pourquoi nous choisir ?</CardTitle>
-          <CardDescription>
-            Les avantages qui font la différence
-          </CardDescription>
+          <CardTitle>{t('about.why.title')}</CardTitle>
+          <CardDescription>{t('about.why.desc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ul className="list-none space-y-3">
             <li>
-              <Badge variant="secondary">🚘</Badge> Large gamme de véhicules adaptés à tous les besoins
+              <Badge variant="secondary">🚘</Badge> {t('about.advantages.item1')}
             </li>
             <li>
-              <Badge variant="secondary">💰</Badge> Tarifs compétitifs et transparents
+              <Badge variant="secondary">💰</Badge> {t('about.advantages.item2')}
             </li>
             <li>
-              <Badge variant="secondary">🤝</Badge> Service client disponible et réactif
+              <Badge variant="secondary">🤝</Badge> {t('about.advantages.item3')}
             </li>
             <li>
-              <Badge variant="secondary">🌍</Badge> Réservation simple et rapide en ligne
+              <Badge variant="secondary">🌍</Badge> {t('about.advantages.item4')}
             </li>
           </ul>
         </CardContent>
@@ -58,25 +50,17 @@ export default function About() {
 
       <Card className="shadow-md hover:shadow-lg transition-shadow">
         <CardHeader>
-          <CardTitle>Notre vision</CardTitle>
-          <CardDescription>
-            Une mobilité durable et innovante
-          </CardDescription>
+          <CardTitle>{t('about.vision.title')}</CardTitle>
+          <CardDescription>{t('about.vision.desc')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground leading-relaxed">
-            Nous croyons que la mobilité est un facteur clé de liberté et de développement.
-            AutoDrive s’engage à offrir une expérience de location fluide, sécurisée et durable,
-            en intégrant des solutions innovantes pour l’avenir.
-          </p>
+          <p className="text-muted-foreground leading-relaxed">{t('about.vision.content')}</p>
         </CardContent>
       </Card>
 
       <Separator className="my-6" />
 
-      <p className="text-center text-sm text-muted-foreground">
-        © 2025 AutoDrive – Votre partenaire mobilité
-      </p>
+      <p className="text-center text-sm text-muted-foreground">© 2025 AutoDrive – {t('about.partner')}</p>
     </div>
   );
 }

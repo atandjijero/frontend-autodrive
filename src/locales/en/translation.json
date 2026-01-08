@@ -1,0 +1,225 @@
+{
+  "nav": {
+    "home": "Home",
+    "login": "Login",
+    "about": "About",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "blog": "Blog"
+  },
+  "hero": {
+    "title": "Welcome to AutoDrive",
+    "subtitle": "Easily rent your vehicle for business trips, vacations or getaways."
+  },
+  "services": {
+    "title": "Our Services",
+    "assurance": {
+      "title": "Full Insurance",
+      "desc": "Protect your rental with our comprehensive insurance included."
+    },
+    "gps": {
+      "title": "Built-in GPS",
+      "desc": "Navigate easily with our free unlimited GPS."
+    },
+    "assistance": {
+      "title": "24/7 Assistance",
+      "desc": "Roadside assistance available anytime."
+    }
+  },
+  "testimonials": {
+    "heading": "What our customers say"
+  },
+  "vehicles": {
+    "available_heading": "Vehicles available today",
+    "promo_heading": "Promoted vehicles"
+  },
+  "footer": {
+    "copyright": "All rights reserved.",
+    "about": "About",
+    "contact": "Contact",
+    "faq": "FAQ"
+  },
+  "buttons": {
+    "learn_more": "Learn more",
+    "discover": "Discover",
+    "contact": "Contact"
+  }
+  ,
+  "about": {
+    "title": "About AutoDrive 🚗",
+    "mission": {
+      "title": "Our mission",
+      "desc": "Simplify mobility for all our customers",
+      "content": "AutoDrive is a modern and reliable vehicle rental platform designed to meet the needs of individuals and professionals. Our goal is to make mobility simple, accessible and enjoyable."
+    },
+    "why": {
+      "title": "Why choose us?",
+      "desc": "The advantages that make the difference"
+    },
+    "advantages": {
+      "item1": "Wide range of vehicles suitable for all needs",
+      "item2": "Competitive and transparent rates",
+      "item3": "Responsive customer service",
+      "item4": "Simple and quick online booking"
+    },
+    "vision": {
+      "title": "Our vision",
+      "desc": "Sustainable and innovative mobility",
+      "content": "We believe mobility is a key factor of freedom and development. AutoDrive is committed to offering a smooth, secure and sustainable rental experience, integrating innovative solutions for the future."
+    },
+    "partner": "Your mobility partner"
+  },
+  "contact": {
+    "title": "Contact 📩",
+    "form": {
+      "title": "Send us a message",
+      "desc": "Fill in the form below and our team will get back to you promptly.",
+      "placeholders": {
+        "name": "Your name",
+        "email": "Your email",
+        "message": "Your message"
+      },
+      "sending": "Sending...",
+      "send": "Send",
+      "success": "Message sent!"
+    },
+    "location": {
+      "title": "Our location 📍",
+      "desc": "Find us easily using the interactive map below."
+    }
+  },
+  "faq": {
+    "title": "FAQ ❓",
+    "intro": "Find answers to the most frequently asked questions about our AutoDrive services.",
+    "q1": { "question": "How do I book a vehicle?", "answer": "You can book directly online via our reservation form. Select your dates, choose your vehicle and complete payment in a few clicks." },
+    "q2": { "question": "Which payment methods do you accept?", "answer": "We accept credit cards (Visa, Mastercard) and secure online payments via Stripe." },
+    "q3": { "question": "Can I cancel or change my reservation?", "answer": "Yes, you can cancel or modify your reservation up to 24 hours before the rental start, directly from your customer area." },
+    "q4": { "question": "Do you offer utility vehicles?", "answer": "Of course! AutoDrive provides a full range of utility vehicles suitable for individuals and businesses." }
+  },
+  "auth": {
+    "login_title": "Login – AutoDrive",
+    "signup_title": "Sign up – AutoDrive",
+    "login_heading": "Sign in",
+    "login_desc": "Enter your credentials to access your account",
+    "email_label": "Email",
+    "email_placeholder": "example@autodrive.com",
+    "password_label": "Password",
+    "password_placeholder": "••••••••",
+    "forgot_password": "Forgot password?",
+    "login_button": "Sign in",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign up",
+    "otp_sent": "An OTP has been sent to your email!",
+    "login_success": "Login successful!",
+    "passwords_mismatch": "Passwords do not match.",
+    "signup_success": "Your account has been created successfully.",
+    "signup_error": "Unable to create account.",
+    "signup_heading": "Create an account",
+    "signup_desc": "Enter your information below to create your account.",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "phone_main": "Primary phone",
+    "phone_placeholder": "+22890123456",
+    "phone_secondary": "Secondary phone (optional)",
+    "phone_placeholder_secondary": "+22892123456",
+    "address": "Address (optional)",
+    "address_placeholder": "Rue des fleurs, Lomé",
+    "role_label": "Role",
+    "role_placeholder": "Choose a role",
+    "role_client": "Client",
+    "role_business": "Business",
+    "role_tourist": "Tourist",
+    "confirm_password": "Confirm password",
+    "signup_button": "Create account",
+    "already_have_account": "Already have an account?"
+  }
+  ,
+  "reservation": {
+    "title": "Reservation",
+    "description": "Fill in the details to reserve your vehicle",
+    "labels": {
+      "name": "Name",
+      "start_date": "Start date",
+      "end_date": "End date",
+      "promo_code": "Promo code (optional)"
+    },
+    "placeholders": {
+      "promo": "Enter your promo code"
+    },
+    "submit": "Send reservation",
+    "errors": {
+      "login_required": "Please log in to make a reservation.",
+      "select_dates": "Please select both a start and end date.",
+      "end_after_start": "End date must be after start date.",
+      "generic": "❌ An error occurred while making the reservation."
+    }
+  },
+  "payment": {
+    "title": "Secure payment",
+    "description": "Complete your reservation securely",
+    "labels": {
+      "name": "Full name",
+      "email": "Email",
+      "amount": "Amount (€)",
+      "card_number": "Card number",
+      "expiry": "Expiry (MM/YY)",
+      "cvv": "CVV"
+    },
+    "placeholders": {
+      "card": "4242 4242 4242 4242",
+      "expiry": "12/25",
+      "cvv": "123"
+    },
+    "pay_button": "Pay",
+    "success_message": "Payment completed successfully!",
+    "download_receipt": "Download PDF receipt",
+    "errors": {
+      "load_reservation": "❌ Unable to load reservation.",
+      "reservation_not_found": "❌ Reservation not found.",
+      "invalid_amount": "❌ Invalid amount.",
+      "generic": "❌ An error occurred during payment."
+    }
+  },
+  "otp": {
+    "title": "OTP verification",
+    "description": "Enter the code sent to your email to validate your login.",
+    "code_label": "OTP code",
+    "valid_for": "The code is valid for 5 minutes.",
+    "verifying": "Verifying...",
+    "verify_button": "Verify",
+    "error_title": "Error",
+    "success_title": "Success",
+    "verified_message": "OTP verified, login successful!",
+    "invalid_error": "Invalid or expired OTP."
+  },
+  "reset": {
+    "title": "Reset password",
+    "description": "Enter your new password below.",
+    "labels": {
+      "new_password": "New password",
+      "confirm_password": "Confirm password",
+      "wait": "Please wait...",
+      "reset_button": "Reset"
+    },
+    "errors": {
+      "invalid_link": "Invalid or expired link.",
+      "passwords_mismatch": "Passwords do not match.",
+      "password_length": "Password must be at least 8 characters.",
+      "generic": "Unable to reset password."
+    },
+    "success": "Password reset successfully."
+  },
+  "forgot": {
+    "title": "Forgot password",
+    "desc": "Enter your email address to receive a reset link.",
+    "email_label": "Email address",
+    "placeholder": "example@autodrive.com",
+    "hint": "We will send a reset link if the email is valid.",
+    "sending": "Please wait...",
+    "reset_button": "Reset",
+    "success": "Reset link sent.",
+    "error": "Error sending reset link.",
+    "alert_error": "Error",
+    "alert_success": "Success"
+  }
+}

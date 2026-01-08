@@ -23,8 +23,10 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { register } from "@/api/apiClient";
+// translations removed: using static french strings
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
+  // const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [inputs, setInputs] = useState({
@@ -66,21 +68,19 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         role: inputs.role as "client" | "entreprise" | "tourist",
       });
 
-      setMessage(res.data.message);
+      setMessage(res.data.message || "Inscription réussie");
       setTimeout(() => navigate("/connexion"), 2000);
     } catch (err: any) {
       console.error("Erreur:", err.response?.data || err.message);
-      setMessage("Impossible de créer le compte.");
+      setMessage("Erreur lors de l'inscription.");
     }
   };
 
   return (
     <Card {...props} className="w-full max-w-4xl mx-auto">
       <CardHeader>
-        <CardTitle>Créer un compte</CardTitle>
-        <CardDescription>
-          Entrez vos informations ci-dessous pour créer votre compte.
-        </CardDescription>
+        <CardTitle>Inscription</CardTitle>
+        <CardDescription>Créez votre compte.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -92,7 +92,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 <Input id="prenom" type="text" placeholder="Jean" onChange={handleChange} value={inputs.prenom} required />
               </Field>
               <Field>
-                <FieldLabel htmlFor="nom">Nom de famille</FieldLabel>
+                <FieldLabel htmlFor="nom">Nom</FieldLabel>
                 <Input id="nom" type="text" placeholder="Dupont" onChange={handleChange} value={inputs.nom} required />
               </Field>
             </div>
@@ -101,23 +101,23 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input id="email" type="email" placeholder="jean.dupont@example.com" onChange={handleChange} value={inputs.email} required />
+                <Input id="email" type="email" placeholder="votre@email.com" onChange={handleChange} value={inputs.email} required />
               </Field>
               <Field>
                 <FieldLabel htmlFor="telephone">Téléphone principal</FieldLabel>
-                <Input id="telephone" type="tel" placeholder="+22890123456" onChange={handleChange} value={inputs.telephone} required />
+                <Input id="telephone" type="tel" placeholder="0123456789" onChange={handleChange} value={inputs.telephone} required />
               </Field>
             </div>
 
             {/* Troisième ligne : Téléphone secondaire et Adresse */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field>
-                <FieldLabel htmlFor="telephoneSecondaire">Téléphone secondaire (optionnel)</FieldLabel>
-                <Input id="telephoneSecondaire" type="tel" placeholder="+22892123456" onChange={handleChange} value={inputs.telephoneSecondaire} />
+                <FieldLabel htmlFor="telephoneSecondaire">Téléphone secondaire</FieldLabel>
+                <Input id="telephoneSecondaire" type="tel" placeholder="0123456789" onChange={handleChange} value={inputs.telephoneSecondaire} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="adresse">Adresse (optionnelle)</FieldLabel>
-                <Input id="adresse" type="text" placeholder="Rue des fleurs, Lomé" onChange={handleChange} value={inputs.adresse} />
+                <FieldLabel htmlFor="adresse">Adresse</FieldLabel>
+                <Input id="adresse" type="text" placeholder="Rue, ville, pays" onChange={handleChange} value={inputs.adresse} />
               </Field>
             </div>
 
@@ -129,8 +129,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   value={inputs.role}
                   onValueChange={(value) => setInputs((prev) => ({ ...prev, role: value }))}
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Choisissez un rôle" />
+                    <SelectTrigger className="w-full">
+                    <SelectValue placeholder={"Sélectionnez un rôle"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="client">Client</SelectItem>
@@ -145,25 +145,23 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field>
                 <FieldLabel htmlFor="motPasse">Mot de passe</FieldLabel>
-                <Input id="motPasse" type="password" placeholder="••••••••" onChange={handleChange} value={inputs.motPasse} required />
+                <Input id="motPasse" type="password" placeholder="Votre mot de passe" onChange={handleChange} value={inputs.motPasse} required />
               </Field>
               <Field>
                 <FieldLabel htmlFor="confirmPassword">Confirmer le mot de passe</FieldLabel>
-                <Input id="confirmPassword" type="password" placeholder="••••••••" onChange={handleChange} value={inputs.confirmPassword} required />
+                <Input id="confirmPassword" type="password" placeholder="Votre mot de passe" onChange={handleChange} value={inputs.confirmPassword} required />
               </Field>
             </div>
 
             {/* Bouton et messages */}
             <Field>
-              <Button type="submit" className="w-full text-sm py-2">Créer un compte</Button>
+              <Button type="submit" className="w-full text-sm py-2">S'inscrire</Button>
               {message && (
-                <p className="text-center text-xs mt-2 text-green-600 dark:text-green-400">
-                  {message}
-                </p>
+                <p className="text-center text-xs mt-2 text-green-600 dark:text-green-400">{message}</p>
               )}
               <FieldDescription className="px-4 text-center text-xs">
                 Vous avez déjà un compte ?{" "}
-                <Link to={"/connexion"}><span>Connectez-vous</span></Link>
+                <Link to={"/connexion"}><span>Se connecter</span></Link>
               </FieldDescription>
             </Field>
           </FieldGroup>

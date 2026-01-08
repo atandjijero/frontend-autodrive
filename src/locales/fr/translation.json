@@ -1,0 +1,225 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "login": "Connexion",
+    "about": "À propos",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "blog": "Blog"
+  },
+  "hero": {
+    "title": "Bienvenue sur AutoDrive",
+    "subtitle": "Louez facilement votre véhicule pour vos voyages d’affaires, vacances ou escapades."
+  },
+  "services": {
+    "title": "Nos Services",
+    "assurance": {
+      "title": "Assurance Complète",
+      "desc": "Protégez votre location avec notre assurance tous risques incluse."
+    },
+    "gps": {
+      "title": "GPS Intégré",
+      "desc": "Naviguez facilement avec notre système GPS gratuit et illimité."
+    },
+    "assistance": {
+      "title": "Assistance 24/7",
+      "desc": "Service d'assistance routière disponible à tout moment."
+    }
+  },
+  "testimonials": {
+    "heading": "Ce que disent nos clients"
+  },
+  "vehicles": {
+    "available_heading": "Véhicules disponibles aujourd'hui",
+    "promo_heading": "Véhicules en promotion"
+  },
+  "footer": {
+    "copyright": "Tous droits réservés.",
+    "about": "À propos",
+    "contact": "Contact",
+    "faq": "FAQ"
+  },
+  "buttons": {
+    "learn_more": "En savoir plus",
+    "discover": "Découvrir",
+    "contact": "Contacter"
+  }
+  ,
+  "about": {
+    "title": "À propos d’AutoDrive 🚗",
+    "mission": {
+      "title": "Notre mission",
+      "desc": "Simplifier la mobilité pour tous nos clients",
+      "content": "AutoDrive est une plateforme de location de véhicules modernes et fiables, conçue pour répondre aux besoins des particuliers comme des professionnels. Notre objectif est de rendre la mobilité simple, accessible et agréable."
+    },
+    "why": {
+      "title": "Pourquoi nous choisir ?",
+      "desc": "Les avantages qui font la différence"
+    },
+    "advantages": {
+      "item1": "Large gamme de véhicules adaptés à tous les besoins",
+      "item2": "Tarifs compétitifs et transparents",
+      "item3": "Service client disponible et réactif",
+      "item4": "Réservation simple et rapide en ligne"
+    },
+    "vision": {
+      "title": "Notre vision",
+      "desc": "Une mobilité durable et innovante",
+      "content": "Nous croyons que la mobilité est un facteur clé de liberté et de développement. AutoDrive s’engage à offrir une expérience de location fluide, sécurisée et durable, en intégrant des solutions innovantes pour l’avenir."
+    },
+    "partner": "Votre partenaire mobilité"
+  },
+  "contact": {
+    "title": "Contact 📩",
+    "form": {
+      "title": "Envoyez-nous un message",
+      "desc": "Remplissez le formulaire ci-dessous et notre équipe vous répondra rapidement.",
+      "placeholders": {
+        "name": "Votre nom",
+        "email": "Votre email",
+        "message": "Votre message"
+      },
+      "sending": "Envoi...",
+      "send": "Envoyer",
+      "success": "Message envoyé !"
+    },
+    "location": {
+      "title": "Notre localisation 📍",
+      "desc": "Retrouvez-nous facilement grâce à la carte interactive ci-dessous."
+    }
+  },
+  "faq": {
+    "title": "FAQ ❓",
+    "intro": "Retrouvez ici les réponses aux questions les plus fréquentes concernant nos services AutoDrive.",
+    "q1": { "question": "Comment réserver un véhicule ?", "answer": "Vous pouvez réserver directement en ligne via notre formulaire de réservation. Sélectionnez vos dates, choisissez votre véhicule et validez votre paiement en quelques clics." },
+    "q2": { "question": "Quels moyens de paiement acceptez-vous ?", "answer": "Nous acceptons les cartes bancaires (Visa, Mastercard) ainsi que les paiements en ligne sécurisés via Stripe." },
+    "q3": { "question": "Puis-je annuler ou modifier ma réservation ?", "answer": "Oui, vous pouvez annuler ou modifier votre réservation jusqu’à 24h avant le début de la location, directement depuis votre espace client." },
+    "q4": { "question": "Proposez-vous des véhicules utilitaires ?", "answer": "Bien sûr ! AutoDrive met à disposition une gamme complète de véhicules utilitaires adaptés aux besoins des particuliers et des entreprises." }
+  },
+  "auth": {
+    "login_title": "Connexion – AutoDrive",
+    "signup_title": "Inscription – AutoDrive",
+    "login_heading": "Connectez-vous",
+    "login_desc": "Entrez vos identifiants pour accéder à votre compte",
+    "email_label": "Email",
+    "email_placeholder": "exemple@autodrive.com",
+    "password_label": "Mot de passe",
+    "password_placeholder": "••••••••",
+    "forgot_password": "Mot de passe oublié ?",
+    "login_button": "Connexion",
+    "no_account": "Vous n'avez pas de compte ?",
+    "sign_up": "Inscrivez-vous",
+    "otp_sent": "Un OTP vous a été envoyé par email !",
+    "login_success": "Connexion réussie !",
+    "passwords_mismatch": "Les mots de passe ne correspondent pas.",
+    "signup_success": "Votre compte a été créé avec succès.",
+    "signup_error": "Impossible de créer le compte.",
+    "signup_heading": "Créer un compte",
+    "signup_desc": "Entrez vos informations ci-dessous pour créer votre compte.",
+    "first_name": "Prénom",
+    "last_name": "Nom de famille",
+    "phone_main": "Téléphone principal",
+    "phone_placeholder": "+22890123456",
+    "phone_secondary": "Téléphone secondaire (optionnel)",
+    "phone_placeholder_secondary": "+22892123456",
+    "address": "Adresse (optionnelle)",
+    "address_placeholder": "Rue des fleurs, Lomé",
+    "role_label": "Rôle",
+    "role_placeholder": "Choisissez un rôle",
+    "role_client": "Client",
+    "role_business": "Entreprise",
+    "role_tourist": "Touriste",
+    "confirm_password": "Confirmer le mot de passe",
+    "signup_button": "Créer un compte",
+    "already_have_account": "Vous avez déjà un compte ?"
+  }
+  ,
+  "reservation": {
+    "title": "Réservation",
+    "description": "Remplissez les informations pour réserver votre véhicule",
+    "labels": {
+      "name": "Nom",
+      "start_date": "Date début",
+      "end_date": "Date fin",
+      "promo_code": "Code promo (optionnel)"
+    },
+    "placeholders": {
+      "promo": "Entrez votre code promo"
+    },
+    "submit": "Envoyer la réservation",
+    "errors": {
+      "login_required": "Veuillez vous connecter pour effectuer une réservation.",
+      "select_dates": "Veuillez sélectionner une date de début et une date de fin.",
+      "end_after_start": "La date de fin doit être postérieure à la date de début.",
+      "generic": "❌ Une erreur est survenue lors de la réservation."
+    }
+  },
+  "payment": {
+    "title": "Paiement sécurisé",
+    "description": "Finalisez votre réservation en toute sécurité",
+    "labels": {
+      "name": "Nom complet",
+      "email": "Email",
+      "amount": "Montant (€)",
+      "card_number": "Numéro de carte",
+      "expiry": "Expiration (MM/AA)",
+      "cvv": "CVV"
+    },
+    "placeholders": {
+      "card": "4242 4242 4242 4242",
+      "expiry": "12/25",
+      "cvv": "123"
+    },
+    "pay_button": "Payer",
+    "success_message": "Paiement effectué avec succès !",
+    "download_receipt": "Télécharger le reçu PDF",
+    "errors": {
+      "load_reservation": "❌ Impossible de charger la réservation.",
+      "reservation_not_found": "❌ Réservation introuvable.",
+      "invalid_amount": "❌ Montant invalide.",
+      "generic": "❌ Une erreur est survenue lors du paiement."
+    }
+  },
+  "otp": {
+    "title": "Vérification OTP",
+    "description": "Entrez le code reçu par email pour valider votre connexion.",
+    "code_label": "Code OTP",
+    "valid_for": "Le code est valable pendant 5 minutes.",
+    "verifying": "Vérification en cours...",
+    "verify_button": "Vérifier",
+    "error_title": "Erreur",
+    "success_title": "Succès",
+    "verified_message": "OTP vérifié, connexion réussie !",
+    "invalid_error": "OTP invalide ou expiré."
+  },
+  "reset": {
+    "title": "Réinitialiser le mot de passe",
+    "description": "Entrez votre nouveau mot de passe ci-dessous.",
+    "labels": {
+      "new_password": "Nouveau mot de passe",
+      "confirm_password": "Confirmer le mot de passe",
+      "wait": "Patientez...",
+      "reset_button": "Réinitialiser"
+    },
+    "errors": {
+      "invalid_link": "Lien invalide ou expiré.",
+      "passwords_mismatch": "Les mots de passe ne correspondent pas.",
+      "password_length": "Le mot de passe doit contenir au moins 8 caractères.",
+      "generic": "Impossible de réinitialiser le mot de passe."
+    },
+    "success": "Mot de passe réinitialisé avec succès."
+  },
+  "forgot": {
+    "title": "Mot de passe oublié",
+    "desc": "Entrez votre adresse email pour recevoir un lien de réinitialisation.",
+    "email_label": "Adresse email",
+    "placeholder": "exemple@autodrive.com",
+    "hint": "Nous vous enverrons un lien de réinitialisation si l’email est valide.",
+    "sending": "Patientez...",
+    "reset_button": "Réinitialiser",
+    "success": "Lien de réinitialisation envoyé.",
+    "error": "Erreur lors de l'envoi du lien.",
+    "alert_error": "Erreur",
+    "alert_success": "Succès"
+  }
+}

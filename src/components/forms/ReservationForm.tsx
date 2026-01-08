@@ -19,6 +19,7 @@ export default function ReservationForm() {
 
   const [dateDebut, setDateDebut] = useState("");
   const [dateFin, setDateFin] = useState("");
+  const [codePromo, setCodePromo] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const nom = localStorage.getItem("userName") || "";
@@ -48,12 +49,12 @@ export default function ReservationForm() {
       clientId,
       dateDebut: new Date(dateDebut).toISOString(),
       dateFin: new Date(dateFin).toISOString(),
+      codePromo: codePromo || undefined, // seulement si rempli
     };
 
     try {
       const res = await addReservation(payload);
-
-      //  Redirection automatique vers paiement
+      // Redirection automatique vers paiement
       navigate(`/paiement/${res.data._id}`);
     } catch (err: any) {
       setErrorMessage(
@@ -99,6 +100,17 @@ export default function ReservationForm() {
                 value={dateFin}
                 onChange={(e) => setDateFin(e.target.value)}
                 required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="codePromo">Code promo (optionnel)</Label>
+              <Input
+                type="text"
+                id="codePromo"
+                value={codePromo}
+                onChange={(e) => setCodePromo(e.target.value)}
+                placeholder="Entrez votre code promo"
               />
             </div>
 

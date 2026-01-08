@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import { sendContact } from "@/api/apiClient"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import {
   Card,
@@ -10,55 +11,52 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card"
+import { useTranslation } from "react-i18next"
 import { Separator } from "@/components/ui/separator"
-import { Helmet } from "react-helmet-async"
 
 export default function Contact() {
+  const { t } = useTranslation();
   const [nom, setNom] = useState("")
   const [email, setEmail] = useState("")
   const [message, setMessage] = useState("")
+  const [submitting, setSubmitting] = useState<boolean>(false)
+  const [success, setSuccess] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    console.log({
-      nom,
-      email,
-      message,
-    })
-
-    // Ici tu pourras appeler ton backend pour envoyer un mail
+    setSubmitting(true)
+    setError(null)
+    setSuccess(false)
+    try {
+      await sendContact({ nom, email, message })
+      setNom("")
+      setEmail("")
+      setMessage("")
+      setSuccess(true)
+    } catch (err: any) {
+      console.error('Contact send error', err)
+      setError(err?.response?.data?.message || 'Erreur lors de l envoi')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
-    <>
-      <Helmet>
-        <title>Contact AutoDrive - Nous Contacter | Location Véhicules</title>
-        <meta name="description" content="Contactez AutoDrive pour vos questions sur la location de véhicules. Service client disponible 7j/7. Réservation en ligne, support technique, informations pratiques." />
-        <meta name="keywords" content="contact AutoDrive, location voiture contact, support client, réservation véhicule, service client location" />
-        <meta property="og:title" content="Contact AutoDrive - Location de Véhicules" />
-        <meta property="og:description" content="Contactez AutoDrive pour vos questions sur la location de véhicules. Service client disponible 7j/7." />
-        <meta property="og:url" content="https://autodrive.com/contact" />
-        <meta name="twitter:card" content="summary" />
-        <link rel="canonical" href="https://autodrive.com/contact" />
-      </Helmet>
-
-      <div className="p-6 max-w-3xl mx-auto space-y-10">
-      <h1 className="text-4xl font-bold text-center mb-6">Contact 📩</h1>
+    <div className="p-6 max-w-3xl mx-auto space-y-10">
+      <h1 className="text-4xl font-bold text-center mb-6">{t('contact.title')}</h1>
 
       {/* Formulaire */}
       <Card className="shadow-md hover:shadow-lg transition-shadow">
         <CardHeader>
-          <CardTitle>Envoyez-nous un message</CardTitle>
-          <CardDescription>
-            Remplissez le formulaire ci-dessous et notre équipe vous répondra rapidement.
-          </CardDescription>
+          <CardTitle>{t('contact.form.title')}</CardTitle>
+          <CardDescription>{t('contact.form.desc')}</CardDescription>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              placeholder="Votre nom"
+              placeholder={t('contact.form.placeholders.name')}
               value={nom}
               onChange={(e) => setNom(e.target.value)}
               required
@@ -66,23 +64,25 @@ export default function Contact() {
 
             <Input
               type="email"
-              placeholder="Votre email"
+              placeholder={t('contact.form.placeholders.email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
 
             <Textarea
-              placeholder="Votre message"
+              placeholder={t('contact.form.placeholders.message')}
               className="min-h-[120px]"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               required
             />
 
-            <Button type="submit" className="w-full">
-              Envoyer
+            <Button type="submit" className="w-full" disabled={submitting}>
+              {submitting ? t('contact.form.sending') : t('contact.form.send')}
             </Button>
+            {success && <p className="text-green-600 text-center">{t('contact.form.success')}</p>}
+            {error && <p className="text-red-600 text-center">{error}</p>}
           </form>
         </CardContent>
       </Card>
@@ -92,10 +92,8 @@ export default function Contact() {
       {/* Localisation */}
       <Card className="shadow-md hover:shadow-lg transition-shadow">
         <CardHeader>
-          <CardTitle>Notre localisation 📍</CardTitle>
-          <CardDescription>
-            Retrouvez-nous facilement grâce à la carte interactive ci-dessous.
-          </CardDescription>
+          <CardTitle>{t('contact.location.title')}</CardTitle>
+          <CardDescription>{t('contact.location.desc')}</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -111,6 +109,5 @@ export default function Contact() {
         </CardContent>
       </Card>
     </div>
-    </>
   )
 }

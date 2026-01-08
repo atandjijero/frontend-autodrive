@@ -610,5 +610,14 @@
     "target": "26",
     "limit": "29",
     "reviewer": "Assign reviewer"
+  },
+  {
+    "id": 69,
+    "header": "Intégrer frontend pour le module Blog (liste publique, lecture article, admin CRUD + publication, upload image)",
+    "type": "Feature",
+    "status": "not-started",
+    "target": "0",
+    "limit": "0",
+    "reviewer": "Assign reviewer"
   }
 ]

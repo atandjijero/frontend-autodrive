@@ -16,6 +16,7 @@ import {
   IconX,
   IconCheck,
   IconChevronDown,
+  IconNotification,
   type Icon,
 } from "@tabler/icons-react";
 
@@ -30,9 +31,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Link } from "react-router-dom";
 
-import { getProfile } from "@/api/apiClient";
+import { getProfile, getUnreadNotifications } from "@/api/apiClient";
 import type { UserProfile } from "@/api/apiClient";
 
 // Définition du type NavItem
@@ -48,22 +50,20 @@ function SidebarDropdown({ item }: { item: NavItem }) {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <SidebarMenuItem>
-      <SidebarMenuButton
-        onClick={() => setOpen(!open)}
-        className="flex items-center justify-between"
-      >
-        <div className="flex items-center gap-2">
-          <item.icon className="!size-5" />
-          <span>{item.title}</span>
-        </div>
-        <IconChevronDown
-          className={`transition-transform ${open ? "rotate-180" : ""}`}
-        />
-      </SidebarMenuButton>
-
-      {open && (
-        <div className="ml-6 mt-2 flex flex-col gap-1">
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <item.icon className="!size-5" />
+              <span>{item.title}</span>
+            </div>
+            <IconChevronDown
+              className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+            />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="ml-6 mt-1 space-y-1">
           {item.children?.map((child: NavItem) => (
             <Link
               key={child.url}
@@ -74,28 +74,56 @@ function SidebarDropdown({ item }: { item: NavItem }) {
               <span>{child.title}</span>
             </Link>
           ))}
-        </div>
-      )}
-    </SidebarMenuItem>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
   );
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [user, setUser] = React.useState<UserProfile | null>(null);
+  const [unreadCount, setUnreadCount] = React.useState<number>(0);
 
   React.useEffect(() => {
     const fetchProfile = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return; // Ne pas essayer de récupérer le profil si pas de token
+
       try {
         const res = await getProfile();
         setUser(res.data);
-      } catch (err) {
+      } catch (err: any) {
         console.error("Erreur lors de la récupération du profil :", err);
+        // En cas d'erreur 401 ou 400, vider le user et ne pas afficher d'erreur
+        if (err.response?.status === 401 || err.response?.status === 400) {
+          setUser(null);
+          // Optionnel: déconnecter l'utilisateur si le token est invalide
+          // localStorage.removeItem("token");
+        }
       }
     };
     fetchProfile();
   }, []);
 
+  React.useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        if (!user || user.role !== 'admin') return;
+        const res = await getUnreadNotifications();
+        setUnreadCount(res.data?.length || 0);
+      } catch (e) {
+        console.error('Erreur récupération notifications non-lues', e);
+      }
+    };
+    fetchUnread();
+  }, [user]);
+
   const navItems: NavItem[] = [
+    {
+      title: "Notifications",
+      url: "/admin/notifications",
+      icon: IconNotification,
+    },
     {
       title: "Tableau de bord",
       url: "/admin/dashboard",
@@ -149,9 +177,88 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     ],
     },
 
-    { title: "Promotions", url: "/admin/promotions", icon: IconDiscount },
-    { title: "Blog / Actualités", url: "/admin/blog", icon: IconArticle },
-    { title: "Agences", url: "/admin/agences", icon: IconMapPin },
+    {
+  title: "Promotions",
+  url: "/admin/promotions",
+  icon: IconDiscount,
+  children: [
+    {
+      title: "Ajouter une promotion",
+      url: "/admin/promotions/ajouter",
+      icon: IconPlus,
+    },
+    {
+      title: "Toutes les promotions",
+      url: "/admin/promotions/liste",
+      icon: IconEye,
+    },
+    {
+      title: "Promotions actives",
+      url: "/admin/promotions/actives",
+      icon: IconCheck,
+    },
+    /*{
+      title: "Supprimer une promotion",
+      url: "/admin/promotions/delete",
+      icon: IconX,
+    },*/
+    {
+      title: "Appliquer une promotion",
+      url: "/admin/promotions/appliquer",
+      icon: IconDiscount,
+    },
+  ],
+}
+,
+    {
+      title: "Blog et Actualités",
+      url: "/admin/blog",
+      icon: IconArticle,
+      children: [
+        {
+          title: "Tous les articles",
+          url: "/admin/blog",
+          icon: IconEye,
+        },
+        {
+          title: "Créer un article",
+          url: "/admin/blog/create",
+          icon: IconPlus,
+        },
+        {
+          title: "Articles publiés",
+          url: "/admin/blog/published",
+          icon: IconCheck,
+        },
+        {
+          title: "Brouillons",
+          url: "/admin/blog/drafts",
+          icon: IconX,
+        },
+      ],
+    },
+    {
+      title: "Agences",
+      url: "/admin/agences",
+      icon: IconMapPin,
+      children: [
+        {
+          title: "Liste des agences",
+          url: "/admin/agences/liste",
+          icon: IconEye,
+        },
+        {
+          title: "Ajouter une agence",
+          url: "/admin/agences/ajouter",
+          icon: IconPlus,
+        },
+        {
+          title: "Importer des agences",
+          url: "/admin/agences/importer",
+          icon: IconPlus,
+        },
+      ],
+    },
     { title: "Paramètres", url: "/admin/settings", icon: IconSettings },
   ];
 
@@ -219,6 +326,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   avatar: "/avatars/default.jpg",
                 }
           }
+          unreadCount={unreadCount}
         />
       </SidebarFooter>
     </Sidebar>

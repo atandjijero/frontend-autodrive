@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { PanelLeftIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Helmet } from "react-helmet-async";
 
 import { getVehicles } from "@/api/apiClient";
 import type { Vehicle } from "@/api/apiClient";
@@ -99,6 +98,7 @@ export default function Vehicules() {
   const [dispos, setDispos] = useState<Vehicle[]>([]);
 
   useEffect(() => {
+    document.title = "Véhicules – AutoDrive";
     getVehicles()
       .then((res) => setDispos(res.data))
       .catch((err) =>
@@ -111,24 +111,11 @@ export default function Vehicules() {
   };
 
   return (
-    <>
-      <Helmet>
-        <title>Nos Véhicules - Location AutoDrive | Catalogue Complet</title>
-        <meta name="description" content="Découvrez notre catalogue complet de véhicules de location. Voitures, SUV, utilitaires disponibles à la location. Réservation en ligne, GPS intégré, assurance complète." />
-        <meta name="keywords" content="location voiture, véhicule location, catalogue auto, voiture disponible, réservation véhicule, GPS voiture, assurance auto" />
-        <meta property="og:title" content="Nos Véhicules - Location AutoDrive" />
-        <meta property="og:description" content="Découvrez notre catalogue complet de véhicules de location. Réservation en ligne facile." />
-        <meta property="og:url" content="https://autodrive.com/vehicules" />
-        <meta name="twitter:card" content="summary" />
-        <link rel="canonical" href="https://autodrive.com/vehicules" />
-      </Helmet>
-
-      <SidebarProvider>
-        <VehiculesContent
-          dispos={dispos}
-          handleSearchResults={handleSearchResults}
-        />
-      </SidebarProvider>
-    </>
+    <SidebarProvider>
+      <VehiculesContent
+        dispos={dispos}
+        handleSearchResults={handleSearchResults}
+      />
+    </SidebarProvider>
   );
 }

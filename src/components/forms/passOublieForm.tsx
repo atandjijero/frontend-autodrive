@@ -12,8 +12,10 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { resetPassword } from "@/api/apiClient";
+// translations removed: using static french strings
 
 export default function PassOublieForm({ className, ...props }: React.ComponentProps<"div">) {
+  // const { t } = useTranslation();
   const { token } = useParams();
   const navigate = useNavigate();
 
@@ -32,7 +34,7 @@ export default function PassOublieForm({ className, ...props }: React.ComponentP
 
     if (!token) {
       setIsError(true);
-      setMessage("Lien invalide ou expiré.");
+      setMessage("Lien invalide.");
       return;
     }
 
@@ -56,10 +58,10 @@ export default function PassOublieForm({ className, ...props }: React.ComponentP
         confirmPassword: inputs.confirmPassword,
       });
       setIsError(false);
-      setMessage(res.data.message);
+      setMessage(res.data.message || "Mot de passe réinitialisé avec succès.");
       setTimeout(() => navigate("/connexion"), 2000);
     } catch (err: any) {
-      const errorMsg = err.response?.data?.message || "Impossible de réinitialiser le mot de passe.";
+      const errorMsg = err.response?.data?.message || "Échec de la réinitialisation.";
       setIsError(true);
       setMessage(errorMsg);
     } finally {
@@ -72,7 +74,7 @@ export default function PassOublieForm({ className, ...props }: React.ComponentP
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Réinitialiser le mot de passe</CardTitle>
-          <CardDescription>Entrez votre nouveau mot de passe ci-dessous.</CardDescription>
+            <CardDescription>Choisissez un nouveau mot de passe.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -87,7 +89,7 @@ export default function PassOublieForm({ className, ...props }: React.ComponentP
               </Field>
               <Field>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Patientez..." : "Réinitialiser"}
+                  {loading ? "Veuillez patienter..." : "Réinitialiser le mot de passe"}
                 </Button>
               </Field>
               {message && (

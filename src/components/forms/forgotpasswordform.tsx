@@ -16,8 +16,10 @@ import {
   FieldDescription,
 } from "@/components/ui/field";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+// translations removed: using static french strings
 
 export default function ForgotPasswordForm() {
+  // const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
@@ -31,9 +33,9 @@ export default function ForgotPasswordForm() {
     try {
       setLoading(true);
       const res = await forgotPassword({ email });
-      setMessage(res.data.message);
+      setMessage(res.data.message || "Email de réinitialisation envoyé.");
     } catch (err: any) {
-      setMessage(err.response?.data?.message || "Erreur lors de l'envoi du lien.");
+      setMessage(err.response?.data?.message || "Erreur lors de l'envoi.");
       setIsError(true);
     } finally {
       setLoading(false);
@@ -43,35 +45,29 @@ export default function ForgotPasswordForm() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-black">
       <Card className="w-full max-w-md shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold">
-            Mot de passe oublié
-          </CardTitle>
-          <CardDescription>
-            Entrez votre adresse email pour recevoir un lien de réinitialisation.
-          </CardDescription>
-        </CardHeader>
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold">Mot de passe oublié</CardTitle>
+            <CardDescription>Entrez votre adresse email pour recevoir un lien de réinitialisation.</CardDescription>
+          </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="email">Adresse email</FieldLabel>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="exemple@autodrive.com"
+                  placeholder="votre@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
-                <FieldDescription>
-                  Nous vous enverrons un lien de réinitialisation si l’email est valide.
-                </FieldDescription>
+                <FieldDescription>Nous enverrons un lien à cette adresse.</FieldDescription>
               </Field>
 
               <Field>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Patientez..." : "réinitialiser"}
+                  {loading ? "Envoi..." : "Envoyer le lien de réinitialisation"}
                 </Button>
               </Field>
 
@@ -80,9 +76,7 @@ export default function ForgotPasswordForm() {
                   variant={isError ? "destructive" : "default"}
                   className="mt-4"
                 >
-                  <AlertTitle>
-                    {isError ? "Erreur" : "Succès"}
-                  </AlertTitle>
+                  <AlertTitle>{isError ? "Erreur" : "Succès"}</AlertTitle>
                   <AlertDescription>{message}</AlertDescription>
                 </Alert>
               )}

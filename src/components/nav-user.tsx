@@ -31,6 +31,7 @@ import { useNavigate } from "react-router-dom"
 
 export function NavUser({
   user,
+  unreadCount,
 }: {
   user: {
     name: string
@@ -38,6 +39,7 @@ export function NavUser({
     avatar: string
     role?: "admin" | "client" | "entreprise" | "tourist"
   }
+  unreadCount?: number
 }) {
   const { isMobile } = useSidebar()
   const navigate = useNavigate()
@@ -57,12 +59,19 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
+              <div className="relative">
+                <Avatar className="h-8 w-8 rounded-lg grayscale">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">
                   {user.name[0]}
                 </AvatarFallback>
-              </Avatar>
+                </Avatar>
+                {unreadCount && unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-2 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-semibold leading-none text-white bg-red-600 rounded">
+                    {unreadCount}
+                  </span>
+                )}
+              </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="text-muted-foreground truncate text-xs">
@@ -114,7 +123,7 @@ export function NavUser({
                 <IconCreditCard />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/admin/notifications')}>
                 <IconNotification />
                 Notifications
               </DropdownMenuItem>

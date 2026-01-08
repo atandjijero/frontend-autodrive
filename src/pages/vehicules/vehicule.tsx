@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   Accordion,
   AccordionContent,
@@ -18,9 +18,13 @@ import type { Vehicle } from "@/api/apiClient";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Vehicule() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [vehicule, setVehicule] = useState<Vehicle | null>(null);
   const [zoom, setZoom] = useState(false);
 
@@ -63,6 +67,11 @@ export default function Vehicule() {
           <CardTitle className="text-3xl font-extrabold">
             {vehicule.marque} - {vehicule.immatriculation}
           </CardTitle>
+          <div className="flex justify-center items-center gap-2 mt-2">
+            <Badge variant={vehicule.disponible ? "default" : "destructive"}>
+              {vehicule.disponible ? "Disponible" : "Indisponible"}
+            </Badge>
+          </div>
         </CardHeader>
 
         <CardContent>
@@ -78,16 +87,18 @@ export default function Vehicule() {
                 Détails
               </AccordionTrigger>
               <AccordionContent>
-                <div className="space-y-2 p-4">
-                  <p>
-                    <b>Carrosserie</b>: {vehicule.carrosserie}
-                  </p>
-                  <p>
-                    <b>Transmission</b>: {vehicule.transmission}
-                  </p>
-                  <p>
-                    <b>Prix</b>: {vehicule.prix} € / jour
-                  </p>
+                <div className="space-y-2 p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p><b>Marque :</b> {vehicule.marque}</p>
+                    <p><b>Modèle :</b> {vehicule.modele}</p>
+                    <p><b>Carrosserie :</b> {vehicule.carrosserie}</p>
+                    <p><b>Transmission :</b> {vehicule.transmission}</p>
+                  </div>
+                  <div>
+                    <p><b>Immatriculation :</b> {vehicule.immatriculation}</p>
+                    <p><b>Prix :</b> {vehicule.prix} € / jour</p>
+                    <p><b>Disponibilité :</b> {vehicule.disponible ? "Oui" : "Non"}</p>
+                  </div>
                 </div>
               </AccordionContent>
             </AccordionItem>
@@ -95,23 +106,36 @@ export default function Vehicule() {
 
           <Separator className="my-4" />
 
-          {/* Bouton Réserver toujours visible */}
+          {/* Bouton Réserver */}
           <div className="p-4 text-center">
-            <p className="mb-4 text-sm text-muted-foreground">
-              Connectez-vous pour pouvoir réserver ce véhicule.
-            </p>
-            <Link to="/connexion">
-              <Button
-                size="lg"
-                className="
-                  mx-auto block font-semibold px-6
-                  bg-white text-black hover:bg-gray-200
-                  dark:bg-black dark:text-white dark:hover:bg-gray-800
-                "
-              >
-                Se connecter pour réserver
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <p className="mb-4 text-sm text-muted-foreground">
+                  Réservez ce véhicule maintenant.
+                </p>
+                <Button
+                  size="lg"
+                  className="mx-auto block font-semibold px-6 bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={() => navigate(`/reservation/${id}`)}
+                >
+                  Réserver ce véhicule
+                </Button>
+              </>
+            ) : (
+              <>
+                <p className="mb-4 text-sm text-muted-foreground">
+                  Connectez-vous pour pouvoir réserver ce véhicule.
+                </p>
+                <Link to={`/connexion?redirect=/reservation/${id}`}>
+                  <Button
+                    size="lg"
+                    className="mx-auto block font-semibold px-6 bg-gray-600 hover:bg-gray-700 text-white"
+                  >
+                    Se connecter pour réserver
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>

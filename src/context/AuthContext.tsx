@@ -2,18 +2,23 @@ import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 
 type User = {
-  _id: string;
+  id: string;
   email: string;
-  role?: string;
+  nom: string;
+  prenom: string;
+  role: "admin" | "client" | "entreprise" | "tourist";
+  token: string;
 };
 
 type AuthContextType = {
   user: User | null;
-  login: (user: User, token: string) => void;
+  login: (user: Omit<User, "token">, token: string) => void;
   logout: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export { AuthContext };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -22,20 +27,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Vérifie si un token est en localStorage
     const token = localStorage.getItem("token");
     const email = localStorage.getItem("email");
-    const role = localStorage.getItem("role");
+    const role = localStorage.getItem("userRole");
     const id = localStorage.getItem("userId");
+    const nom = localStorage.getItem("userNom");
+    const prenom = localStorage.getItem("userPrenom");
 
-    if (token && email && id) {
-      setUser({ _id: id, email, role: role || "user" });
+    if (token && email && id && role && nom && prenom) {
+      setUser({ id, email, nom, prenom, role: role as User["role"], token });
     }
   }, []);
 
-  const login = (userData: User, token: string) => {
+  const login = (userData: Omit<User, "token">, token: string) => {
     localStorage.setItem("token", token);
     localStorage.setItem("email", userData.email);
-    localStorage.setItem("userId", userData._id);
-    if (userData.role) localStorage.setItem("role", userData.role);
-    setUser(userData);
+    localStorage.setItem("userId", userData.id);
+    localStorage.setItem("userNom", userData.nom);
+    localStorage.setItem("userPrenom", userData.prenom);
+    localStorage.setItem("userRole", userData.role);
+    setUser({ ...userData, token });
   };
 
   const logout = () => {

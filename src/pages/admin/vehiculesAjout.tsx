@@ -39,8 +39,8 @@ export default function VehiculesAjout() {
         style: { background: "#e6f4ea", color: "#1e7e34" }, // vert pro
       });
 
-      // ✅ Redirection professionnelle
-      navigate("/vehicules/liste");
+      // Redirection professionnelle
+      navigate("/admin/dashboard");
 
     } catch (error: any) {
       toast.error(
