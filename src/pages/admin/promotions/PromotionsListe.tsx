@@ -29,6 +29,29 @@ export default function PromotionsListe() {
     }
   };
 
+  const getStatusBadge = (promo: Promotion) => {
+    const now = new Date();
+    const dateFin = new Date(promo.dateFin);
+
+    if (promo.statut === 'Inactive') {
+      return <Badge variant="destructive">Inactive</Badge>;
+    }
+
+    if (dateFin < now) {
+      return <Badge variant="destructive">Expirée</Badge>;
+    }
+
+    if (promo.statut === 'Active') {
+      return <Badge variant="secondary">Active</Badge>;
+    }
+
+    return <Badge variant="outline">{promo.statut}</Badge>;
+  };
+
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString('fr-FR');
+  };
+
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
       {promotions.map((promo) => (
@@ -42,6 +65,9 @@ export default function PromotionsListe() {
               {promo.type === "pourcentage" ? `${promo.valeur}%` : `${promo.valeur} €`}
             </p>
             <p className="text-sm text-muted-foreground">
+              Du {formatDate(promo.dateDebut)} au {formatDate(promo.dateFin)}
+            </p>
+            <p className="text-sm text-muted-foreground">
               Durée min : {promo.dureeMinLocation} jours
             </p>
             <p className="text-sm text-muted-foreground">
@@ -53,7 +79,7 @@ export default function PromotionsListe() {
             <p className="text-sm text-muted-foreground">
               Codes : {promo.codesPromo.join(', ')}
             </p>
-            <Badge variant="secondary">{promo.statut}</Badge>
+            {getStatusBadge(promo)}
             <div className="mt-4 flex gap-2">
               <Button
                 variant="outline"

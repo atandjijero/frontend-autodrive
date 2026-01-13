@@ -14,6 +14,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 import { getVehicles } from "@/api/apiClient";
 import type { Vehicle } from "@/api/apiClient";
+import { useAuth } from "@/hooks/useAuth";
 
 function VehiculesContent({
   dispos,
@@ -23,6 +24,7 @@ function VehiculesContent({
   handleSearchResults: (results: Vehicle[]) => void;
 }) {
   const { isMobile, toggleSidebar } = useSidebar();
+  const { user } = useAuth();
 
   return (
     <div className="flex w-full">
@@ -83,7 +85,11 @@ function VehiculesContent({
                   "
                   asChild
                 >
-                  <Link to={`/reservation/${dispo._id}`}>Réserver</Link>
+                  {user ? (
+                    <Link to={`/reservation/${dispo._id}`}>Réserver</Link>
+                  ) : (
+                    <Link to={`/connexion?redirect=/reservation/${dispo._id}`}>Se connecter pour réserver</Link>
+                  )}
                 </Button>
               </CardContent>
             </Card>

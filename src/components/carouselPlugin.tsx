@@ -49,22 +49,22 @@ export function CarouselPlugin() {
     <div className="relative">
       <Carousel
         plugins={[plugin.current]}
-        className="w-full max-w-6xl mx-auto"
+        className="w-full"
         onMouseEnter={plugin.current.stop}
         onMouseLeave={() => plugin.current.play()}
       >
         <CarouselContent>
           {slides.map((slide, index) => (
             <CarouselItem key={index}>
-              <div className="p-1">
-                <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <CardContent className="flex flex-col md:flex-row items-center justify-between p-8 h-48">
+              <div className="p-2">
+                <Card className="bg-gray-100 dark:bg-gray-800 border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <CardContent className="flex flex-col md:flex-row items-center justify-between p-12 h-64">
                     <div className="flex-1 text-center md:text-left">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-3xl">{slide.icon}</span>
-                        <h3 className="text-xl font-bold text-gray-800">{slide.title}</h3>
+                      <div className="flex items-center gap-4 mb-4">
+                        <span className="text-4xl">{slide.icon}</span>
+                        <h3 className="text-2xl font-bold text-foreground">{slide.title}</h3>
                       </div>
-                      <p className="text-gray-600">{slide.description}</p>
+                      <p className="text-muted-foreground text-lg leading-relaxed">{slide.description}</p>
                     </div>
                   </CardContent>
                 </Card>

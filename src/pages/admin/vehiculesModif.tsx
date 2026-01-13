@@ -91,28 +91,32 @@ export default function VehiculesModif() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold mb-4">
-        Modifier {vehicle.marque} {vehicle.modele}
-      </h1>
-
-      <Card className="mt-4 w-full max-w-2xl">
-        <CardHeader>
-          <CardTitle>
+      <div className="flex justify-center">
+        <div className="w-full max-w-4xl">
+          <h1 className="text-2xl font-bold mb-4">
             Modifier {vehicle.marque} {vehicle.modele}
-          </CardTitle>
-          <CardDescription>
-            Mettez à jour les informations du véhicule puis enregistrez.
-          </CardDescription>
-        </CardHeader>
+          </h1>
 
-        <CardContent>
-          <VehiculeForm defaultValues={vehicle} onSubmit={handleUpdate} />
+          <Card className="mt-4 w-full">
+            <CardHeader>
+              <CardTitle>
+                Modifier {vehicle.marque} {vehicle.modele}
+              </CardTitle>
+              <CardDescription>
+                Mettez à jour les informations du véhicule puis enregistrez.
+              </CardDescription>
+            </CardHeader>
 
-          <Button form="vehicule-form" type="submit" className="mt-4">
-            Enregistrer les modifications
-          </Button>
-        </CardContent>
-      </Card>
+            <CardContent>
+              <VehiculeForm defaultValues={vehicle} onSubmit={handleUpdate} />
+
+              <Button form="vehicule-form" type="submit" className="mt-4">
+                Enregistrer les modifications
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </>
   );
 }

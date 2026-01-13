@@ -53,6 +53,12 @@ import AgencesAjout from "./pages/admin/agencesAjout";
 import AgencesModif from "./pages/admin/agencesModif";
 import AgencesImport from "./pages/admin/agencesImport";
 import AdminBlog from "@/pages/admin/blog";
+import ContratsEntreprise from "@/pages/entreprise/contrats";
+import ContratsNouveau from "@/pages/entreprise/contratsNouveau";
+import ContratsAdmin from "@/pages/admin/contrats/ContratsAdmin";
+import DownloadRedirect from "@/pages/DownloadRedirect";
+//import ContratsEdit from "@/pages/admin/contrats/ContratsEdit";
+import VehiculesSupprimer from "./pages/admin/vehiculesSupprimer";
 
 
 
@@ -93,6 +99,8 @@ function App() {
             <Route path="/entreprise/profil" element={<ProfileWithLayout role="entreprise" />} />
             <Route path="/entreprise/temoignages" element={<TemoignagesWithLayout role="entreprise" />} />
             <Route path="/entreprise/reservations" element={<ReservationList />} />
+            <Route path="/entreprise/contrats" element={<ContratsEntreprise />} />
+            <Route path="/entreprise/contrats/nouveau" element={<ContratsNouveau />} />
             <Route path="/touriste/dashboard" element={<DashboardTouriste />} />
             <Route path="/touriste/profil" element={<ProfileWithLayout role="touriste" />} />
             <Route path="/touriste/temoignages" element={<TemoignagesWithLayout role="touriste" />} />
@@ -109,6 +117,7 @@ function App() {
             <Route path="vehicules/ajouter" element={<VehiculesAjout />} />
             <Route path="vehicules/liste" element={<VehiculesListe />} />
             <Route path="vehicules/modifier/:id" element={<VehiculesModif />} />
+            <Route path="vehicules/supprimer/:id" element={<VehiculesSupprimer />} />
             <Route path="reservations/liste" element={<ReservationList />} />
             <Route path="paiements/liste" element={<PaiementsList />} />
             <Route path="clients/liste" element={<ClientsListe />} />
@@ -126,12 +135,18 @@ function App() {
             <Route path="agences/ajouter" element={<AgencesAjout />} />
             <Route path="agences/modifier/:id" element={<AgencesModif />} />
             <Route path="agences/importer" element={<AgencesImport />} />
+
+            {/* Routes Contrats */}
+            <Route path="contrats/liste" element={<ContratsAdmin />} />
+            <Route path="contrats/pending" element={<ContratsAdmin />} />
+            <Route path="contrats/approved" element={<ContratsAdmin />} />
             </Route>
 
 
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<Article />} />
             <Route path="/blog/article/:id" element={<Article />} />
+            <Route path="/contracts/:id/download" element={<DownloadRedirect />} />
             
             {/* correction */}
           </Routes>

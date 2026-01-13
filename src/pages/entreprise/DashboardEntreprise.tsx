@@ -2,8 +2,10 @@
 import { Link } from "react-router-dom";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { Sidebar } from "@/components/layout/Sidebar";
-import { getDashboard, getUserTemoignages } from "@/api/apiClient"; 
-import type { DashboardResponse, Temoignage } from "@/api/apiClient";
+import { getDashboard, getUserTemoignages, getContracts, apiClient } from "@/api/apiClient"; 
+import generateContractPdf from "@/lib/generateContractPdf";
+import { toast } from "sonner";
+import type { DashboardResponse, Temoignage, Contract } from "@/api/apiClient";
 import { useAuth } from "@/context/AuthContext";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -31,18 +33,21 @@ export default function DashboardEntreprise() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userTestimonials, setUserTestimonials] = useState<Temoignage[]>([]);
+  const [contracts, setContracts] = useState<Contract[]>([]);
   const { user } = useAuth();
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [dashboardRes, userTestimonialsRes] = await Promise.all([
+        const [dashboardRes, userTestimonialsRes, contractsRes] = await Promise.all([
           getDashboard(),
-          getUserTemoignages() // <-- récupère directement les témoignages du user connecté
+          getUserTemoignages(), // récupère directement les témoignages du user connecté
+          getContracts(),
         ]);
 
         setData(dashboardRes.data);
         setUserTestimonials(userTestimonialsRes.data);
+        setContracts(contractsRes.data || []);
 
         setLoading(false);
       } catch (err) {
@@ -232,6 +237,74 @@ export default function DashboardEntreprise() {
                         </CardHeader>
                         <CardContent>
                           <p className="text-sm text-muted-foreground">{t.message}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Contrats approuvés */}
+              <div className="space-y-4 mt-8">
+                <h3 className="text-lg font-semibold">Contrats approuvés</h3>
+                {contracts.filter(c => c.statut === 'Approved').length === 0 ? (
+                  <Card>
+                    <CardContent className="py-6 text-center text-muted-foreground">
+                      Aucun contrat approuvé pour le moment.
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {contracts.filter(c => c.statut === 'Approved').map((c) => (
+                      <Card key={c._id} className="hover:shadow-md transition-shadow">
+                        <CardHeader>
+                          <CardTitle className="text-base">{c.vehicleId ? `${c.vehicleId.marque} ${c.vehicleId.modele}` : 'Véhicule'}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground">Montant: {c.montantTotal} €</p>
+                            <div className="mt-3">
+                              <Button variant="outline" size="sm" onClick={async () => {
+                                try {
+                                  const resp = await apiClient.get(`/contracts/${c._id}/download`);
+                                  let contract = resp.data;
+                                  let agency: any = null;
+                                  try {
+                                    const agencyId = contract.agencyId || contract.agenceId || contract.agence?._id;
+                                    if (agencyId) {
+                                      const agencyResp = await apiClient.get(`/agencies/${agencyId}`);
+                                      agency = agencyResp.data;
+                                    }
+                                  } catch (e) {
+                                    console.warn('Unable to fetch agency by id', e);
+                                  }
+                                  if (!agency) {
+                                    try {
+                                      const activeRes = await apiClient.get('/agencies/agencies/active/all?limit=1');
+                                      if ((activeRes as any).data && (activeRes as any).data.length) {
+                                        agency = (activeRes as any).data[0];
+                                      }
+                                    } catch (e) {
+                                      console.warn('Unable to fetch active agency', e);
+                                    }
+                                  }
+                                  const logoFieldCandidates = [agency?.logo, contract.agenceLogo, contract.logo, contract.agencyLogo, contract.agenceLogoPath];
+                                  const logoCandidate = logoFieldCandidates.find(Boolean) as string | undefined;
+                                  const doc = await generateContractPdf(contract, { agency: agency || undefined, agencyLogoUrl: logoCandidate || undefined });
+                                  const blob = doc.output('blob');
+                                  const url = window.URL.createObjectURL(blob);
+                                  const link = document.createElement('a');
+                                  link.href = url;
+                                  link.setAttribute('download', `contrat-${c._id}.pdf`);
+                                  document.body.appendChild(link);
+                                  link.click();
+                                  link.parentNode?.removeChild(link);
+                                  window.URL.revokeObjectURL(url);
+                                } catch (err) {
+                                  console.error('Erreur téléchargement contrat:', err);
+                                  toast.error('Impossible de télécharger le reçu');
+                                }
+                              }}>Télécharger le reçu</Button>
+                            </div>
                         </CardContent>
                       </Card>
                     ))}

@@ -17,6 +17,7 @@ import {
   IconCheck,
   IconChevronDown,
   IconNotification,
+  IconFileText,
   type Icon,
 } from "@tabler/icons-react";
 
@@ -256,6 +257,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           title: "Importer des agences",
           url: "/admin/agences/importer",
           icon: IconPlus,
+        },
+      ],
+    },
+    {
+      title: "Contrats",
+      url: "/admin/contrats",
+      icon: IconFileText,
+      children: [
+        {
+          title: "Tous les contrats",
+          url: "/admin/contrats/liste",
+          icon: IconEye,
+        },
+        {
+          title: "Contrats en attente",
+          url: "/admin/contrats/pending",
+          icon: IconCalendar,
+        },
+        {
+          title: "Contrats approuvés",
+          url: "/admin/contrats/approved",
+          icon: IconCheck,
         },
       ],
     },

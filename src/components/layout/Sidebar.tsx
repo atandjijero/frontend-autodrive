@@ -17,27 +17,28 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 
-import { Home, Calendar, CreditCard, MessageSquare, User, LogOut, Settings, FileText } from "lucide-react";
+import { Home, Calendar, CreditCard, MessageSquare, User, LogOut, Settings, FileText, Plus } from "lucide-react";
 
 const navItemsByRole = {
   client: [
     { label: "Dashboard", icon: Home, href: "/client/dashboard" },
-    { label: "Réservations", icon: Calendar, href: "/client/reservations" },
-    { label: "Paiements", icon: CreditCard, href: "/client/paiements" },
+    { label: "Réservations", icon: Calendar, href: "/client/dashboard" },
+    { label: "Paiements", icon: CreditCard, href: "/client/dashboard" },
     { label: "Témoignages", icon: MessageSquare, href: "/client/temoignages" },
     //{ label: "Profil", icon: User, href: "/client/profil" },
   ],
   entreprise: [
     { label: "Dashboard", icon: Home, href: "/entreprise/dashboard" },
     { label: "Témoignages", icon: MessageSquare, href: "/entreprise/temoignages" },
-    { label: "Réservations", icon: Calendar, href: "/entreprise/reservations" },
-    { label: "Paiements", icon: CreditCard, href: "/entreprise/paiements" },
+    { label: "Réservations", icon: Calendar, href: "/entreprise/dashboard" },
+    { label: "Paiements", icon: CreditCard, href: "/entreprise/dashboard" },
     { label: "Contrats", icon: FileText, href: "/entreprise/contrats" },
+    { label: "Nouveau contrat", icon: Plus, href: "/entreprise/contrats/nouveau" },
   ],
   touriste: [
     { label: "Dashboard", icon: Home, href: "/touriste/dashboard" },
-    { label: "Réservations", icon: Calendar, href: "/touriste/reservations" },
-    { label: "Paiements", icon: CreditCard, href: "/touriste/paiements" },
+    { label: "Réservations", icon: Calendar, href: "/touriste/dashboard" },
+    { label: "Paiements", icon: CreditCard, href: "/touriste/dashboard" },
     { label: "Témoignages", icon: MessageSquare, href: "/touriste/temoignages" },
     //{ label: "Profil", icon: User, href: "/touriste/profil" },
   ],

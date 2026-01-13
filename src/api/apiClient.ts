@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
+import { toast } from "sonner";
 
 // ---------------- DTOs ----------------
 export interface CreateUserDto {
@@ -95,6 +96,7 @@ export interface Agency {
   description?: string;
   logo?: string;
   location?: LocationDto;
+  distance?: number; // Distance en mètres depuis la position de l'utilisateur
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -108,7 +110,7 @@ export interface AgenciesListResponseDto {
 }
 
 // ---------------- Axios Config ----------------
-const apiClient: AxiosInstance = axios.create({
+export const apiClient: AxiosInstance = axios.create({
   baseURL: "http://localhost:9000",
   headers: {
     "Content-Type": "application/json",
@@ -160,6 +162,19 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  // Debug: log whether Authorization header is present
+  try {
+    const hasAuth = !!config.headers?.Authorization;
+    // Mask token for debug (show first/last 4 chars)
+    let masked = null;
+    if (token) {
+      masked = `${token.slice(0,4)}...${token.slice(-4)}`;
+    }
+    // Use console.debug so it's easy to filter in devtools
+    console.debug("apiClient request:", config.method, config.url, "hasAuthorization:", hasAuth, "token:", masked);
+  } catch (e) {
+    // ignore logging errors
+  }
   return config;
 });
 
@@ -172,8 +187,16 @@ apiClient.interceptors.response.use(
       const respData = error.response.data;
       if (status === 401) {
         console.error("Non authentifié : veuillez vous connecter.", { status, respData });
+        try {
+          toast.error("Session expirée ou non autorisée — veuillez vous reconnecter");
+        } catch (e) {}
+        // Redirect to login page
+        try {
+          window.location.replace('/connexion');
+        } catch (e) {}
       } else if (status === 403) {
         console.error("Accès interdit : rôle insuffisant ou token invalide.", { status, respData });
+        try { toast.error("Accès interdit"); } catch (e) {}
       } else if (status >= 500) {
         try {
           console.error("Erreur serveur :", status, JSON.stringify(respData, null, 2));
@@ -775,5 +798,89 @@ export const importAgencies = (file: File) => {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 };
+
+// ---------------- CONTRACT DTOs ----------------
+export interface CreateContractDto {
+  vehicleId?: string;
+  dateDebut: string;
+  dateFin: string;
+  montantTotal: number;
+  acompteVerse?: number;
+  conditionsSpeciales?: string;
+}
+
+export interface UpdateContractDto {
+  vehicleId?: string;
+  statut?: 'Pending' | 'Approved' | 'Rejected';
+  commentaires?: string;
+  montantTotal?: number;
+  acompteVerse?: number;
+  conditionsSpeciales?: string;
+  dateValidation?: string;
+  validePar?: string;
+}
+
+export interface Contract {
+  _id: string;
+  userId: {
+    _id: string;
+    nom: string;
+    prenom: string;
+    email: string;
+    telephone: string;
+    role: string;
+  };
+  vehicleId?: {
+    _id: string;
+    marque: string;
+    modele: string;
+    immatriculation: string;
+    prix: number;
+    photos?: string[];
+  };
+  dateDebut: string;
+  dateFin: string;
+  montantTotal: number;
+  acompteVerse: number;
+  conditionsSpeciales?: string;
+  statut: 'Pending' | 'Approved' | 'Rejected';
+  commentaires?: string;
+  dateValidation?: string;
+  validePar?: {
+    _id: string;
+    nom: string;
+    prenom: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ---------------- CONTRACT API FUNCTIONS ----------------
+export const createContract = (contractData: CreateContractDto) =>
+  apiClient.post<Contract>('/contracts', contractData);
+
+export const getContracts = () =>
+  apiClient.get<Contract[]>('/contracts');
+
+export const getAllContracts = () =>
+  apiClient.get<Contract[]>('/contracts');
+
+export const getContract = (id: string) =>
+  apiClient.get<Contract>(`/contracts/${id}`);
+
+export const updateContract = (id: string, updateData: UpdateContractDto) =>
+  apiClient.put<Contract>(`/contracts/${id}`, updateData);
+
+// Valider ou rejeter un contrat (Admin uniquement)
+export const validateContract = (
+  id: string,
+  data: { valider: boolean; commentaires?: string }
+) => apiClient.post<Contract>(`/contracts/${id}/validate`, data);
+
+export const deleteContract = (id: string) =>
+  apiClient.delete(`/contracts/${id}`);
+
+export const downloadContractPDF = (id: string) =>
+  apiClient.get(`/contracts/${id}/download`, { responseType: 'blob' });
 
 
