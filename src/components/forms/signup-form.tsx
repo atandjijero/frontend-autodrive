@@ -19,15 +19,14 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select"; 
-import { Link, useNavigate } from "react-router-dom";
+} from "@/components/ui/select";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { register } from "@/api/apiClient";
 // translations removed: using static french strings
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   // const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const [inputs, setInputs] = useState({
     prenom: "",
@@ -57,7 +56,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     }
 
     try {
-      const res = await register({
+      await register({
         nom: inputs.nom,
         prenom: inputs.prenom,
         email: inputs.email,
@@ -67,9 +66,18 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         adresse: inputs.adresse || undefined,
         role: inputs.role as "client" | "entreprise" | "tourist",
       });
+          setMessage(
+            `Inscription réussie ! 🎉
 
-      setMessage(res.data.message || "Inscription réussie");
-      setTimeout(() => navigate("/connexion"), 2000);
+Bienvenue sur AutoDrive ! 
+
+Votre compte a été créé avec succès. Voici les prochaines étapes :
+1. Vérifiez votre email : Un message de vérification a été envoyé à votre adresse email.
+2. Cliquez sur le lien : Dans l'email, cliquez sur "Vérifier mon email".
+3. Connectez-vous : Après vérification, vous serez redirigé vers la page de connexion pour accéder à votre compte.
+
+Le lien de vérification est valable pendant 24 heures.`
+          );
     } catch (err: any) {
       console.error("Erreur:", err.response?.data || err.message);
       setMessage("Erreur lors de l'inscription.");
@@ -157,7 +165,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             <Field>
               <Button type="submit" className="w-full text-sm py-2">S'inscrire</Button>
               {message && (
-                <p className="text-center text-xs mt-2 text-green-600 dark:text-green-400">{message}</p>
+                <div className="text-center text-xs mt-2 text-green-600 dark:text-green-400 whitespace-pre-line">
+                  {message}
+                </div>
               )}
               <FieldDescription className="px-4 text-center text-xs">
                 Vous avez déjà un compte ?{" "}

@@ -253,6 +253,9 @@ export const forgotPassword = (data: ForgotPasswordDto) =>
 export const resetPassword = (data: ResetPasswordDto) =>
   apiClient.post<{ message: string }>("/auth/reset-password", data);
 
+export const verifyEmail = (token: string) =>
+  apiClient.post<{ message: string }>("/auth/verify-email", { token });
+
 export const getProfile = () =>
   apiClient.get<UserProfile>("/auth/profil");
 
@@ -461,7 +464,7 @@ export interface Temoignage {
   message: string;
 }
 
-// Récupérer tous les témoignages
+// Récupérer tous les témoignages (PUBLIC - endpoint getAllTemoignages du backend)
 export const getTemoignages = () =>
   apiClient.get<Temoignage[]>("/dashboard/temoignages");
 
@@ -471,7 +474,7 @@ export const getUserTemoignages = () =>
 
 // Ajouter un témoignage
 export const addTemoignage = (data: { message: string }) =>
-  apiClient.post<string[]>("/dashboard/temoignages", data);
+  apiClient.post<Temoignage[]>("/dashboard/temoignages", data);
 
 // Supprimer un témoignage
 export const deleteTemoignage = (userId: string, message: string) =>
@@ -811,7 +814,7 @@ export interface CreateContractDto {
 
 export interface UpdateContractDto {
   vehicleId?: string;
-  statut?: 'Pending' | 'Approved' | 'Rejected';
+  statut?: 'pending' | 'approved' | 'rejected';
   commentaires?: string;
   montantTotal?: number;
   acompteVerse?: number;
@@ -843,7 +846,7 @@ export interface Contract {
   montantTotal: number;
   acompteVerse: number;
   conditionsSpeciales?: string;
-  statut: 'Pending' | 'Approved' | 'Rejected';
+  statut: 'pending' | 'approved' | 'rejected';
   commentaires?: string;
   dateValidation?: string;
   validePar?: {

@@ -38,7 +38,7 @@ interface Contract {
   montantTotal: number;
   acompteVerse: number;
   conditionsSpeciales?: string;
-  statut: 'Pending' | 'Approved' | 'Rejected';
+  statut: 'pending' | 'approved' | 'rejected';
   commentaires?: string;
   dateValidation?: string;
   validePar?: {
@@ -96,12 +96,12 @@ export default function AdminContrats() {
     }
   };
 
-  const updateContractStatus = async (contractId: string, statut: 'Approved' | 'Rejected') => {
+  const updateContractStatus = async (contractId: string, statut: 'approved' | 'rejected') => {
     try {
       console.log('Updating contract status:', contractId, statut, commentaires);
       setUpdating(true);
       setError(null);
-      const data: any = { valider: statut === 'Approved' };
+      const data: any = { valider: statut === 'approved' };
       if (commentaires.trim()) data.commentaires = commentaires;
 
       console.log('Sending validation data:', data);
@@ -114,7 +114,7 @@ export default function AdminContrats() {
       setDialogOpen(false);
       setPendingIntent(null);
       setCommentaires('');
-      setStatusMessage({ type: 'success', text: statut === 'Approved' ? 'Contrat approuvé avec succès.' : 'Contrat rejeté.' });
+      setStatusMessage({ type: 'success', text: statut === 'approved' ? 'Contrat approuvé avec succès.' : 'Contrat rejeté.' });
       setTimeout(() => setStatusMessage({ type: null, text: '' }), 4000);
     } catch (error: any) {
       console.error('Erreur lors de la mise à jour du contrat:', error);
@@ -245,9 +245,9 @@ export default function AdminContrats() {
 
   const getStatusBadge = (statut: string) => {
     switch (statut) {
-      case 'Approved':
+      case 'approved':
         return <Badge className="bg-green-600 text-white dark:bg-green-500 dark:text-white">✓ Approuvé</Badge>;
-      case 'Rejected':
+      case 'rejected':
         return <Badge variant="destructive" className="dark:bg-red-900 dark:text-red-100">✗ Rejeté</Badge>;
       default:
         return <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">⏳ En attente</Badge>;
@@ -340,8 +340,8 @@ export default function AdminContrats() {
             <Card key={contract._id} className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-black shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
               {/* Status Bar */}
               <div className={`h-1.5 ${
-                contract.statut === 'Approved' ? 'bg-gradient-to-r from-green-500 to-green-600' :
-                contract.statut === 'Rejected' ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                contract.statut === 'approved' ? 'bg-gradient-to-r from-green-500 to-green-600' :
+                contract.statut === 'rejected' ? 'bg-gradient-to-r from-red-500 to-red-600' :
                 'bg-gradient-to-r from-amber-500 to-amber-600'
               }`} />
               
@@ -449,7 +449,7 @@ export default function AdminContrats() {
                 )}
 
                 {/* Approval Info */}
-                {contract.statut === 'Approved' && contract.dateValidation && (
+                {contract.statut === 'approved' && contract.dateValidation && (
                   <div className="mb-4 p-3 bg-white dark:bg-black rounded-lg border border-slate-200 dark:border-slate-800 flex items-start gap-3">
                     <CheckCircle className="h-4 w-4 text-slate-600 dark:text-slate-400 mt-0.5 flex-shrink-0" />
                     <div>
@@ -475,7 +475,7 @@ export default function AdminContrats() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" className="w-48 bg-white dark:bg-black border border-slate-200 dark:border-slate-800">
-                      {contract.statut !== 'Approved' && (
+                      {contract.statut !== 'approved' && (
                         <DropdownMenuItem asChild>
                           <button
                             className="w-full cursor-pointer dark:text-slate-100 dark:hover:bg-transparent"
@@ -491,7 +491,7 @@ export default function AdminContrats() {
                           </button>
                         </DropdownMenuItem>
                       )}
-                      {contract.statut !== 'Rejected' && (
+                      {contract.statut !== 'rejected' && (
                         <DropdownMenuItem asChild>
                           <button
                             className="w-full cursor-pointer dark:text-slate-100 dark:hover:bg-transparent"
@@ -537,7 +537,7 @@ export default function AdminContrats() {
                     </DropdownMenuContent>
                   </DropdownMenu>
 
-                  {contract.statut === 'Approved' && (
+                  {contract.statut === 'approved' && (
                     <Button
                       size="sm"
                       variant="outline"
@@ -702,7 +702,7 @@ export default function AdminContrats() {
 
                           <div className="flex gap-2">
                             <Button
-                              onClick={() => updateContractStatus(selectedContract._id, 'Rejected')}
+                              onClick={() => updateContractStatus(selectedContract._id, 'rejected')}
                               className="flex-1 bg-red-600 hover:bg-red-700 text-white dark:bg-red-700 dark:hover:bg-red-800"
                               disabled={updating}
                             >
@@ -710,7 +710,7 @@ export default function AdminContrats() {
                               {updating ? 'Rejet...' : 'Rejeter'}
                             </Button>
                             <Button
-                              onClick={() => updateContractStatus(selectedContract._id, 'Approved')}
+                              onClick={() => updateContractStatus(selectedContract._id, 'approved')}
                               className="flex-1 bg-green-600 hover:bg-green-700 text-white dark:bg-green-500 dark:hover:bg-green-600"
                               disabled={updating}
                             >

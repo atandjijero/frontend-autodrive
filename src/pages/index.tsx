@@ -63,9 +63,23 @@ export default function HomePage() {
 
   // Charger les témoignages
   useEffect(() => {
-    getTemoignages()
-      .then((res) => setTemoignages(res.data))
-      .catch(() => setError("Impossible de charger les témoignages."));
+    const loadTemoignages = () => {
+      getTemoignages()
+        .then((res) => {
+          console.log("✅ Témoignages chargés:", res.data);
+          setTemoignages(res.data);
+        })
+        .catch((err) => {
+          console.error("❌ Erreur chargement témoignages:", err.response?.status, err.message);
+        });
+    };
+
+    loadTemoignages();
+    
+    // Rafraîchir les témoignages toutes les 3 secondes pour afficher les nouveaux
+    const interval = setInterval(loadTemoignages, 3000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   // Construire la liste des véhicules en promotion
@@ -342,7 +356,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {temoignages.slice(0, 3).map((temoignage, index) => (
+              {temoignages.slice(-6).map((temoignage, index) => (
                 <Card key={index} className="hover:shadow-2xl transition-all duration-500 hover:scale-105 border-0 bg-gray-50 dark:bg-gray-800 animate-slide-in-up" style={{ animationDelay: `${600 + index * 100}ms` }}>
                   <CardContent className="p-8">
                     <div className="flex items-center mb-6">

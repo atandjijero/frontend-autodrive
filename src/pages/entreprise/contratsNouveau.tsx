@@ -239,7 +239,7 @@ export default function NouveauContrat() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="montantTotal">
-                        {formData.vehicleId ? 'Montant total calculé' : 'Montant total (à saisir manuellement)'}
+                        {formData.vehicleId ? 'Montant total calculé' : 'Montant total (Calculé automatiquement si véhicule sélectionné)'}
                       </Label>
                       {formData.vehicleId ? (
                         <Input

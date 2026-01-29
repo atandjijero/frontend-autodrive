@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { appliquerPromotion, getActivePromotions } from "@/api/apiClient";
+import { appliquerPromotion, getActivePromotions, getVehicleById } from "@/api/apiClient";
 import type { Promotion } from "@/api/apiClient";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,19 @@ export default function PromotionsAppliquer() {
   useEffect(() => {
     getActivePromotions().then((res) => setPromotions(res.data));
   }, []);
+
+  useEffect(() => {
+    if (promotionId) {
+      const selectedPromo = promotions.find(p => p._id === promotionId);
+      if (selectedPromo && selectedPromo.vehiculeId) {
+        getVehicleById(selectedPromo.vehiculeId).then((res) => {
+          setMontantBase(res.data.prix);
+        }).catch(() => {
+          setMontantBase(0);
+        });
+      }
+    }
+  }, [promotionId, promotions]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,8 +64,8 @@ export default function PromotionsAppliquer() {
             </Select>
           </div>
           <div>
-            <Label htmlFor="montantBase" className="text-lg">Montant de base</Label>
-            <Input id="montantBase" type="number" value={montantBase} onChange={(e) => setMontantBase(Number(e.target.value))} className="h-12" />
+            <Label htmlFor="montantBase" className="text-lg">Montant de base (auto-rempli)</Label>
+            <Input id="montantBase" type="number" value={montantBase} disabled className="h-12" />
           </div>
           <Button type="submit" className="w-full h-12 text-lg">Appliquer</Button>
         </form>

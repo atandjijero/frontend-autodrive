@@ -31,7 +31,7 @@ interface Contract {
   montantTotal: number;
   acompteVerse: number;
   conditionsSpeciales?: string;
-  statut: 'Pending' | 'Approved' | 'Rejected';
+  statut: 'pending' | 'approved' | 'rejected';
   dateValidation?: string;
   validePar?: {
     nom: string;
@@ -129,9 +129,9 @@ export default function ContratsEntreprise() {
 
   const getStatusBadge = (statut: string) => {
     switch (statut) {
-      case 'Approved':
+      case 'approved':
         return <Badge variant="secondary" className="bg-green-500">Approuvé</Badge>;
-      case 'Rejected':
+      case 'rejected':
         return <Badge variant="destructive">Rejeté</Badge>;
       default:
         return <Badge variant="outline">En attente</Badge>;
@@ -253,7 +253,7 @@ export default function ContratsEntreprise() {
                       </div>
                     )}
 
-                    {contract.statut === 'Approved' && contract.dateValidation && (
+                    {contract.statut === 'approved' && contract.dateValidation && (
                       <div className="mb-4 p-4 bg-white border border-gray-100 rounded-lg shadow-sm flex items-start gap-3">
                         <div className="w-1 h-10 bg-green-500 rounded" aria-hidden />
                         <div>
@@ -267,7 +267,7 @@ export default function ContratsEntreprise() {
                     )}
 
                     <div className="flex gap-2">
-                      {contract.statut === 'Approved' && (
+                      {contract.statut === 'approved' && (
                         <Button
                           variant="outline"
                           size="sm"

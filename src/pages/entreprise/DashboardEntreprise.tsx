@@ -247,7 +247,7 @@ export default function DashboardEntreprise() {
               {/* Contrats approuvés */}
               <div className="space-y-4 mt-8">
                 <h3 className="text-lg font-semibold">Contrats approuvés</h3>
-                {contracts.filter(c => c.statut === 'Approved').length === 0 ? (
+                {contracts.filter(c => c.statut === 'approved').length === 0 ? (
                   <Card>
                     <CardContent className="py-6 text-center text-muted-foreground">
                       Aucun contrat approuvé pour le moment.
@@ -255,7 +255,7 @@ export default function DashboardEntreprise() {
                   </Card>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {contracts.filter(c => c.statut === 'Approved').map((c) => (
+                    {contracts.filter(c => c.statut === 'approved').map((c) => (
                       <Card key={c._id} className="hover:shadow-md transition-shadow">
                         <CardHeader>
                           <CardTitle className="text-base">{c.vehicleId ? `${c.vehicleId.marque} ${c.vehicleId.modele}` : 'Véhicule'}</CardTitle>

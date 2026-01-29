@@ -59,6 +59,7 @@ import ContratsAdmin from "@/pages/admin/contrats/ContratsAdmin";
 import DownloadRedirect from "@/pages/DownloadRedirect";
 //import ContratsEdit from "@/pages/admin/contrats/ContratsEdit";
 import VehiculesSupprimer from "./pages/admin/vehiculesSupprimer";
+import VerificationEmail from "@/pages/auth/verification-email";
 
 
 
@@ -87,6 +88,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/inscription" element={<Inscription />} />
+            <Route path="/verify-email/:token" element={<VerificationEmail />} />
             <Route path="/otp" element={<OtpForm />} />
             <Route path="/reset-password/:token" element={<PassOublieForm />} />
             <Route path="/forgot-password" element={<ForgotPasswordForm />} />

@@ -260,7 +260,10 @@ export default function ReservationDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {reservations.slice(0, 10).map((res) => (
+                  {reservations
+                    .sort((a, b) => new Date(b.dateDebut).getTime() - new Date(a.dateDebut).getTime())
+                    .slice(0, 10)
+                    .map((res) => (
                     <tr key={res._id} className="border-b hover:bg-muted/50 transition-colors">
                       <td className="p-2 flex items-center gap-3">
                         <img
