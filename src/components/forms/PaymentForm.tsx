@@ -39,7 +39,19 @@ export default function PaymentForm() {
         const reservationData = res.data;
         
         const prix = reservationData.vehicleId?.prix;
-        setAmount(prix ?? null);
+
+        // Calculer le montant total en fonction de la durée (jours)
+        let computedAmount: number | null = prix ?? null;
+        if (reservationData.dateDebut && reservationData.dateFin && prix != null) {
+          const start = new Date(reservationData.dateDebut);
+          const end = new Date(reservationData.dateFin);
+          const msPerDay = 24 * 60 * 60 * 1000;
+          const diffDays = Math.ceil((end.getTime() - start.getTime()) / msPerDay);
+          const days = diffDays > 0 ? diffDays : 1;
+          computedAmount = days * prix;
+        }
+
+        setAmount(computedAmount ?? null);
 
         // Récupérer les informations de l'agence si elle existe
         if (reservationData.vehicleId?.agencyId) {
