@@ -56,7 +56,7 @@ export default function Blog() {
 
       <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
-          <Card key={post.id || post._id} className="overflow-hidden pt-0">
+          <Card key={post.id} className="overflow-hidden pt-0">
             <CardHeader className={cn("relative p-0")}>
               <Badge
                 className={cn(
@@ -90,7 +90,7 @@ export default function Blog() {
                 <p className="text-sm text-gray-500">
                   Date de rédaction: {post.dateRedaction}
                 </p>
-                <Link to={`/blog/${post.slug ?? post.id ?? post._id}`}>
+                <Link to={`/blog/${post.slug ?? post.id}`}>
                   <Button variant="outline">Lire</Button>
                 </Link>
               </div>

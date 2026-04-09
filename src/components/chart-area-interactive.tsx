@@ -57,7 +57,7 @@ export function ChartAreaInteractive() {
             monthlyData[monthKey] = { total: 0, active: 0 };
           }
           monthlyData[monthKey].total += 1;
-          if (reservation.statut === "en cours") {
+          if (reservation.statut === "en_cours") {
             monthlyData[monthKey].active += 1;
           }
         });

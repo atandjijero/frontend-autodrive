@@ -63,7 +63,7 @@ export default function VehiculesSuppr() {
       <p className="my-4">
         Êtes-vous sûr de vouloir supprimer ce véhicule ?
         <br />
-        <strong>ID :</strong> {vehicle._id}
+        <strong>ID :</strong> {vehicle.id}
       </p>
 
       <Button

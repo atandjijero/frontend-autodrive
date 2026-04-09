@@ -36,7 +36,7 @@ export default function DownloadRedirect() {
         // Fetch active agency to ensure PDF always has real agency info
         let agency: any = null;
         try {
-          const agencyId = contract.agencyId || contract.agenceId || contract.agence?._id;
+          const agencyId = contract.agencyId || contract.agenceId || contract.agence?.id;
           if (agencyId) {
             const agencyResp = await apiClient.get(`/agencies/${agencyId}`);
             agency = agencyResp.data;
@@ -71,7 +71,7 @@ export default function DownloadRedirect() {
         const pdfBlob = doc.output('blob');
         const pdfUrl = window.URL.createObjectURL(pdfBlob);
 
-        const filename = `contrat-${contract._id || id}.pdf`;
+        const filename = `contrat-${contract.id || id}.pdf`;
         if (newWin) {
           // Inject a small page that auto-clicks a download link to force download
           try {

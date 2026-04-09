@@ -18,7 +18,7 @@ export default function PromotionsListe() {
     getPromotions().then((res) => setPromotions(res.data));
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string | number) => {
     if (confirm("Supprimer cette promotion ?")) {
       try {
         await deletePromotion(id);
@@ -55,7 +55,7 @@ export default function PromotionsListe() {
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
       {promotions.map((promo) => (
-        <Card key={promo._id}>
+        <Card key={promo.id}>
           <CardHeader>
             <CardTitle>{promo.titre}</CardTitle>
           </CardHeader>
@@ -83,13 +83,13 @@ export default function PromotionsListe() {
             <div className="mt-4 flex gap-2">
               <Button
                 variant="outline"
-                onClick={() => navigate(`/admin/promotions/update/${promo._id}`)}
+                onClick={() => navigate(`/admin/promotions/update/${promo.id}`)}
               >
                 Modifier
               </Button>
               <Button
                 variant="destructive"
-                onClick={() => handleDelete(promo._id)}
+                onClick={() => handleDelete(promo.id)}
               >
                 Supprimer
               </Button>

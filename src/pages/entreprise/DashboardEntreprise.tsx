@@ -1,8 +1,8 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { Sidebar } from "@/components/layout/Sidebar";
-import { getDashboard, getUserTemoignages, getContracts, apiClient } from "@/api/apiClient"; 
+import { getDashboard, getUserTemoignages, getContracts, apiClient } from "@/api/apiClient";
 import generateContractPdf from "@/lib/generateContractPdf";
 import { toast } from "sonner";
 import type { DashboardResponse, Temoignage, Contract } from "@/api/apiClient";
@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
+import { formatReservationStatus } from "@/lib/utils";
 
 // Icons
 import { Calendar, CreditCard, MessageSquare, AlertCircle, Plus, Eye, TrendingUp } from "lucide-react";
@@ -97,7 +98,7 @@ export default function DashboardEntreprise() {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold tracking-tight">
-                    Bienvenue, {data.profil.prenom} {data.profil.nom}
+                    Bienvenue, {data?.profil?.prenom} {data?.profil?.nom}
                   </h2>
                   <p className="text-muted-foreground">
                     Gérez votre flotte de véhicules et vos réservations d'entreprise.
@@ -112,7 +113,7 @@ export default function DashboardEntreprise() {
               </div>
 
               {/* Stats Cards */}
-              <div className={`grid grid-cols-1 md:grid-cols-${data.paiements.length > 0 ? 3 : 2} gap-4`}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Réservations actives</CardTitle>
@@ -120,7 +121,7 @@ export default function DashboardEntreprise() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
-                      {data.reservations.filter(r => r.statut === "en cours").length}
+                      {data.reservations.filter(r => r.statut === "en_cours").length}
                     </div>
                     <p className="text-xs text-muted-foreground flex items-center">
                       <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
@@ -169,7 +170,7 @@ export default function DashboardEntreprise() {
                     </Button>
                   </Link>
                 </div>
-                {data.reservations.length === 0 ? (
+                {data?.reservations?.length === 0 ? (
                   <Card>
                     <CardContent className="flex flex-col items-center justify-center py-8">
                       <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
@@ -184,15 +185,25 @@ export default function DashboardEntreprise() {
                   </Card>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {data.reservations.map((r) => (
-                      <Card key={r._id} className="hover:shadow-md transition-shadow">
+                    {data?.reservations?.map((r) => (
+                      <Card key={r.id} className="hover:shadow-md transition-shadow">
                         <CardHeader className="pb-3">
                           <div className="flex items-center justify-between">
                             <CardTitle className="text-base">
-                              {r.vehicleId.marque} {r.vehicleId.modele}
+                              {r.vehicle.marque} {r.vehicle.modele}
                             </CardTitle>
-                            <Badge variant={r.statut === "en cours" ? "default" : "secondary"}>
-                              {r.statut}
+                            <Badge
+                              variant={
+                                r.statut === "en_cours" ? "default" :
+                                  r.statut === "validee" ? "outline" :
+                                    r.statut === "en_attente" ? "secondary" :
+                                      "destructive"
+                              }
+                              className={
+                                r.statut === "validee" ? "border-green-500 text-green-600 dark:text-green-400" : ""
+                              }
+                            >
+                              {formatReservationStatus(r.statut)}
                             </Badge>
                           </div>
                         </CardHeader>
@@ -204,12 +215,22 @@ export default function DashboardEntreprise() {
                             </div>
                             <div className="flex items-center text-sm text-muted-foreground">
                               <Calendar className="mr-2 h-4 w-4" />
-                                                            Au {formatDate(r.dateFin)}
+                              Au {formatDate(r.dateFin)}
                             </div>
                           </div>
-                          <Button variant="outline" size="sm" className="w-full mt-4">
-                            Voir détails
-                          </Button>
+
+                          <div className="grid grid-cols-2 gap-2 mt-4">
+                            <Button variant="outline" size="sm" className="w-full">
+                              Détails
+                            </Button>
+                            {r.statut === "validee" && (
+                              <Link to={`/paiement/${r.id}`} className="w-full">
+                                <Button size="sm" className="w-full bg-green-600 hover:bg-green-700 text-white">
+                                  Payer
+                                </Button>
+                              </Link>
+                            )}
+                          </div>
                         </CardContent>
                       </Card>
                     ))}
@@ -256,55 +277,55 @@ export default function DashboardEntreprise() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {contracts.filter(c => c.statut === 'approved').map((c) => (
-                      <Card key={c._id} className="hover:shadow-md transition-shadow">
+                      <Card key={c._id || c.id} className="hover:shadow-md transition-shadow">
                         <CardHeader>
                           <CardTitle className="text-base">{c.vehicleId ? `${c.vehicleId.marque} ${c.vehicleId.modele}` : 'Véhicule'}</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <p className="text-sm text-muted-foreground">Montant: {c.montantTotal} €</p>
-                            <div className="mt-3">
-                              <Button variant="outline" size="sm" onClick={async () => {
+                          <div className="mt-3">
+                            <Button variant="outline" size="sm" onClick={async () => {
+                              try {
+                                const resp = await apiClient.get(`/contracts/${c._id || c.id}/download`);
+                                let contract = resp.data;
+                                let agency: any = null;
                                 try {
-                                  const resp = await apiClient.get(`/contracts/${c._id}/download`);
-                                  let contract = resp.data;
-                                  let agency: any = null;
+                                  const agencyId = contract.agencyId || contract.agenceId || contract.agence?.id;
+                                  if (agencyId) {
+                                    const agencyResp = await apiClient.get(`/agencies/${agencyId}`);
+                                    agency = agencyResp.data;
+                                  }
+                                } catch (e) {
+                                  console.warn('Unable to fetch agency by id', e);
+                                }
+                                if (!agency) {
                                   try {
-                                    const agencyId = contract.agencyId || contract.agenceId || contract.agence?._id;
-                                    if (agencyId) {
-                                      const agencyResp = await apiClient.get(`/agencies/${agencyId}`);
-                                      agency = agencyResp.data;
+                                    const activeRes = await apiClient.get('/agencies/agencies/active/all?limit=1');
+                                    if ((activeRes as any).data && (activeRes as any).data.length) {
+                                      agency = (activeRes as any).data[0];
                                     }
                                   } catch (e) {
-                                    console.warn('Unable to fetch agency by id', e);
+                                    console.warn('Unable to fetch active agency', e);
                                   }
-                                  if (!agency) {
-                                    try {
-                                      const activeRes = await apiClient.get('/agencies/agencies/active/all?limit=1');
-                                      if ((activeRes as any).data && (activeRes as any).data.length) {
-                                        agency = (activeRes as any).data[0];
-                                      }
-                                    } catch (e) {
-                                      console.warn('Unable to fetch active agency', e);
-                                    }
-                                  }
-                                  const logoFieldCandidates = [agency?.logo, contract.agenceLogo, contract.logo, contract.agencyLogo, contract.agenceLogoPath];
-                                  const logoCandidate = logoFieldCandidates.find(Boolean) as string | undefined;
-                                  const doc = await generateContractPdf(contract, { agency: agency || undefined, agencyLogoUrl: logoCandidate || undefined });
-                                  const blob = doc.output('blob');
-                                  const url = window.URL.createObjectURL(blob);
-                                  const link = document.createElement('a');
-                                  link.href = url;
-                                  link.setAttribute('download', `contrat-${c._id}.pdf`);
-                                  document.body.appendChild(link);
-                                  link.click();
-                                  link.parentNode?.removeChild(link);
-                                  window.URL.revokeObjectURL(url);
-                                } catch (err) {
-                                  console.error('Erreur téléchargement contrat:', err);
-                                  toast.error('Impossible de télécharger le reçu');
                                 }
-                              }}>Télécharger le reçu</Button>
-                            </div>
+                                const logoFieldCandidates = [agency?.logo, contract.agenceLogo, contract.logo, contract.agencyLogo, contract.agenceLogoPath];
+                                const logoCandidate = logoFieldCandidates.find(Boolean) as string | undefined;
+                                const doc = await generateContractPdf(contract, { agency: agency || undefined, agencyLogoUrl: logoCandidate || undefined });
+                                const blob = doc.output('blob');
+                                const url = window.URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                link.href = url;
+                                  link.setAttribute('download', `contrat-${c._id || c.id}.pdf`);
+                                document.body.appendChild(link);
+                                link.click();
+                                link.parentNode?.removeChild(link);
+                                window.URL.revokeObjectURL(url);
+                              } catch (err) {
+                                console.error('Erreur téléchargement contrat:', err);
+                                toast.error('Impossible de télécharger le reçu');
+                              }
+                            }}>Télécharger le reçu</Button>
+                          </div>
                         </CardContent>
                       </Card>
                     ))}

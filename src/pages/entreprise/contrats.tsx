@@ -13,7 +13,8 @@ import generateContractPdf from "@/lib/generateContractPdf";
 import { toast } from "sonner";
 
 interface Contract {
-  _id: string;
+  _id?: string;
+  id?: number;
   userId: {
     nom: string;
     prenom: string;
@@ -76,7 +77,7 @@ export default function ContratsEntreprise() {
       // Fetch agency details: first try by contract.agencyId, then fallback to active agency
       let agency: any = null;
       try {
-        const agencyId = contract.agencyId || contract.agenceId || contract.agence?._id;
+        const agencyId = contract.agencyId || contract.agenceId || contract.agence?.id;
         if (agencyId) {
           const agencyResp = await apiClient.get(`/agencies/${agencyId}`);
           agency = agencyResp.data;
@@ -205,7 +206,7 @@ export default function ContratsEntreprise() {
           ) : (
             <div className="grid gap-6">
               {contracts.map((contract) => (
-                <Card key={contract._id}>
+                <Card key={contract.id}>
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>
@@ -271,12 +272,12 @@ export default function ContratsEntreprise() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => downloadContract(contract._id)}
-                          disabled={downloadingId === contract._id}
-                          className={downloadingId === contract._id ? 'opacity-70' : ''}
+                          onClick={() => downloadContract(contract._id || String(contract.id))}
+                          disabled={downloadingId === (contract._id || String(contract.id))}
+                          className={downloadingId === (contract._id || String(contract.id)) ? 'opacity-70' : ''}
                         >
                           <Download className="mr-2 h-4 w-4" />
-                          {downloadingId === contract._id ? 'Téléchargement...' : 'Télécharger le reçu'}
+                          {downloadingId === (contract._id || String(contract.id)) ? 'Téléchargement...' : 'Télécharger le reçu'}
                         </Button>
                       )}
                       <Button variant="outline" size="sm">

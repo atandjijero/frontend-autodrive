@@ -29,7 +29,7 @@ export default function AdminNotifications() {
   const handleMarkRead = async (id: string) => {
     try {
       const res = await markNotificationRead(id);
-      setNotifications(prev => prev.map(n => (n._id === id ? res.data : n)));
+      setNotifications(prev => prev.map(n => (n.id === id ? res.data : n)));
     } catch (e: any) {
       console.error('Erreur mark read', e);
     }
@@ -43,7 +43,7 @@ export default function AdminNotifications() {
         {error && <p className="text-red-600">{error}</p>}
         <div className="space-y-4">
           {notifications.map((n) => (
-            <Card key={n._id} className={`shadow ${n.read ? 'opacity-70' : ''}`}>
+            <Card key={n.id} className={`shadow ${n.read ? 'opacity-70' : ''}`}>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>{n.title}</span>
@@ -54,7 +54,7 @@ export default function AdminNotifications() {
                 <p className="mb-2">{n.body}</p>
                 <div className="flex gap-2">
                   {!n.read && (
-                    <Button onClick={() => handleMarkRead(n._id)}>Marquer lu</Button>
+                    <Button onClick={() => handleMarkRead(n.id)}>Marquer lu</Button>
                   )}
                   <Button variant="outline" onClick={() => navigate('/admin/contacts')}>Voir le message</Button>
                 </div>

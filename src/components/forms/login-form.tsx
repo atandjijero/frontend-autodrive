@@ -16,12 +16,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState } from "react";
-import { login } from "@/api/apiClient";
+import { login as apiLogin } from "@/api/apiClient";
 import type { LoginResponse } from "@/api/apiClient";
-// translations removed: using static french strings
+import { useAuth } from "@/context/AuthContext";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
-  // const { t } = useTranslation();
+  const { login: authLogin } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get("redirect");
@@ -40,7 +40,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     setSuccessMessage(null);
 
     try {
-      const res = await login({
+      const res = await apiLogin({
         email: inputs.email,
         motPasse: inputs.password,
       });
@@ -54,29 +54,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
           );
         navigate("/otp", { state: { email: inputs.email, redirect } });
       } else {
-        //  Stockage du token
-        if (data.access_token) {
-          localStorage.setItem("token", data.access_token);
-        }
-
-        //  Stockage de l'ID utilisateur (id ou _id)
-        const userId = data._id || data.id;
-        console.log("userId stocké :", userId); // 👀 debug
-        if (userId) {
-          localStorage.setItem("userId", userId);
-        } else {
-          console.error("⚠️ Aucun ID utilisateur trouvé dans la réponse backend");
-        }
-
-        // Autres infos
-        if (data.nom) localStorage.setItem("userNom", data.nom);
-        if (data.prenom) localStorage.setItem("userPrenom", data.prenom);
-        if (data.email) localStorage.setItem("email", data.email);
-        // backward-compatible keys used elsewhere in the app
-        const fullName = [data.prenom, data.nom].filter(Boolean).join(" ");
-        if (fullName) localStorage.setItem("userName", fullName);
-        if (data.email) localStorage.setItem("userEmail", data.email);
-        if (data.role) localStorage.setItem("userRole", data.role);
+        // Synchroniser avec AuthContext
+        const userId = String(data.id || "");
+        authLogin({
+          id: userId,
+          email: data.email || "",
+          nom: data.nom || "",
+          prenom: data.prenom || "",
+          role: (data.role as any) || "client"
+        }, data.access_token || "");
 
         setSuccessMessage("Connexion réussie.");
         const role = data.role?.toLowerCase();
@@ -86,21 +72,22 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         navigate(redirect);
         } else {
           switch (role) {
-          case "admin":
-          navigate("/admin/dashboard");
-          break;
-          case "client":
-          navigate("/client/dashboard");
-          break;
-          case "tourist":
-          navigate("/touriste/dashboard");
-          break;
-          case "entreprise":
-          navigate("/entreprise/dashboard");
-        break;
-    default:
-      navigate("/vehicules"); // fallback
-  }
+            case "admin":
+              navigate("/admin/dashboard");
+              break;
+            case "client":
+              navigate("/client/dashboard");
+              break;
+            case "tourist":
+            case "touriste":
+              navigate("/touriste/dashboard");
+              break;
+            case "entreprise":
+              navigate("/entreprise/dashboard");
+              break;
+            default:
+              navigate("/vehicules");
+          }
 }
 
       }

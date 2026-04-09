@@ -29,7 +29,7 @@ export default function VehiculesAjout() {
       // Photos (FileList)
       if (values.photos instanceof FileList) {
         Array.from(values.photos).forEach((file) => {
-          formData.append("file", file);
+          formData.append("files", file);
         });
       }
 

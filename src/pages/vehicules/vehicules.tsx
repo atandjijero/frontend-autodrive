@@ -54,7 +54,7 @@ function VehiculesContent({
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {dispos.map((dispo) => (
             <Card
-              key={dispo._id}
+              key={dispo.id}
               className="mb-4 p-4 shadow hover:shadow-lg transition-shadow"
             >
               <CardHeader>
@@ -74,23 +74,36 @@ function VehiculesContent({
                   <br /> Prix: {dispo.prix} €
                 </p>
 
-                {/* Bouton Réserver → redirection */}
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="
-                    mt-3 mx-auto block w-full font-semibold px-6
-                    bg-white text-black border hover:bg-gray-200
-                    dark:bg-black dark:text-white dark:hover:bg-gray-800
-                  "
-                  asChild
-                >
-                  {user ? (
-                    <Link to={`/reservation/${dispo._id}`}>Réserver</Link>
-                  ) : (
-                    <Link to={`/connexion?redirect=/reservation/${dispo._id}`}>Se connecter pour réserver</Link>
-                  )}
-                </Button>
+                {/* Bouton Réserver → redirection ou Déjà réservée */}
+                {dispo.disponible ? (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="
+                      mt-3 mx-auto block w-full font-semibold px-6
+                      bg-white text-black border hover:bg-gray-200
+                      dark:bg-black dark:text-white dark:hover:bg-gray-800
+                    "
+                    asChild
+                  >
+                    {user ? (
+                      <Link to={`/reservation/${dispo.id}`}>Réserver</Link>
+                    ) : (
+                      <Link to={`/connexion?redirect=/reservation/${dispo.id}`}>Se connecter pour réserver</Link>
+                    )}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="
+                      mt-3 mx-auto block w-full font-semibold px-6
+                    "
+                    disabled
+                  >
+                    Déjà réservée
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))}

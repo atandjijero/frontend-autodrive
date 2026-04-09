@@ -16,15 +16,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { createContract, getVehicles } from "@/api/apiClient";
-
-interface Vehicle {
-  _id: string;
-  marque: string;
-  modele: string;
-  immatriculation: string;
-  prix: number;
-  disponible: boolean;
-}
+import type { Vehicle } from "@/api/apiClient";
 
 export default function NouveauContrat() {
   const navigate = useNavigate();
@@ -60,7 +52,7 @@ export default function NouveauContrat() {
     // Si aucun véhicule n'est sélectionné, retourner 0 (sera saisi manuellement)
     if (!formData.vehicleId) return 0;
 
-    const vehicle = vehicles.find(v => v._id === formData.vehicleId);
+    const vehicle = vehicles.find(v => v.id === parseInt(formData.vehicleId));
     if (!vehicle) return 0;
 
     const days = Math.ceil((formData.dateFin.getTime() - formData.dateDebut.getTime()) / (1000 * 60 * 60 * 24));
@@ -99,7 +91,7 @@ export default function NouveauContrat() {
     }
   };
 
-  const selectedVehicle = vehicles.find(v => v._id === formData.vehicleId);
+  const selectedVehicle = vehicles.find(v => v.id === parseInt(formData.vehicleId));
 
   return (
     <DashboardLayout>
@@ -138,7 +130,7 @@ export default function NouveauContrat() {
                       </SelectTrigger>
                       <SelectContent>
                         {vehicles.map((vehicle) => (
-                          <SelectItem key={vehicle._id} value={vehicle._id}>
+                          <SelectItem key={vehicle.id} value={String(vehicle.id)}>
                             {vehicle.marque} {vehicle.modele} - {vehicle.immatriculation} ({vehicle.prix}€/jour)
                           </SelectItem>
                         ))}

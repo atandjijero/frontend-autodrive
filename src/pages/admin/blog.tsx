@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { createBlogPost, updateBlogPost, deleteBlogPost, publishBlogPost, uploadBlogImage, getAdminBlogPosts, resolveUrl } from "@/api/apiClient";
 import type { Post } from "@/api/apiClient";
 import { IconPlus } from "@tabler/icons-react";
@@ -116,7 +117,7 @@ export default function AdminBlog() {
     try {
       const data = { ...form };
       if (editing) {
-        await updateBlogPost(editing.id || editing._id!, data);
+        await updateBlogPost(editing.id, data);
       } else {
         await createBlogPost(data);
       }
@@ -141,7 +142,7 @@ export default function AdminBlog() {
     });
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string | number) => {
     if (confirm("Supprimer cet article ?")) {
       try {
         await deleteBlogPost(id);
@@ -152,7 +153,7 @@ export default function AdminBlog() {
     }
   };
 
-  const handlePublish = async (id: string) => {
+  const handlePublish = async (id: string | number) => {
     try {
       await publishBlogPost(id);
       fetchPosts();
@@ -195,7 +196,17 @@ export default function AdminBlog() {
               <Input
                 placeholder="Titre"
                 value={form.titre}
-                onChange={(e) => setForm(prev => ({ ...prev, titre: e.target.value }))}
+                onChange={(e) => {
+                  const titre = e.target.value;
+                  const slug = titre
+                    .toLowerCase()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-z0-9\s-]/g, "")
+                    .trim()
+                    .replace(/\s+/g, "-")
+                    .replace(/-+/g, "-");
+                  setForm(prev => ({ ...prev, titre, slug }));
+                }}
                 required
               />
               <Input
@@ -222,11 +233,19 @@ export default function AdminBlog() {
                 disabled
                 readOnly
               />
-              <Input
-                placeholder="Catégorie"
+              <Select
                 value={form.categorie}
-                onChange={(e) => setForm(prev => ({ ...prev, categorie: e.target.value }))}
-              />
+                onValueChange={(val) => setForm(prev => ({ ...prev, categorie: val }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Choisir une catégorie" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Actualité">Actualité</SelectItem>
+                  <SelectItem value="Conseils">Conseils</SelectItem>
+                  <SelectItem value="Promo">Promo</SelectItem>
+                </SelectContent>
+              </Select>
               <div>
                 <Input
                   type="file"
@@ -245,7 +264,7 @@ export default function AdminBlog() {
         <div className="space-y-4">
           {loading && <p>Chargement...</p>}
           {filteredPosts.map((post) => (
-            <Card key={post.id || post._id || post.titre}>
+            <Card key={post.id || post.titre}>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>{post.titre}</span>
@@ -258,12 +277,12 @@ export default function AdminBlog() {
                 <p className="mb-2">{post.extrait}</p>
                 <div className="flex gap-2">
                   <Button onClick={() => handleEdit(post)}>Modifier</Button>
-                  {(post.id || post._id) && (
+                  {post.id && (
                     <>
-                      <Button onClick={() => handlePublish(post.id || post._id!)} variant="outline">
+                      <Button onClick={() => handlePublish(post.id!)} variant="outline">
                         {post.status === "published" ? "Dépublier" : "Publier"}
                       </Button>
-                      <Button onClick={() => handleDelete(post.id || post._id!)} variant="destructive">Supprimer</Button>
+                      <Button onClick={() => handleDelete(post.id!)} variant="destructive">Supprimer</Button>
                     </>
                   )}
                 </div>

@@ -19,7 +19,8 @@ import { generateContractPdf } from "@/lib/generateContractPdf";
 import { useAuth } from "@/hooks/useAuth";
 
 interface Contract {
-  _id: string;
+  _id?: string;
+  id?: number;
   userId: {
     nom: string;
     prenom: string;
@@ -139,7 +140,7 @@ export default function AdminContrats() {
       if (modifyAcompte !== '') body.acompteVerse = Number(modifyAcompte);
       if (modifyConditions.trim() !== '') body.conditionsSpeciales = modifyConditions.trim();
 
-      await updateContract(selectedContract._id, body);
+      await updateContract(selectedContract._id || String(selectedContract.id), body);
       await loadContracts();
       setDialogOpen(false);
       setPendingIntent(null);
@@ -179,15 +180,15 @@ export default function AdminContrats() {
     }
   };
 
-  const downloadContract = async (contractId: string) => {
+  const downloadContract = async (contractId: string | number) => {
     // Try to generate PDF client-side using available contract + agency data
-    const contract = contracts.find((c) => c._id === contractId);
+    const contract = contracts.find((c) => (c._id || c.id) === contractId);
     try {
       if (!contract) throw new Error('Contrat introuvable');
 
       // Attempt to fetch agency details: first try by contract.agencyId, then fallback to active agency
       let agency: any = null;
-      const agencyId = (contract as any).agencyId || (contract as any).agenceId || (contract as any).agence?._id;
+      const agencyId = (contract as any).agencyId || (contract as any).agenceId || (contract as any).agence?.id;
       if (agencyId) {
         try {
           const res = await getAgencyById(String(agencyId));
@@ -337,7 +338,7 @@ export default function AdminContrats() {
       ) : (
         <div className="space-y-4">
           {contracts.map((contract) => (
-            <Card key={contract._id} className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-black shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
+            <Card key={contract.id} className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-black shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
               {/* Status Bar */}
               <div className={`h-1.5 ${
                 contract.statut === 'approved' ? 'bg-gradient-to-r from-green-500 to-green-600' :
@@ -541,7 +542,7 @@ export default function AdminContrats() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => downloadContract(contract._id)}
+                      onClick={() => downloadContract(contract._id || String(contract.id))}
                       className="text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-transparent dark:hover:bg-transparent"
                     >
                       <Download className="mr-2 h-4 w-4" />
@@ -678,7 +679,7 @@ export default function AdminContrats() {
                               Annuler
                             </Button>
                             <Button 
-                              onClick={() => handleDeleteContract(selectedContract._id)} 
+                              onClick={() => handleDeleteContract(selectedContract._id || String(selectedContract.id))}
                               className="flex-1 bg-red-600 hover:bg-red-700 text-white dark:bg-red-700 dark:hover:bg-red-800" 
                               disabled={updating}
                             >
@@ -702,7 +703,7 @@ export default function AdminContrats() {
 
                           <div className="flex gap-2">
                             <Button
-                              onClick={() => updateContractStatus(selectedContract._id, 'rejected')}
+                              onClick={() => updateContractStatus(selectedContract._id || String(selectedContract.id), 'rejected')}
                               className="flex-1 bg-red-600 hover:bg-red-700 text-white dark:bg-red-700 dark:hover:bg-red-800"
                               disabled={updating}
                             >
@@ -710,7 +711,7 @@ export default function AdminContrats() {
                               {updating ? 'Rejet...' : 'Rejeter'}
                             </Button>
                             <Button
-                              onClick={() => updateContractStatus(selectedContract._id, 'approved')}
+                              onClick={() => updateContractStatus(selectedContract._id || String(selectedContract.id), 'approved')}
                               className="flex-1 bg-green-600 hover:bg-green-700 text-white dark:bg-green-500 dark:hover:bg-green-600"
                               disabled={updating}
                             >

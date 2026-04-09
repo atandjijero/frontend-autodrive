@@ -51,74 +51,74 @@ export function Sidebar({ role = "client" }: { role?: "client" | "entreprise" | 
 
   return (
     <ShadSidebar side="left" variant="sidebar" collapsible="icon">
-        <SidebarHeader>
-          <div className="px-3 py-2">
-            <a href="/" className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-md bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white font-bold">AD</div>
-              <div className="flex flex-col leading-tight">
-                <span className="text-sm font-semibold">Autodrive</span>
-                <span className="text-xs text-muted-foreground">Espace {role}</span>
-              </div>
-            </a>
-          </div>
-          <div className="px-3 pb-2">
-            <SidebarInput placeholder="Rechercher..." />
-          </div>
-        </SidebarHeader>
+      <SidebarHeader>
+        <div className="px-3 py-2">
+          <a href="/" className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-md bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center text-white font-bold">AD</div>
+            <div className="flex flex-col leading-tight">
+              <span className="text-sm font-semibold">Autodrive</span>
+              <span className="text-xs text-muted-foreground">Espace {role}</span>
+            </div>
+          </a>
+        </div>
+        <div className="px-3 pb-2">
+          <SidebarInput placeholder="Rechercher..." />
+        </div>
+      </SidebarHeader>
 
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-            <SidebarMenu>
-              {navItems.map(({ label, icon: Icon, href }) => (
-                <SidebarMenuItem key={label}>
-                  <SidebarMenuButton asChild>
-                    <a href={href} className="flex items-center gap-3 w-full">
-                      <Icon className="w-5 h-5 text-muted-foreground" />
-                      <span className="truncate">{label}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
-
-          <SidebarGroup>
-            <SidebarGroupLabel>Gestion</SidebarGroupLabel>
-            <SidebarMenu>
-              <SidebarMenuItem>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarMenu>
+            {navItems.map(({ label, icon: Icon, href }) => (
+              <SidebarMenuItem key={label}>
                 <SidebarMenuButton asChild>
-                  <a href="/support" className="flex items-center gap-3 w-full">
-                    <Settings className="w-5 h-5 text-muted-foreground" />
-                    <span>Support & paramètres</span>
+                  <a href={href} className="flex items-center gap-3 w-full">
+                    <Icon className="w-5 h-5 text-muted-foreground" />
+                    <span className="truncate">{label}</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroup>
-        </SidebarContent>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
 
-        <SidebarFooter>
-          <SidebarSeparator />
-          <div className="p-3">
-            <div className="flex items-center gap-3 mb-2">
-              <User className="w-5 h-5" />
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">{user?.email}</span>
-                <span className="text-xs text-muted-foreground capitalize">{role}</span>
-              </div>
+        <SidebarGroup>
+          <SidebarGroupLabel>Gestion</SidebarGroupLabel>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="/support" className="flex items-center gap-3 w-full">
+                  <Settings className="w-5 h-5 text-muted-foreground" />
+                  <span>Support & paramètres</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter>
+        <SidebarSeparator />
+        <div className="p-3">
+          <div className="flex items-center gap-3 mb-2">
+            <User className="w-5 h-5" />
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">{user?.email}</span>
+              <span className="text-xs text-muted-foreground capitalize">{role}</span>
             </div>
-            <button onClick={() => navigate(`/${role}/profil`)} className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-muted w-full text-left">
-              <User className="w-5 h-5" />
-              <span className="text-sm">Mon profil</span>
-            </button>
-            <button onClick={() => { logout(); navigate("/"); }} className="mt-2 flex items-center gap-3 rounded-md px-2 py-2 text-destructive hover:bg-destructive/10 w-full text-left">
-              <LogOut className="w-5 h-5" />
-              <span className="text-sm">Déconnexion</span>
-            </button>
           </div>
-        </SidebarFooter>
-      </ShadSidebar>
+          <button onClick={() => navigate(`/${role}/profil`)} className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-muted w-full text-left">
+            <User className="w-5 h-5" />
+            <span className="text-sm">Mon profil</span>
+          </button>
+          <button onClick={() => { logout(); navigate("/"); }} className="mt-2 flex items-center gap-3 rounded-md px-2 py-2 text-destructive hover:bg-destructive/10 w-full text-left">
+            <LogOut className="w-5 h-5" />
+            <span className="text-sm">Déconnexion</span>
+          </button>
+        </div>
+      </SidebarFooter>
+    </ShadSidebar>
   );
 }
 

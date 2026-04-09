@@ -87,10 +87,10 @@ export default function PaiementsList() {
         const vehList = Array.from(
           new Set(
             data
-              .filter((p) => p.reservationId?.vehicleId)
+              .filter((p) => p.reservationId?.vehicle)
               .map(
                 (p) =>
-                  `${p.reservationId.vehicleId.marque} ${p.reservationId.vehicleId.modele}`
+                  `${p.reservationId.vehicle.marque} ${p.reservationId.vehicle.modele}`
               )
           )
         );
@@ -115,8 +115,8 @@ export default function PaiementsList() {
           paiementsByMonth[month] += 1;
 
           // Revenu par véhicule
-          if (p.statut === "reussi" && p.reservationId?.vehicleId) {
-            const veh = p.reservationId.vehicleId;
+          if (p.statut === "reussi" && p.reservationId?.vehicle) {
+            const veh = p.reservationId.vehicle;
             const key = `${veh.marque} ${veh.modele}`;
 
             if (!revenueByVehicle[key]) revenueByVehicle[key] = 0;
@@ -190,7 +190,7 @@ export default function PaiementsList() {
     // Filter by vehicle
     if (vehicleFilter !== "all") {
       filtered = filtered.filter((p) => {
-        const veh = p.reservationId?.vehicleId;
+        const veh = p.reservationId?.vehicle;
         if (!veh) return false;
         const name = `${veh.marque} ${veh.modele}`;
         return name === vehicleFilter;
@@ -455,7 +455,7 @@ const exportPDF = () => {
 
               <TableBody>
                 {paginated.map((p) => (
-                  <TableRow key={p._id}>
+                  <TableRow key={p.id}>
                     <TableCell>{p.nom}</TableCell>
                     <TableCell>{p.email}</TableCell>
                     <TableCell>{p.montant} €</TableCell>

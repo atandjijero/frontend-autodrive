@@ -36,7 +36,7 @@ export default function AdminContacts() {
     try {
       await respondToContact(id, response);
       // update local list
-      setContacts(prev => prev.map(c => (c._id === id ? { ...c, response, status: 'responded' } : c)));
+      setContacts(prev => prev.map(c => (c.id === id ? { ...c, response, status: 'responded' } : c)));
     } catch (e: any) {
       setErrors(e?.response?.data?.message || 'Erreur lors de l envoi de la réponse');
     }
@@ -50,7 +50,7 @@ export default function AdminContacts() {
         {errors && <p className="text-red-600">{errors}</p>}
         <div className="space-y-4">
           {contacts.map(contact => (
-            <Card key={contact._id} className="shadow">
+            <Card key={contact.id} className="shadow">
               <CardHeader>
                 <CardTitle>{contact.nom} — {contact.email}</CardTitle>
               </CardHeader>
@@ -59,12 +59,12 @@ export default function AdminContacts() {
                 <div className="space-y-2">
                   <Textarea
                     placeholder="Réponse"
-                    value={responses[contact._id] ?? contact.response ?? ''}
-                    onChange={(e) => handleChange(contact._id, e.target.value)}
+                    value={responses[contact.id] ?? contact.response ?? ''}
+                    onChange={(e) => handleChange(contact.id, e.target.value)}
                   />
                   <div className="flex gap-2">
                     <Button
-                      onClick={() => handleRespond(contact._id)}
+                      onClick={() => handleRespond(contact.id)}
                       disabled={contact.status === 'responded'}
                     >
                       {contact.status === 'responded' ? 'Déjà répondu' : 'Envoyer la réponse'}

@@ -21,8 +21,9 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { register } from "@/api/apiClient";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 // translations removed: using static french strings
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
@@ -39,12 +40,26 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     confirmPassword: "",
     role: "client",
   });
-
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setInputs((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPhotoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,16 +71,18 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     }
 
     try {
-      await register({
-        nom: inputs.nom,
-        prenom: inputs.prenom,
-        email: inputs.email,
-        motPasse: inputs.motPasse,
-        telephone: inputs.telephone,
-        telephoneSecondaire: inputs.telephoneSecondaire || undefined,
-        adresse: inputs.adresse || undefined,
-        role: inputs.role as "client" | "entreprise" | "tourist",
-      });
+      const formData = new FormData();
+      formData.append("nom", inputs.nom);
+      formData.append("prenom", inputs.prenom);
+      formData.append("email", inputs.email);
+      formData.append("motPasse", inputs.motPasse);
+      formData.append("telephone", inputs.telephone);
+      if (inputs.telephoneSecondaire) formData.append("telephoneSecondaire", inputs.telephoneSecondaire);
+      if (inputs.adresse) formData.append("adresse", inputs.adresse);
+      formData.append("role", inputs.role);
+      if (photoFile) formData.append("photo", photoFile);
+
+      await register(formData);
           setMessage(
             `Inscription réussie ! 🎉
 
@@ -80,7 +97,8 @@ Le lien de vérification est valable pendant 24 heures.`
           );
     } catch (err: any) {
       console.error("Erreur:", err.response?.data || err.message);
-      setMessage("Erreur lors de l'inscription.");
+      const errorMessage = err.response?.data?.message || err.message || "Erreur lors de l'inscription.";
+      setMessage(`Erreur: ${errorMessage}`);
     }
   };
 
@@ -93,6 +111,35 @@ Le lien de vérification est valable pendant 24 heures.`
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <FieldGroup>
+            {/* Photo de profil */}
+            <div className="flex justify-center mb-4">
+              <div className="flex flex-col items-center gap-4">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src={photoPreview || ""} alt="Photo de profil" />
+                  <AvatarFallback>
+                    {inputs.prenom?.[0]?.toUpperCase()}{inputs.nom?.[0]?.toUpperCase() || "?"}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <Input
+                    ref={fileInputRef}
+                    id="photo"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handlePhotoChange}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    {photoFile ? "Changer la photo" : "Ajouter une photo"}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
             {/* Première ligne : Prénom et Nom */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field>
@@ -165,7 +212,9 @@ Le lien de vérification est valable pendant 24 heures.`
             <Field>
               <Button type="submit" className="w-full text-sm py-2">S'inscrire</Button>
               {message && (
-                <div className="text-center text-xs mt-2 text-green-600 dark:text-green-400 whitespace-pre-line">
+                <div className={`text-center text-xs mt-2 whitespace-pre-line ${
+                  message.startsWith("Inscription réussie") ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+                }`}>
                   {message}
                 </div>
               )}

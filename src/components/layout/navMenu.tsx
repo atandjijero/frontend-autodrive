@@ -4,13 +4,13 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/lang-switcher";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react"; // icône hamburger
+import { Menu, ArrowLeft } from "lucide-react"; // icônes
 import { cn } from "@/lib/utils";
 
 export const items = [
@@ -24,20 +24,38 @@ export const items = [
 
 export function NavMenu() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useTranslation();
+  const isHome = location.pathname === "/";
 
   return (
     <>
       {/* Navbar */}
       <header className="fixed top-0 left-0 w-full h-16 flex items-center border-b px-6 bg-white dark:bg-black text-gray-900 dark:text-white z-50">
-        {/* Logo */}
-        <Link
-          to="/"
-          aria-label="Accueil"
-          className="px-2 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-        >
-          <h1 className="text-xl font-bold">AutoDrive 🚗</h1>
-        </Link>
+        {/* Bouton retour + Logo */}
+        <div className="flex items-center gap-2">
+          {!isHome && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              aria-label="Retour"
+              className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          )}
+          <Link
+            to="/"
+            aria-label="Accueil"
+            className="flex items-center gap-2 px-2 transition-transform hover:scale-105 active:scale-95 group"
+          >
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-blue-500/25 transition-all">
+              <span className="text-white font-bold text-lg">A</span>
+            </div>
+            <h1 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">AutoDrive</h1>
+          </Link>
+        </div>
 
         {/* Menu desktop */}
         <nav className="hidden md:flex ml-auto">

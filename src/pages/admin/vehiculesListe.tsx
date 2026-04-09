@@ -40,7 +40,7 @@ export default function VehiculesListe() {
       <h1 className="text-2xl font-bold mb-4">Liste des véhicules</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {vehicules.map((vehicule) => (
-          <Card key={vehicule._id} className="overflow-hidden">
+          <Card key={vehicule.id} className="overflow-hidden">
             <CardHeader>
               <CardTitle>
                 {vehicule.marque} {vehicule.modele}
@@ -80,13 +80,13 @@ export default function VehiculesListe() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem asChild>
-                      <Link to={`/admin/vehicules/modifier/${vehicule._id}`}>
+                      <Link to={`/admin/vehicules/modifier/${vehicule.id}`}>
                         <IconEdit />
                         Modifier
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to={`/admin/vehicules/supprimer/${vehicule._id}`}>
+                      <Link to={`/admin/vehicules/supprimer/${vehicule.id}`}>
                         <IconTrash />
                         Supprimer
                       </Link>

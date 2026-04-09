@@ -1,18 +1,23 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getPromotionById, updatePromotion, getVehicles } from "@/api/apiClient";
-import type { Promotion, UpdatePromotionDto, Vehicle } from "@/api/apiClient";
+import type { UpdatePromotionDto, Vehicle } from "@/api/apiClient";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 
 export default function PromotionsUpdate() {
   const { id } = useParams();
-  const [promotion, setPromotion] = useState<Promotion | null>(null);
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [formData, setFormData] = useState<UpdatePromotionDto>({});
+  const [allVehicles, setAllVehicles] = useState<Vehicle[]>([]);
+  const [selectedVehicleIds, setSelectedVehicleIds] = useState<number[]>([]);
   const [message, setMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -21,51 +26,86 @@ export default function PromotionsUpdate() {
           getPromotionById(id!),
           getVehicles()
         ]);
-        setPromotion(promoRes.data);
-        setVehicles(vehRes.data.filter(v => v.disponible)); // Only available vehicles
+        const promo = promoRes.data;
+        setFormData({
+          titre: promo.titre,
+          description: promo.description,
+          type: promo.type,
+          valeur: promo.valeur,
+          dateDebut: promo.dateDebut,
+          dateFin: promo.dateFin,
+          vehiculesIds: promo.vehiculesIds || [],
+          utilisationMax: promo.utilisationMax,
+          codesPromo: promo.codesPromo,
+          dureeMinLocation: promo.dureeMinLocation,
+          montantMinCommande: promo.montantMinCommande,
+        });
+        setSelectedVehicleIds(promo.vehiculesIds || []);
+        setAllVehicles(vehRes.data);
+        setLoading(false);
       } catch (err: any) {
-        setMessage("Erreur de chargement : " + (err.message || "Inconnue"));
+        setMessage("❌ Erreur de chargement : " + (err.message || "Inconnue"));
+        setLoading(false);
       }
     };
     if (id) {
       loadData();
     } else {
-      setMessage("ID de promotion manquant dans l'URL");
+      setMessage("❌ ID de promotion manquant dans l'URL");
+      setLoading(false);
     }
   }, [id]);
 
+  // Véhicules disponibles + ceux déjà sélectionnés (même s'ils ne sont plus dispo)
+  const displayVehicles = allVehicles.filter(
+    (v) => v.disponible || selectedVehicleIds.includes(v.id)
+  );
+
   const handleChange = (field: keyof UpdatePromotionDto, value: any) => {
-    setPromotion((prev) => (prev ? { ...prev, [field]: value } : null));
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const toggleVehicle = (vehicleId: number) => {
+    setSelectedVehicleIds((prev) => {
+      const next = prev.includes(vehicleId)
+        ? prev.filter((vid) => vid !== vehicleId)
+        : [...prev, vehicleId];
+      setFormData((fd) => ({ ...fd, vehiculesIds: next }));
+      return next;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!id || !promotion) return;
+    if (!id) return;
 
-    // Créer un objet avec seulement les champs modifiables
-    const updateData: UpdatePromotionDto = {
-      titre: promotion.titre,
-      description: promotion.description,
-      type: promotion.type,
-      valeur: promotion.valeur,
-      dateDebut: promotion.dateDebut,
-      dateFin: promotion.dateFin,
-      vehiculeId: promotion.vehiculeId,
-      utilisationMax: promotion.utilisationMax,
-      codesPromo: promotion.codesPromo,
-      dureeMinLocation: promotion.dureeMinLocation,
-      montantMinCommande: promotion.montantMinCommande,
-    };
+    if (!formData.dateDebut || !formData.dateFin) {
+      setMessage("❌ Les dates de début et fin sont requises.");
+      return;
+    }
+
+    const dateDebut = new Date(formData.dateDebut);
+    const dateFin = new Date(formData.dateFin);
+    
+    if (dateDebut >= dateFin) {
+      setMessage("❌ La date de fin doit être après la date de début.");
+      return;
+    }
 
     try {
-      await updatePromotion(id, updateData);
-      setMessage("✅ Promotion mise à jour !");
+      setIsSaving(true);
+      setMessage(null);
+      await updatePromotion(id, { ...formData, vehiculesIds: selectedVehicleIds });
+      setMessage("✅ Promotion mise à jour avec succès !");
     } catch (err: any) {
-      setMessage("❌ Erreur lors de la mise à jour : " + (err.response?.data?.message || err.message));
+      const errorMsg = err.response?.data?.message || err.message || "Erreur inconnue";
+      setMessage(`❌ ${errorMsg}`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  if (!promotion) return <p>Chargement...</p>;
+  if (loading) return <p>Chargement...</p>;
 
   return (
     <Card className="max-w-lg mx-auto mt-10">
@@ -79,14 +119,14 @@ export default function PromotionsUpdate() {
               <Label htmlFor="titre">Titre</Label>
               <Input
                 id="titre"
-                value={promotion.titre || ""}
+                value={formData.titre || ""}
                 onChange={(e) => handleChange("titre", e.target.value)}
               />
             </div>
             <div>
               <Label htmlFor="type">Type</Label>
               <Select
-                value={promotion.type}
+                value={formData.type}
                 onValueChange={(val) => handleChange("type", val as "pourcentage" | "montant")}
               >
                 <SelectTrigger>
@@ -103,46 +143,84 @@ export default function PromotionsUpdate() {
             <Label htmlFor="description">Description</Label>
             <Input
               id="description"
-              value={promotion.description || ""}
+              value={formData.description || ""}
               onChange={(e) => handleChange("description", e.target.value)}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="valeur">Valeur</Label>
-              <Input
-                id="valeur"
-                type="number"
-                value={promotion.valeur || 0}
-                onChange={(e) => handleChange("valeur", Number(e.target.value))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="vehiculeId">Véhicule associé</Label>
-              <Select
-                value={promotion.vehiculeId || ""}
-                onValueChange={(val) => handleChange("vehiculeId", val)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un véhicule" />
-                </SelectTrigger>
-                <SelectContent>
-                  {vehicles.map((veh) => (
-                    <SelectItem key={veh._id} value={veh._id}>
-                      {veh.marque} {veh.modele} - {veh.immatriculation}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div>
+            <Label htmlFor="valeur">Valeur</Label>
+            <Input
+              id="valeur"
+              type="number"
+              value={formData.valeur || 0}
+              onChange={(e) => handleChange("valeur", Number(e.target.value))}
+            />
+          </div>
+
+          {/* Sélection multiple de véhicules */}
+          <div>
+            <Label className="mb-3 block">
+              Véhicules concernés
+              <span className="text-muted-foreground text-xs ml-2">
+                (aucun = promotion globale)
+              </span>
+            </Label>
+
+            {selectedVehicleIds.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {selectedVehicleIds.map((vid) => {
+                  const v = allVehicles.find((veh) => veh.id === vid);
+                  return v ? (
+                    <Badge
+                      key={vid}
+                      variant="secondary"
+                      className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                      onClick={() => toggleVehicle(vid)}
+                    >
+                      {v.marque} {v.modele || v.immatriculation} ✕
+                    </Badge>
+                  ) : null;
+                })}
+              </div>
+            )}
+
+            <div className="border rounded-lg max-h-48 overflow-y-auto p-2 space-y-1">
+              {displayVehicles.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Aucun véhicule disponible
+                </p>
+              ) : (
+                displayVehicles.map((v) => (
+                  <label
+                    key={v.id}
+                    className="flex items-center gap-3 p-2 rounded-md hover:bg-accent cursor-pointer transition-colors"
+                  >
+                    <Checkbox
+                      checked={selectedVehicleIds.includes(v.id)}
+                      onCheckedChange={() => toggleVehicle(v.id)}
+                    />
+                    <span className="text-sm font-medium">
+                      {v.marque} {v.modele || v.immatriculation}
+                    </span>
+                    {!v.disponible && (
+                      <Badge variant="outline" className="text-xs">Indisponible</Badge>
+                    )}
+                    <span className="text-xs text-muted-foreground ml-auto">
+                      {v.prix} € / jour
+                    </span>
+                  </label>
+                ))
+              )}
             </div>
           </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="dateDebut">Date début</Label>
               <Input
                 id="dateDebut"
                 type="date"
-                value={promotion.dateDebut?.slice(0, 10) || ""}
+                value={formData.dateDebut?.slice(0, 10) || ""}
                 onChange={(e) => handleChange("dateDebut", e.target.value)}
               />
             </div>
@@ -151,7 +229,7 @@ export default function PromotionsUpdate() {
               <Input
                 id="dateFin"
                 type="date"
-                value={promotion.dateFin?.slice(0, 10) || ""}
+                value={formData.dateFin?.slice(0, 10) || ""}
                 onChange={(e) => handleChange("dateFin", e.target.value)}
               />
             </div>
@@ -162,7 +240,7 @@ export default function PromotionsUpdate() {
               <Input
                 id="utilisationMax"
                 type="number"
-                value={promotion.utilisationMax || 0}
+                value={formData.utilisationMax || 0}
                 onChange={(e) => handleChange("utilisationMax", Number(e.target.value))}
               />
             </div>
@@ -171,7 +249,7 @@ export default function PromotionsUpdate() {
               <Input
                 id="dureeMinLocation"
                 type="number"
-                value={promotion.dureeMinLocation || 1}
+                value={formData.dureeMinLocation || 1}
                 onChange={(e) => handleChange("dureeMinLocation", Number(e.target.value))}
               />
             </div>
@@ -182,7 +260,7 @@ export default function PromotionsUpdate() {
               <Input
                 id="montantMinCommande"
                 type="number"
-                value={promotion.montantMinCommande || 0}
+                value={formData.montantMinCommande || 0}
                 onChange={(e) => handleChange("montantMinCommande", Number(e.target.value))}
               />
             </div>
@@ -190,15 +268,21 @@ export default function PromotionsUpdate() {
               <Label htmlFor="codesPromo">Codes promo (séparés par des virgules)</Label>
               <Input
                 id="codesPromo"
-                value={promotion.codesPromo?.join(",") || ""}
+                value={formData.codesPromo?.join(",") || ""}
                 onChange={(e) => handleChange("codesPromo", e.target.value.split(","))}
               />
             </div>
           </div>
-          <Button type="submit" className="w-full">
-            Mettre à jour
+          <Button type="submit" className="w-full" disabled={isSaving}>
+            {isSaving ? "Mise à jour en cours..." : "Mettre à jour"}
           </Button>
-          {message && <p className="mt-2 text-center">{message}</p>}
+          {message && (
+            <p className={`mt-2 text-center text-sm ${
+              message.startsWith("✅") ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+            }`}>
+              {message}
+            </p>
+          )}
         </form>
       </CardContent>
     </Card>

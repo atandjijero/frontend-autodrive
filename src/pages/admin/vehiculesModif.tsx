@@ -63,7 +63,7 @@ export default function VehiculesModif() {
 
       //  Nouvelle photo uploadée
       if (values.photos instanceof FileList && values.photos.length > 0) {
-        formData.append("file", values.photos[0]);
+        formData.append("files", values.photos[0]);
       }
 
       await updateVehicle(id!, formData);

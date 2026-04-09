@@ -54,7 +54,7 @@ export default function AgencesListe() {
   }, []);
 
   const handleDelete = async (agency: Agency) => {
-    const agencyId = agency.id || agency._id;
+    const agencyId = agency.id;
     if (!agencyId) {
       toast.error("ID de l'agence manquant");
       return;
@@ -72,7 +72,7 @@ export default function AgencesListe() {
   };
 
   const handleToggleActive = async (agency: Agency) => {
-    const agencyId = agency.id || agency._id;
+    const agencyId = agency.id;
     if (!agencyId) {
       toast.error("ID de l'agence manquant");
       return;
@@ -252,7 +252,7 @@ export default function AgencesListe() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {agencies.map((agency, index) => (
-          <Card key={agency.id || agency._id || `agency-${index}`} className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
+          <Card key={agency.id || `agency-${index}`} className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
             <CardHeader className="pb-3">
               {agency.logo && (
                 <div className="flex justify-center mb-3">
@@ -322,7 +322,7 @@ export default function AgencesListe() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
                     <DropdownMenuItem asChild>
-                      <Link to={`/admin/agences/modifier/${agency.id || agency._id}`} className="cursor-pointer">
+                      <Link to={`/admin/agences/modifier/${agency.id}`} className="cursor-pointer">
                         <IconEdit className="h-4 w-4 mr-2" />
                         Modifier
                       </Link>

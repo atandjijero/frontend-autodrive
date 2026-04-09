@@ -35,15 +35,17 @@ export interface ResetPasswordDto {
 }
 
 export interface UserProfile {
-  id: string; //  backend renvoie "id" et non "_id"
+  id: number;
   nom: string;
   prenom: string;
   email: string;
   telephone: string;
+  telephoneSecondaire?: string;
   adresse?: string;
+  photo?: string;
+  avatar?: string;
   role: "admin" | "client" | "entreprise" | "tourist";
   dateInscription?: string;
-  avatar?: string;
 }
 
 // Agency DTOs
@@ -83,8 +85,7 @@ export interface UpdateAgencyDto {
 }
 
 export interface Agency {
-  id?: string;
-  _id?: string;
+  id: number;
   name: string;
   address: string;
   city: string;
@@ -110,8 +111,10 @@ export interface AgenciesListResponseDto {
 }
 
 // ---------------- Axios Config ----------------
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:9000";
+
 export const apiClient: AxiosInstance = axios.create({
-  baseURL: "http://localhost:9000",
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -168,7 +171,7 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     // Mask token for debug (show first/last 4 chars)
     let masked = null;
     if (token) {
-      masked = `${token.slice(0,4)}...${token.slice(-4)}`;
+      masked = `${token.slice(0, 4)}...${token.slice(-4)}`;
     }
     // Use console.debug so it's easy to filter in devtools
     console.debug("apiClient request:", config.method, config.url, "hasAuthorization:", hasAuth, "token:", masked);
@@ -189,14 +192,14 @@ apiClient.interceptors.response.use(
         console.error("Non authentifié : veuillez vous connecter.", { status, respData });
         try {
           toast.error("Session expirée ou non autorisée — veuillez vous reconnecter");
-        } catch (e) {}
+        } catch (e) { }
         // Redirect to login page
         try {
           window.location.replace('/connexion');
-        } catch (e) {}
+        } catch (e) { }
       } else if (status === 403) {
         console.error("Accès interdit : rôle insuffisant ou token invalide.", { status, respData });
-        try { toast.error("Accès interdit"); } catch (e) {}
+        try { toast.error("Accès interdit"); } catch (e) { }
       } else if (status >= 500) {
         try {
           console.error("Erreur serveur :", status, JSON.stringify(respData, null, 2));
@@ -218,8 +221,14 @@ apiClient.interceptors.response.use(
 );
 
 // ---------------- AUTH ----------------
-export const register = (data: CreateUserDto) =>
-  apiClient.post("/auth/register", data);
+export const register = (data: FormData | CreateUserDto) => {
+  if (data instanceof FormData) {
+    return apiClient.post("/auth/register", data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  }
+  return apiClient.post("/auth/register", data);
+};
 
 export interface LoginResponse {
   message?: string;
@@ -272,7 +281,7 @@ export interface CreateVehicleDto {
 }
 
 export interface Vehicle {
-  _id: string;
+  id: number;
   carrosserie: string;
   modele: string;
   marque: string;
@@ -282,7 +291,7 @@ export interface Vehicle {
   immatriculation: string;
   disponible: boolean;
   deleted: boolean;
-  agencyId?: string; // ID de l'agence propriétaire du véhicule
+  agencyId?: number; // ID de l'agence propriétaire du véhicule
   createdAt: string;
   updatedAt: string;
 }
@@ -295,27 +304,27 @@ export const addVehicle = (data: FormData) =>
 export const getVehicles = () =>
   apiClient.get<Vehicle[]>("/vehicles");
 
-export const getVehicleById = (id: string) =>
+export const getVehicleById = (id: string | number) =>
   apiClient.get<Vehicle>(`/vehicles/${id}`);
 
-export const updateVehicle = (id: string, data: FormData) =>
+export const updateVehicle = (id: string | number, data: FormData) =>
   apiClient.put<Vehicle>(`/vehicles/${id}`, data, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 
-export const deleteVehicle = (id: string) =>
+export const deleteVehicle = (id: string | number) =>
   apiClient.delete<Vehicle>(`/vehicles/${id}`);
 
-export const markVehicleUnavailable = (id: string) =>
+export const markVehicleUnavailable = (id: string | number) =>
   apiClient.put<Vehicle>(`/vehicles/${id}/unavailable`);
 
-export const markVehicleAvailable = (id: string) =>
+export const markVehicleAvailable = (id: string | number) =>
   apiClient.put<Vehicle>(`/vehicles/${id}/available`);
 
 // ---------------- RESERVATIONS ----------------
 // ---------------- RESERVATIONS ----------------
 export interface ReservationVehicle {
-  _id: string;
+  id: number;
   carrosserie: string;
   modele: string;
   marque: string;
@@ -325,13 +334,13 @@ export interface ReservationVehicle {
   immatriculation: string;
   disponible: boolean;
   deleted: boolean;
-  agencyId?: string; // ID de l'agence propriétaire du véhicule
+  agencyId?: number; // ID de l'agence propriétaire du véhicule
   createdAt: string;
   updatedAt: string;
 }
 
 export interface ReservationClient {
-  _id: string;
+  id: number;
   role: "client" | "admin" | "entreprise" | "tourist";
   nom: string;
   prenom: string;
@@ -347,21 +356,24 @@ export interface ReservationClient {
 }
 
 export interface CreateReservationDto {
-  vehicleId: string; 
-  clientId: string;  
+  vehicleId: string;
+  clientId: string;
   dateDebut: string;
   dateFin: string;
   codePromo?: string;
 }
 
 export interface Reservation {
-  _id: string;
-  vehicleId: ReservationVehicle;   // objet complet renvoyé par le backend
-  clientId: ReservationClient;     // objet complet renvoyé par le backend
+  id: number;
+  vehicle: ReservationVehicle;     // objet complet renvoyé par le backend
+  client: ReservationClient;       // objet complet renvoyé par le backend
+  vehicleId: number;               // ID du véhicule
+  clientId: number;                // ID du client
   dateDebut: string;
   dateFin: string;
-  statut: "en cours" | "terminée" | "annulée";
+  statut: "en_attente" | "validee" | "en_cours" | "terminee" | "annulee";
   numeroReservation: string;
+  promotionId?: Promotion; // Ajout du champ promotion
   createdAt?: string;
   updatedAt?: string;
 }
@@ -372,11 +384,14 @@ export const addReservation = (data: CreateReservationDto) =>
 export const getReservations = () =>
   apiClient.get<Reservation[]>("/reservations");
 
-export const getReservationById = (id: string) =>
+export const getReservationById = (id: string | number) =>
   apiClient.get<Reservation>(`/reservations/${id}`);
 
-export const deleteReservation = (id: string) =>
+export const deleteReservation = (id: string | number) =>
   apiClient.delete<Reservation>(`/reservations/${id}`);
+
+export const updateReservationStatus = (id: string | number, statut: string) =>
+  apiClient.patch<Reservation>(`/reservations/${id}/status`, { statut });
 // ---------------- PAIEMENTS ----------------
 
 export interface CreatePaiementDto {
@@ -384,20 +399,24 @@ export interface CreatePaiementDto {
   nom: string;
   email: string;
   montant: number;
-  numeroCarte: string;
-  expiration: string;
-  cvv: string;
+  methodePaiement: "CARTE" | "TMONEY" | "FLOOZ";
+  telephone?: string;
+  numeroCarte?: string;
+  expiration?: string;
+  cvv?: string;
 }
 
 export interface Paiement {
-  _id: string;
-  reservationId: Reservation; 
+  id: number;
+  reservationId: Reservation;
   nom: string;
   email: string;
   montant: number;
-  numeroCarte: string;
-  expiration: string;
-  cvv: string;
+  methodePaiement: "CARTE" | "TMONEY" | "FLOOZ";
+  telephone?: string;
+  numeroCarte?: string;
+  expiration?: string;
+  cvv?: string;
   statut: "reussi" | "echoue";
   createdAt: string;
   updatedAt: string;
@@ -412,11 +431,11 @@ export const getPaiements = () =>
   apiClient.get<Paiement[]>("/paiements");
 
 // Récupérer un paiement par ID
-export const getPaiementById = (id: string) =>
+export const getPaiementById = (id: string | number) =>
   apiClient.get<Paiement>(`/paiements/${id}`);
-export const downloadReservationReceipt = (id: string) =>
+export const downloadReservationReceipt = (id: string | number) =>
   apiClient.get(`/reservations/${id}/recu`, {
-    responseType: "blob", 
+    responseType: "blob",
   });
 
 // ---------------- STATS ----------------
@@ -432,7 +451,7 @@ export interface ClientStats {
 }
 // ---------------- DASHBOARD ----------------
 export interface Promotion {
-  _id: string;
+  id: number;
   code: string;
   description: string;
   reduction: number;
@@ -496,7 +515,7 @@ export interface CreatePromotionDto {
   valeur: number;
   dateDebut: string;
   dateFin: string;
-  vehiculeId?: string;
+  vehiculesIds?: number[];
   utilisationMax?: number;
   codesPromo?: string[];
   dureeMinLocation?: number;
@@ -510,7 +529,7 @@ export interface UpdatePromotionDto {
   valeur?: number;
   dateDebut?: string;
   dateFin?: string;
-  vehiculeId?: string;
+  vehiculesIds?: number[];
   utilisationMax?: number;
   codesPromo?: string[];
   dureeMinLocation?: number;
@@ -518,14 +537,14 @@ export interface UpdatePromotionDto {
 }
 
 export interface Promotion {
-  _id: string;
+  id: number;
   titre: string;
   description: string;
   type: "pourcentage" | "montant";
   valeur: number;
   dateDebut: string;
   dateFin: string;
-  vehiculeId: string;
+  vehiculesIds?: number[];
   utilisationMax: number;
   codesPromo: string[];
   dureeMinLocation: number;
@@ -549,7 +568,7 @@ export const getActivePromotions = () =>
   apiClient.get<Promotion[]>("/promotions/active");
 
 // Récupérer une promotion par ID
-export const getPromotionById = (id: string) =>
+export const getPromotionById = (id: string | number) =>
   apiClient.get<Promotion>(`/promotions/${id}`);
 
 // Récupérer une promotion par code promo
@@ -557,16 +576,16 @@ export const getPromotionByCode = (code: string) =>
   apiClient.get<Promotion>(`/promotions/code/${code}`);
 
 // Mettre à jour une promotion
-export const updatePromotion = (id: string, data: UpdatePromotionDto) =>
+export const updatePromotion = (id: string | number, data: UpdatePromotionDto) =>
   apiClient.put<Promotion>(`/promotions/${id}`, data);
 
 // Supprimer une promotion
-export const deletePromotion = (id: string) =>
+export const deletePromotion = (id: string | number) =>
   apiClient.delete<void>(`/promotions/${id}`);
 
 // Appliquer une promotion à un montant
 export const appliquerPromotion = (
-  promotionId: string, // doit être l'_id de la promotion (string)
+  promotionId: string | number,
   body: { montantBase: number; vehiculeId?: string }
 ) =>
   apiClient.post<{
@@ -586,7 +605,7 @@ export const sendContact = (data: ContactDto) =>
   apiClient.post<{ message: string }>("/contact", data);
 
 export interface Contact {
-  _id: string;
+  id: number;
   nom: string;
   email: string;
   message: string;
@@ -598,31 +617,32 @@ export interface Contact {
 
 export const getContacts = () => apiClient.get<Contact[]>('/contact');
 
-export const respondToContact = (id: string, response: string) =>
+export const respondToContact = (id: string | number, response: string) =>
   apiClient.put<Contact>(`/contact/${id}/respond`, { response });
 
 // ---------------- NOTIFICATIONS ----------------
 export interface Notification {
-  _id: string;
+  id: number;
   title: string;
   body: string;
   read: boolean;
-  entityId?: string;
+  entityId?: number;
   meta?: Record<string, any>;
   createdAt?: string;
 }
 
 export const getNotifications = () => apiClient.get<Notification[]>('/notifications');
 export const getUnreadNotifications = () => apiClient.get<Notification[]>('/notifications/unread');
-export const markNotificationRead = (id: string) => apiClient.put<Notification>(`/notifications/${id}/mark-read`);
+export const markNotificationRead = (id: string | number) => apiClient.put<Notification>(`/notifications/${id}/mark-read`);
 
 // ---------------- BLOG ----------------
 export interface Post {
-  id: string;
+  id: number;
   titre: string;
   slug: string;
   corps: string;
   extrait?: string;
+  author?: string;
   idAdmin?: string;
   categorie?: string;
   photo?: string;
@@ -630,14 +650,6 @@ export interface Post {
   status?: 'draft' | 'published';
   createdAt?: string;
   updatedAt?: string;
-  _id?: string; // pour compatibilité
-  title?: string; // pour compatibilité
-  body?: string; // pour compatibilité
-  excerpt?: string; // pour compatibilité
-  author?: string; // pour compatibilité
-  tags?: string[]; // pour compatibilité
-  publishedAt?: string; // pour compatibilité
-  featuredImage?: string; // pour compatibilité
 }
 
 export interface CreatePostDto {
@@ -680,19 +692,19 @@ export const getAdminBlogPosts = (params?: { page?: number; limit?: number; q?: 
 export const getBlogPostBySlug = (slug: string) =>
   apiClient.get<Post>(`/blog/${slug}`);
 
-export const getBlogPost = (id: string) =>
+export const getBlogPost = (id: string | number) =>
   apiClient.get<Post>(`/blog/${id}`);
 
 export const createBlogPost = (data: CreatePostDto) =>
   apiClient.post<Post>('/admin/blog', data);
 
-export const updateBlogPost = (id: string, data: UpdatePostDto) =>
+export const updateBlogPost = (id: string | number, data: UpdatePostDto) =>
   apiClient.put<Post>(`/admin/blog/${id}`, data);
 
-export const deleteBlogPost = (id: string) =>
+export const deleteBlogPost = (id: string | number) =>
   apiClient.delete(`/admin/blog/${id}`);
 
-export const publishBlogPost = (id: string) =>
+export const publishBlogPost = (id: string | number) =>
   apiClient.patch<Post>(`/admin/blog/${id}/publish`);
 
 export const uploadBlogImage = (file: File) => {
@@ -707,7 +719,7 @@ export const uploadBlogImage = (file: File) => {
 export const getAgencies = (params?: { page?: number; limit?: number; q?: string; isActive?: boolean }) =>
   apiClient.get<AgenciesListResponseDto>('/admin/agencies', { params });
 
-export const getAgencyById = (id: string) =>
+export const getAgencyById = (id: string | number) =>
   apiClient.get<Agency>(`/agencies/${id}`);
 
 export const getActiveAgencies = (params?: { page?: number; limit?: number; q?: string }) =>
@@ -784,13 +796,13 @@ export const updateAgency = (id: string, data: UpdateAgencyDto, logoFile?: File)
   });
 };
 
-export const deleteAgency = (id: string) =>
+export const deleteAgency = (id: string | number) =>
   apiClient.delete(`/admin/agencies/${id}`);
 
-export const toggleAgencyActive = (id: string) =>
+export const toggleAgencyActive = (id: string | number) =>
   apiClient.patch<Agency>(`/admin/agencies/${id}/toggle`);
 
-export const exportAgencyToPdf = (id: string) =>
+export const exportAgencyToPdf = (id: string | number) =>
   apiClient.get(`/agencies/${id}/export-pdf`, { responseType: 'blob' });
 
 // Import agencies from a JSON file (multipart upload)
@@ -825,6 +837,7 @@ export interface UpdateContractDto {
 
 export interface Contract {
   _id: string;
+  id?: number;
   userId: {
     _id: string;
     nom: string;
@@ -847,7 +860,7 @@ export interface Contract {
   acompteVerse: number;
   conditionsSpeciales?: string;
   statut: 'pending' | 'approved' | 'rejected';
-  commentaires?: string;
+  commentarios?: string;
   dateValidation?: string;
   validePar?: {
     _id: string;
@@ -868,22 +881,22 @@ export const getContracts = () =>
 export const getAllContracts = () =>
   apiClient.get<Contract[]>('/contracts');
 
-export const getContract = (id: string) =>
+export const getContract = (id: string | number) =>
   apiClient.get<Contract>(`/contracts/${id}`);
 
-export const updateContract = (id: string, updateData: UpdateContractDto) =>
+export const updateContract = (id: string | number, updateData: UpdateContractDto) =>
   apiClient.put<Contract>(`/contracts/${id}`, updateData);
 
 // Valider ou rejeter un contrat (Admin uniquement)
 export const validateContract = (
-  id: string,
+  id: string | number,
   data: { valider: boolean; commentaires?: string }
 ) => apiClient.post<Contract>(`/contracts/${id}/validate`, data);
 
-export const deleteContract = (id: string) =>
+export const deleteContract = (id: string | number) =>
   apiClient.delete(`/contracts/${id}`);
 
-export const downloadContractPDF = (id: string) =>
+export const downloadContractPDF = (id: string | number) =>
   apiClient.get(`/contracts/${id}/download`, { responseType: 'blob' });
 
 

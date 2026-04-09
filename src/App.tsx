@@ -73,89 +73,89 @@ function App() {
             <Toaster richColors closeButton />
             <div className="w-full min-h-screen">
               <Routes>
-            {/* Routes publiques */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/vehicules" element={<Vehicules />} />
-            <Route path="/vehicules/:id" element={<Vehicule />} />
-            <Route
-              path="/reservation/:vehicleId"
-              element={<ReservationForm />}
-            />
-            <Route path="/paiement/:reservationId" element={<PaymentForm />} />
-            
-            <Route path="/connexion" element={<Connexion />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/inscription" element={<Inscription />} />
-            <Route path="/verify-email/:token" element={<VerificationEmail />} />
-            <Route path="/otp" element={<OtpForm />} />
-            <Route path="/reset-password/:token" element={<PassOublieForm />} />
-            <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-            {/* Dashboards par rôle */}
-            <Route path="/client/dashboard" element={<DashboardClient />} />
-            <Route path="/client/profil" element={<ProfileWithLayout role="client" />} />
-            <Route path="/client/temoignages" element={<TemoignagesWithLayout role="client" />} />
-            <Route path="/client/reservations" element={<ReservationList />} />
-            <Route path="/entreprise/dashboard" element={<DashboardEntreprise />} />
-            <Route path="/entreprise/profil" element={<ProfileWithLayout role="entreprise" />} />
-            <Route path="/entreprise/temoignages" element={<TemoignagesWithLayout role="entreprise" />} />
-            <Route path="/entreprise/reservations" element={<ReservationList />} />
-            <Route path="/entreprise/contrats" element={<ContratsEntreprise />} />
-            <Route path="/entreprise/contrats/nouveau" element={<ContratsNouveau />} />
-            <Route path="/touriste/dashboard" element={<DashboardTouriste />} />
-            <Route path="/touriste/profil" element={<ProfileWithLayout role="touriste" />} />
-            <Route path="/touriste/temoignages" element={<TemoignagesWithLayout role="touriste" />} />
-            <Route path="/touriste/reservations" element={<ReservationList />} />
-            {/* Routes admin avec le nouveau dashboard */}
-            <Route path="/admin" element={<Admin />}>
-            <Route path="notifications" element={<AdminNotifications />} />
-            <Route path="contacts" element={<AdminContacts />} />
-            <Route path="blog" element={<AdminBlog />} />
-            <Route path="blog/create" element={<AdminBlog />} />
-            <Route path="blog/published" element={<AdminBlog />} />
-            <Route path="blog/drafts" element={<AdminBlog />} />
-            <Route path="profil" element={<Profil />} />
-            <Route path="vehicules/ajouter" element={<VehiculesAjout />} />
-            <Route path="vehicules/liste" element={<VehiculesListe />} />
-            <Route path="vehicules/modifier/:id" element={<VehiculesModif />} />
-            <Route path="vehicules/supprimer/:id" element={<VehiculesSupprimer />} />
-            <Route path="reservations/liste" element={<ReservationList />} />
-            <Route path="paiements/liste" element={<PaiementsList />} />
-            <Route path="clients/liste" element={<ClientsListe />} />
-            <Route path="dashboard" element={<DashboardPage />} />
+                {/* Routes publiques */}
+                <Route path="/" element={<HomePage />} />
+                <Route path="/vehicules" element={<Vehicules />} />
+                <Route path="/vehicules/:id" element={<Vehicule />} />
+                <Route
+                  path="/reservation/:vehicleId"
+                  element={<ReservationForm />}
+                />
+                <Route path="/paiement/:reservationId" element={<PaymentForm />} />
 
-            {/*  Routes Promotions */}
-            <Route path="promotions/ajouter" element={<PromotionsAjout />} />
-            <Route path="promotions/liste" element={<PromotionsListe />} />
-            <Route path="promotions/actives" element={<PromotionsActives />} />
-            <Route path="promotions/update/:id" element={<PromotionsUpdate />} />
-            <Route path="promotions/appliquer" element={<PromotionsAppliquer />} />
+                <Route path="/connexion" element={<Connexion />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/inscription" element={<Inscription />} />
+                <Route path="/verify-email/:token" element={<VerificationEmail />} />
+                <Route path="/otp" element={<OtpForm />} />
+                <Route path="/reset-password/:token" element={<PassOublieForm />} />
+                <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+                {/* Dashboards par rôle */}
+                <Route path="/client/dashboard" element={<DashboardClient />} />
+                <Route path="/client/profil" element={<ProfileWithLayout role="client" />} />
+                <Route path="/client/temoignages" element={<TemoignagesWithLayout role="client" />} />
+                <Route path="/client/reservations" element={<ReservationList />} />
+                <Route path="/entreprise/dashboard" element={<DashboardEntreprise />} />
+                <Route path="/entreprise/profil" element={<ProfileWithLayout role="entreprise" />} />
+                <Route path="/entreprise/temoignages" element={<TemoignagesWithLayout role="entreprise" />} />
+                <Route path="/entreprise/reservations" element={<ReservationList />} />
+                <Route path="/entreprise/contrats" element={<ContratsEntreprise />} />
+                <Route path="/entreprise/contrats/nouveau" element={<ContratsNouveau />} />
+                <Route path="/touriste/dashboard" element={<DashboardTouriste />} />
+                <Route path="/touriste/profil" element={<ProfileWithLayout role="touriste" />} />
+                <Route path="/touriste/temoignages" element={<TemoignagesWithLayout role="touriste" />} />
+                <Route path="/touriste/reservations" element={<ReservationList />} />
+                {/* Routes admin avec le nouveau dashboard */}
+                <Route path="/admin" element={<Admin />}>
+                  <Route path="notifications" element={<AdminNotifications />} />
+                  <Route path="contacts" element={<AdminContacts />} />
+                  <Route path="blog" element={<AdminBlog />} />
+                  <Route path="blog/create" element={<AdminBlog />} />
+                  <Route path="blog/published" element={<AdminBlog />} />
+                  <Route path="blog/drafts" element={<AdminBlog />} />
+                  <Route path="profil" element={<Profil />} />
+                  <Route path="vehicules/ajouter" element={<VehiculesAjout />} />
+                  <Route path="vehicules/liste" element={<VehiculesListe />} />
+                  <Route path="vehicules/modifier/:id" element={<VehiculesModif />} />
+                  <Route path="vehicules/supprimer/:id" element={<VehiculesSupprimer />} />
+                  <Route path="reservations/liste" element={<ReservationList />} />
+                  <Route path="paiements/liste" element={<PaiementsList />} />
+                  <Route path="clients/liste" element={<ClientsListe />} />
+                  <Route path="dashboard" element={<DashboardPage />} />
 
-            {/* Routes Agences */}
-            <Route path="agences/liste" element={<AgencesListe />} />
-            <Route path="agences/ajouter" element={<AgencesAjout />} />
-            <Route path="agences/modifier/:id" element={<AgencesModif />} />
-            <Route path="agences/importer" element={<AgencesImport />} />
+                  {/*  Routes Promotions */}
+                  <Route path="promotions/ajouter" element={<PromotionsAjout />} />
+                  <Route path="promotions/liste" element={<PromotionsListe />} />
+                  <Route path="promotions/actives" element={<PromotionsActives />} />
+                  <Route path="promotions/update/:id" element={<PromotionsUpdate />} />
+                  <Route path="promotions/appliquer" element={<PromotionsAppliquer />} />
 
-            {/* Routes Contrats */}
-            <Route path="contrats/liste" element={<ContratsAdmin />} />
-            <Route path="contrats/pending" element={<ContratsAdmin />} />
-            <Route path="contrats/approved" element={<ContratsAdmin />} />
-            </Route>
+                  {/* Routes Agences */}
+                  <Route path="agences/liste" element={<AgencesListe />} />
+                  <Route path="agences/ajouter" element={<AgencesAjout />} />
+                  <Route path="agences/modifier/:id" element={<AgencesModif />} />
+                  <Route path="agences/importer" element={<AgencesImport />} />
+
+                  {/* Routes Contrats */}
+                  <Route path="contrats/liste" element={<ContratsAdmin />} />
+                  <Route path="contrats/pending" element={<ContratsAdmin />} />
+                  <Route path="contrats/approved" element={<ContratsAdmin />} />
+                </Route>
 
 
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<Article />} />
-            <Route path="/blog/article/:id" element={<Article />} />
-            <Route path="/contracts/:id/download" element={<DownloadRedirect />} />
-            
-            {/* correction */}
-          </Routes>
-        </div>
-      </ThemeProvider>
-    </BrowserRouter>
-    </HelmetProvider>
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<Article />} />
+                <Route path="/blog/article/:id" element={<Article />} />
+                <Route path="/contracts/:id/download" element={<DownloadRedirect />} />
+
+                {/* correction */}
+              </Routes>
+            </div>
+          </ThemeProvider>
+        </BrowserRouter>
+      </HelmetProvider>
     </AuthProvider>
   );
 }

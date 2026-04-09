@@ -14,7 +14,7 @@ export default function PromotionsActives() {
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
       {promotions.map((promo) => (
-        <Card key={promo._id}>
+        <Card key={promo.id}>
           <CardHeader>
             <CardTitle>{promo.titre}</CardTitle>
           </CardHeader>

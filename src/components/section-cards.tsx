@@ -32,8 +32,8 @@ export function SectionCards() {
         const vehicles = vehiclesRes.data;
 
         const totalReservations = reservations.length;
-        const activeReservations = reservations.filter(r => r.statut === "en cours").length;
-        const totalRevenue = reservations.reduce((sum, r) => sum + (r.vehicleId?.prix || 0), 0);
+        const activeReservations = reservations.filter(r => r.statut === "en_cours").length;
+        const totalRevenue = reservations.reduce((sum, r) => sum + (r.vehicle?.prix || 0), 0);
         const totalVehicles = vehicles.length;
 
         setStats({
