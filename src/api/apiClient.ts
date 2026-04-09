@@ -111,7 +111,26 @@ export interface AgenciesListResponseDto {
 }
 
 // ---------------- Axios Config ----------------
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:9000";
+// Déterminer l'URL de base de l'API en fonction de l'environnement
+const getApiBaseUrl = (): string => {
+  // Si variable Vite est définie (priorité)
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  
+  // En développement local
+  if (import.meta.env.DEV) {
+    return "http://localhost:9000";
+  }
+  
+  // En production: utiliser le backend Render déployé
+  return "https://backend-autodrive.onrender.com";
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+// Log pour débugger
+console.log("🔌 API Base URL:", API_BASE_URL, "(env:", import.meta.env.MODE, ")");
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

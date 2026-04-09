@@ -22,6 +22,23 @@ import {
 import { Loader2, MapPin, Phone, AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
+interface DataLoadingState {
+  vehicules: boolean;
+  promotions: boolean;
+  temoignages: boolean;
+}
+
+interface ErrorState {
+  vehicules: string | null;
+  promotions: string | null;
+  temoignages: string | null;
+  general: string | null;
+}
+
+const isNetworkError = (error: any): boolean => {
+  return !error.response || error.code === 'ECONNABORTED' || error.message === 'Network Error';
+};
+
 export default function HomePage() {
   const { t } = useTranslation();
   const [vehicules, setVehicules] = useState<Vehicle[]>([]);
@@ -30,49 +47,133 @@ export default function HomePage() {
   const [temoignages, setTemoignages] = useState<Temoignage[]>([]);
   const [nearbyAgencies, setNearbyAgencies] = useState<Agency[]>([]);
   const [gpsLoading, setGpsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<DataLoadingState>({
+    vehicules: true,
+    promotions: true,
+    temoignages: true
+  });
+  const [errors, setErrors] = useState<ErrorState>({
+    vehicules: null,
+    promotions: null,
+    temoignages: null,
+    general: null
+  });
+  const [retryCount, setRetryCount] = useState(0);
 
-  // Charger les véhicules
+  // Charger les véhicules avec retry automatique
   useEffect(() => {
-    getVehicles()
-      .then((res) => {
-        setVehicules(res.data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Impossible de charger les véhicules.");
-        setLoading(false);
-      });
-  }, []);
+    let retryTimer: NodeJS.Timeout;
+    const attemptLoad = () => {
+      getVehicles()
+        .then((res) => {
+          setVehicules(res.data);
+          setLoading(prev => ({ ...prev, vehicules: false }));
+          setErrors(prev => ({ ...prev, vehicules: null }));
+        })
+        .catch((err) => {
+          const isNetwork = isNetworkError(err);
+          setErrors(prev => ({
+            ...prev,
+            vehicules: isNetwork ? null : "Impossible de charger les véhicules."
+          }));
+          setLoading(prev => ({ ...prev, vehicules: isNetwork })); // Keep loading if network error
+          
+          if (isNetwork && retryCount < 5) {
+            retryTimer = setTimeout(() => {
+              setRetryCount(prev => prev + 1);
+            }, 3000);
+          } else if (!isNetwork) {
+            setLoading(prev => ({ ...prev, vehicules: false }));
+          }
+        });
+    };
 
-  // Charger les promotions actives
-  useEffect(() => {
-    getPromotions(true)
-      .then((res) => setPromotions(res.data))
-      .catch(() => setError("Impossible de charger les promotions."));
-  }, []);
+    if (loading.vehicules || (errors.vehicules === null && retryCount > 0)) {
+      attemptLoad();
+    }
 
-  // Charger les témoignages
+    return () => clearTimeout(retryTimer);
+  }, [retryCount, loading.vehicules]);
+
+  // Charger les promotions actives avec retry
   useEffect(() => {
+    let retryTimer: NodeJS.Timeout;
+    const attemptLoad = () => {
+      getPromotions(true)
+        .then((res) => {
+          setPromotions(res.data);
+          setLoading(prev => ({ ...prev, promotions: false }));
+          setErrors(prev => ({ ...prev, promotions: null }));
+        })
+        .catch((err) => {
+          const isNetwork = isNetworkError(err);
+          setErrors(prev => ({
+            ...prev,
+            promotions: isNetwork ? null : "Impossible de charger les promotions."
+          }));
+          setLoading(prev => ({ ...prev, promotions: isNetwork }));
+          
+          if (isNetwork && retryCount < 5) {
+            retryTimer = setTimeout(() => {
+              setRetryCount(prev => prev + 1);
+            }, 3000);
+          } else if (!isNetwork) {
+            setLoading(prev => ({ ...prev, promotions: false }));
+          }
+        });
+    };
+
+    if (loading.promotions || (errors.promotions === null && retryCount > 0)) {
+      attemptLoad();
+    }
+
+    return () => clearTimeout(retryTimer);
+  }, [retryCount, loading.promotions]);
+
+  // Charger les témoignages avec retry
+  useEffect(() => {
+    let retryTimer: NodeJS.Timeout;
+    let pollInterval: NodeJS.Timeout;
+
     const loadTemoignages = () => {
       getTemoignages()
         .then((res) => {
           console.log("✅ Témoignages chargés:", res.data);
           setTemoignages(res.data);
+          setLoading(prev => ({ ...prev, temoignages: false }));
+          setErrors(prev => ({ ...prev, temoignages: null }));
         })
         .catch((err) => {
-          console.error("❌ Erreur chargement témoignages:", err.response?.status, err.message);
+          const isNetwork = isNetworkError(err);
+          console.error("❌ Erreur chargement témoignages:", err.message);
+          setErrors(prev => ({
+            ...prev,
+            temoignages: isNetwork ? null : "Impossible de charger les témoignages."
+          }));
+          setLoading(prev => ({ ...prev, temoignages: isNetwork }));
+          
+          if (isNetwork && retryCount < 5) {
+            retryTimer = setTimeout(() => {
+              setRetryCount(prev => prev + 1);
+            }, 3000);
+          } else if (!isNetwork) {
+            setLoading(prev => ({ ...prev, temoignages: false }));
+          }
         });
     };
 
     loadTemoignages();
     
-    // Rafraîchir les témoignages toutes les 3 secondes pour afficher les nouveaux
-    const interval = setInterval(loadTemoignages, 3000);
+    // Rafraîchir les témoignages toutes les 3 secondes une fois chargés
+    if (!loading.temoignages) {
+      pollInterval = setInterval(loadTemoignages, 3000);
+    }
     
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      clearTimeout(retryTimer);
+      clearInterval(pollInterval);
+    };
+  }, [retryCount, loading.temoignages]);
 
   // Construire la liste des véhicules en promotion (uniquement disponibles)
   useEffect(() => {
@@ -87,12 +188,12 @@ export default function HomePage() {
   // Fonction pour trouver les agences proches
   const findNearbyAgencies = async () => {
     if (!navigator.geolocation) {
-      setError("La géolocalisation n'est pas supportée par ce navigateur");
+      setErrors(prev => ({ ...prev, general: "La géolocalisation n'est pas supportée par ce navigateur" }));
       return;
     }
 
     setGpsLoading(true);
-    setError(null);
+    setErrors(prev => ({ ...prev, general: null }));
 
     try {
       const position = await new Promise<GeolocationPosition>((resolve, reject) => {
@@ -112,10 +213,10 @@ export default function HomePage() {
         });
 
         setNearbyAgencies(agencies.data);
-        setError(null); // Clear any previous errors on success
+        setErrors(prev => ({ ...prev, general: null })); // Clear any previous errors on success
       } catch (apiError: any) {
         console.error("Erreur API agences:", apiError);
-        setError("Erreur lors de la recherche d'agences proches");
+        setErrors(prev => ({ ...prev, general: "Erreur lors de la recherche d'agences proches" }));
       }
     } catch (geoError: any) {
       // Only log if it's not a permission denied error (which is expected)
@@ -123,27 +224,80 @@ export default function HomePage() {
         console.error("Erreur de géolocalisation:", geoError);
       }
       
-      setError(
-        geoError.code === 1 ? "Veuillez autoriser l'accès à votre position pour trouver les agences proches" :
-        geoError.code === 2 ? "Position indisponible. Vérifiez votre connexion GPS" :
-        geoError.code === 3 ? "Timeout de géolocalisation. Réessayez plus tard" :
-        "Erreur lors de l'obtention de votre position"
-      );
+      setErrors(prev => ({
+        ...prev,
+        general: geoError.code === 1 ? "Veuillez autoriser l'accès à votre position pour trouver les agences proches" :
+          geoError.code === 2 ? "Position indisponible. Vérifiez votre connexion GPS" :
+          geoError.code === 3 ? "Timeout de géolocalisation. Réessayez plus tard" :
+          "Erreur lors de l'obtention de votre position"
+      }));
     } finally {
       setGpsLoading(false);
     }
   };
 
   // Gestion des états de chargement et d'erreur
-  if (error) {
+  const hasAnyNetworkError = Object.values(errors).some(e => e === null) && (loading.vehicules || loading.promotions || loading.temoignages);
+  const hasAnyError = Object.values(errors).some(e => e !== null);
+
+  // Message d'attente professionnel quand le backend n'est pas accessible
+  if (hasAnyNetworkError && !vehicules.length) {
     return (
-      <p className="text-red-500 text-center">
-        {error}
-      </p>
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-slate-950 dark:to-slate-900">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="flex justify-center mb-6">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full animate-pulse"></div>
+              <div className="absolute inset-1 bg-white dark:bg-slate-950 rounded-full flex items-center justify-center">
+                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+              </div>
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+            Démarrage du service
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+            Nous initialisons notre plateforme pour vous. Cela peut prendre quelques secondes.
+          </p>
+          <div className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" />
+              <span>Connexion au serveur en cours</span>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
-  if (loading) {
+  if (errors.vehicules || errors.promotions || errors.temoignages) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-slate-950 dark:to-slate-900">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+              <AlertCircle className="w-8 h-8 text-red-600" />
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+            Erreur de chargement
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            {errors.vehicules || errors.promotions || errors.temoignages}
+          </p>
+          <Button 
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8"
+          >
+            Réessayer
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // État de chargement initial
+  if (loading.vehicules || loading.promotions || loading.temoignages) {
     return (
       <div className="flex justify-center items-center h-64">
         <p className="text-lg font-semibold text-muted-foreground">
@@ -257,10 +411,10 @@ export default function HomePage() {
                       )}
                     </Button>
 
-                    {error && (
+                    {errors.general && (
                       <Alert variant="destructive" className="border-red-200 bg-red-50 text-red-700 dark:bg-red-900/20 rounded-xl">
                         <AlertCircle className="h-4 w-4" />
-                        <AlertDescription className="text-sm font-medium">{error}</AlertDescription>
+                        <AlertDescription className="text-sm font-medium">{errors.general}</AlertDescription>
                       </Alert>
                     )}
 
