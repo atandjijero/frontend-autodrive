@@ -62,7 +62,7 @@ export default function HomePage() {
 
   // Charger les véhicules avec retry automatique
   useEffect(() => {
-    let retryTimer: NodeJS.Timeout;
+    let retryTimer: ReturnType<typeof setTimeout>;
     const attemptLoad = () => {
       getVehicles()
         .then((res) => {
@@ -97,7 +97,7 @@ export default function HomePage() {
 
   // Charger les promotions actives avec retry
   useEffect(() => {
-    let retryTimer: NodeJS.Timeout;
+    let retryTimer: ReturnType<typeof setTimeout>;
     const attemptLoad = () => {
       getPromotions(true)
         .then((res) => {
@@ -132,8 +132,8 @@ export default function HomePage() {
 
   // Charger les témoignages avec retry
   useEffect(() => {
-    let retryTimer: NodeJS.Timeout;
-    let pollInterval: NodeJS.Timeout;
+    let retryTimer: ReturnType<typeof setTimeout>;
+    let pollInterval: ReturnType<typeof setInterval>;
 
     const loadTemoignages = () => {
       getTemoignages()
@@ -238,7 +238,6 @@ export default function HomePage() {
 
   // Gestion des états de chargement et d'erreur
   const hasAnyNetworkError = Object.values(errors).some(e => e === null) && (loading.vehicules || loading.promotions || loading.temoignages);
-  const hasAnyError = Object.values(errors).some(e => e !== null);
 
   // Message d'attente professionnel quand le backend n'est pas accessible
   if (hasAnyNetworkError && !vehicules.length) {
