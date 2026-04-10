@@ -56,9 +56,9 @@ export default function PromotionsUpdate() {
     }
   }, [id]);
 
-  // Véhicules disponibles + ceux déjà sélectionnés (même s'ils ne sont plus dispo)
+  // Véhicules candidats aux promotions + ceux déjà sélectionnés (même s'ils ne sont plus dispo)
   const displayVehicles = allVehicles.filter(
-    (v) => v.disponible || selectedVehicleIds.includes(v.id)
+    (v) => (v.disponible && v.promotionCandidate) || selectedVehicleIds.includes(v.id)
   );
 
   const handleChange = (field: keyof UpdatePromotionDto, value: any) => {

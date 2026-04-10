@@ -12,6 +12,7 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
@@ -24,6 +25,7 @@ const vehicleSchema = z.object({
   transmission: z.enum(["automatique", "manuelle"]),
   prix: z.coerce.number().min(1),
   immatriculation: z.string().min(2),
+  promotionCandidate: z.boolean().optional().default(false),
 
   // Accepte FileList OU tableau d'URL
   photos: z
@@ -51,6 +53,7 @@ export function VehiculeForm({ defaultValues, onSubmit }: VehiculeFormProps) {
       transmission: defaultValues?.transmission ?? "automatique",
       prix: defaultValues?.prix ?? 80,
       immatriculation: defaultValues?.immatriculation ?? "",
+      promotionCandidate: defaultValues?.promotionCandidate ?? false,
       photos: defaultValues?.photos ?? [], // accepte les URLs en modification
     },
   })
@@ -157,6 +160,28 @@ export function VehiculeForm({ defaultValues, onSubmit }: VehiculeFormProps) {
                 <Input placeholder="AB-123-CD" {...field} />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Promotion */}
+        <FormField
+          control={form.control}
+          name="promotionCandidate"
+          render={({ field }) => (
+            <FormItem className="flex items-start gap-3">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={(checked) => field.onChange(checked)}
+                />
+              </FormControl>
+              <div>
+                <FormLabel className="mb-1">Ajouter ce véhicule aux promotions</FormLabel>
+                <p className="text-sm text-muted-foreground">
+                  Cochez pour rendre ce véhicule visible dans la création de promotions.
+                </p>
+              </div>
             </FormItem>
           )}
         />

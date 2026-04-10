@@ -25,6 +25,7 @@ export default function VehiculesAjout() {
       formData.append("transmission", values.transmission);
       formData.append("prix", values.prix.toString());
       formData.append("immatriculation", values.immatriculation);
+      formData.append("promotionCandidate", String(values.promotionCandidate ?? false));
 
       // Photos (FileList)
       if (values.photos instanceof FileList) {

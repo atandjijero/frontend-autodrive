@@ -18,6 +18,7 @@ export default function Contact() {
   const { t } = useTranslation();
   const [nom, setNom] = useState("")
   const [email, setEmail] = useState("")
+  const [sujet, setSujet] = useState("")
   const [message, setMessage] = useState("")
   const [submitting, setSubmitting] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
@@ -29,9 +30,10 @@ export default function Contact() {
     setError(null)
     setSuccess(false)
     try {
-      await sendContact({ nom, email, message })
+      await sendContact({ nom, email, sujet, message })
       setNom("")
       setEmail("")
+      setSujet("")
       setMessage("")
       setSuccess(true)
     } catch (err: any) {
@@ -67,6 +69,13 @@ export default function Contact() {
               placeholder={t('contact.form.placeholders.email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <Input
+              placeholder={t('contact.form.placeholders.subject')}
+              value={sujet}
+              onChange={(e) => setSujet(e.target.value)}
               required
             />
 

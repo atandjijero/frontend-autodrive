@@ -82,19 +82,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       formData.append("role", inputs.role);
       if (photoFile) formData.append("photo", photoFile);
 
-      await register(formData);
-          setMessage(
-            `Inscription réussie ! 🎉
-
-Bienvenue sur AutoDrive ! 
-
-Votre compte a été créé avec succès. Voici les prochaines étapes :
-1. Vérifiez votre email : Un message de vérification a été envoyé à votre adresse email.
-2. Cliquez sur le lien : Dans l'email, cliquez sur "Vérifier mon email".
-3. Connectez-vous : Après vérification, vous serez redirigé vers la page de connexion pour accéder à votre compte.
-
-Le lien de vérification est valable pendant 24 heures.`
-          );
+      const res = await register(formData);
+      setMessage(res.data?.message || "Inscription réussie ! Connectez-vous pour recevoir votre OTP de première connexion.");
     } catch (err: any) {
       console.error("Erreur:", err.response?.data || err.message);
       const errorMessage = err.response?.data?.message || err.message || "Erreur lors de l'inscription.";

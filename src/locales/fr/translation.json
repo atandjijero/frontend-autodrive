@@ -77,6 +77,7 @@
       "placeholders": {
         "name": "Votre nom",
         "email": "Votre email",
+        "subject": "Sujet de votre message",
         "message": "Votre message"
       },
       "sending": "Envoi...",

@@ -61,8 +61,8 @@ export default function PromotionsAjout() {
     getVehicles().then((res) => setVehicles(res.data))
   }, [])
 
-  // Filtrer uniquement les véhicules disponibles
-  const availableVehicles = vehicles.filter((v) => v.disponible)
+  // Filtrer uniquement les véhicules disponibles et éligibles aux promotions
+  const availableVehicles = vehicles.filter((v) => v.disponible && v.promotionCandidate)
 
   const form = useForm<PromotionFormValues>({
     resolver: zodResolver(promotionSchema),

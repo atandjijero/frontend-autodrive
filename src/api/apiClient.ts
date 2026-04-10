@@ -297,6 +297,7 @@ export interface CreateVehicleDto {
   photos?: string[];
   immatriculation: string;
   disponible?: boolean;
+  promotionCandidate?: boolean;
 }
 
 export interface Vehicle {
@@ -310,6 +311,7 @@ export interface Vehicle {
   immatriculation: string;
   disponible: boolean;
   deleted: boolean;
+  promotionCandidate: boolean;
   agencyId?: number; // ID de l'agence propriétaire du véhicule
   createdAt: string;
   updatedAt: string;
@@ -617,6 +619,7 @@ export const appliquerPromotion = (
 export interface ContactDto {
   nom: string;
   email: string;
+  sujet: string;
   message: string;
 }
 

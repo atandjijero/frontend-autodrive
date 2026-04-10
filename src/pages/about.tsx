@@ -33,16 +33,16 @@ export default function About() {
         <CardContent>
           <ul className="list-none space-y-3">
             <li>
-              <Badge variant="secondary">🚘</Badge> {t('about.advantages.item1')}
+              <Badge variant="secondary"></Badge> {t('about.advantages.item1')}
             </li>
             <li>
-              <Badge variant="secondary">💰</Badge> {t('about.advantages.item2')}
+              <Badge variant="secondary"></Badge> {t('about.advantages.item2')}
             </li>
             <li>
-              <Badge variant="secondary">🤝</Badge> {t('about.advantages.item3')}
+              <Badge variant="secondary"></Badge> {t('about.advantages.item3')}
             </li>
             <li>
-              <Badge variant="secondary">🌍</Badge> {t('about.advantages.item4')}
+              <Badge variant="secondary"></Badge> {t('about.advantages.item4')}
             </li>
           </ul>
         </CardContent>
