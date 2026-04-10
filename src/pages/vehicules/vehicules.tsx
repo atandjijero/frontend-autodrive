@@ -119,14 +119,18 @@ export default function Vehicules() {
   useEffect(() => {
     document.title = "Véhicules – AutoDrive";
     getVehicles()
-      .then((res) => setDispos(res.data))
+      .then((res) =>
+        setDispos(
+          res.data.filter((v) => v.disponible && !v.promotionCandidate),
+        ),
+      )
       .catch((err) =>
         console.error("Erreur lors du chargement des véhicules :", err)
       );
   }, []);
 
   const handleSearchResults = (results: Vehicle[]) => {
-    setDispos(results);
+    setDispos(results.filter((v) => v.disponible && !v.promotionCandidate));
   };
 
   return (

@@ -58,9 +58,12 @@ export function VehiculeSearch({
   useEffect(() => {
     getVehicles()
       .then((res) => {
-        setVehicules(res.data);
-        if (res.data.length > 0) {
-          const prices = res.data.map((v) => v.prix);
+        const filtered = res.data.filter(
+          (v) => v.disponible && !v.promotionCandidate,
+        );
+        setVehicules(filtered);
+        if (filtered.length > 0) {
+          const prices = filtered.map((v) => v.prix);
           setPriceRange([Math.min(...prices), Math.max(...prices)]);
         }
       })

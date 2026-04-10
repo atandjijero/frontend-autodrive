@@ -40,7 +40,11 @@ export default function NouveauContrat() {
     try {
       // TODO: Implement API call to get available vehicles
       const response = await getVehicles();
-      setVehicles(response.data.filter(vehicle => vehicle.disponible));
+      setVehicles(
+        response.data.filter(
+          (vehicle) => vehicle.disponible && !vehicle.promotionCandidate,
+        ),
+      );
     } catch (error) {
       console.error('Erreur lors du chargement des véhicules:', error);
     }

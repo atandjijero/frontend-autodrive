@@ -305,8 +305,10 @@ export default function HomePage() {
       </div>
     );
   }
-  // Filtrer les véhicules disponibles
-  const dispos = vehicules.filter((v) => v.disponible);
+  // Filtrer les véhicules disponibles et non destinés aux promotions
+  const dispos = vehicules.filter(
+    (v) => v.disponible && !v.promotionCandidate,
+  );
 
   return (
     <>
