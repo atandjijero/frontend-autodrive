@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { IconSearch, IconCar, IconUsers, IconFileText } from "@tabler/icons-react";
-import { getUsers, getVehicles, getReservations } from "@/api/apiClient";
+import { getVehicles, getUsers, getReservations, type Vehicle, type AdminUser, type Reservation } from "@/api/apiClient";
 
 type SearchResult = {
   type: "vehicle" | "user" | "reservation";
@@ -14,102 +14,95 @@ type SearchResult = {
   category: string;
 };
 
-const normalize = (value: string) => value.toLowerCase();
-
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const buildVehicleResults = (vehicles: any[], queryLower: string): SearchResult[] =>
-    vehicles
-      .filter((vehicle) =>
-        [vehicle.modele, vehicle.marque, vehicle.carrosserie, vehicle.immatriculation]
-          .filter(Boolean)
-          .some((value) => normalize(value).includes(queryLower))
-      )
-      .map((vehicle) => ({
-        type: "vehicle",
-        title: `${vehicle.marque} ${vehicle.modele}`,
-        description: `${vehicle.carrosserie} - immatriculation ${vehicle.immatriculation}`,
-        category: "Véhicules",
-      }));
-
-  const buildUserResults = (users: any[], queryLower: string): SearchResult[] =>
-    users
-      .filter((user) =>
-        [user.nom, user.prenom, user.email, user.role]
-          .filter(Boolean)
-          .some((value) => normalize(value).includes(queryLower))
-      )
-      .map((user) => ({
-        type: "user",
-        title: `${user.nom} ${user.prenom}`,
-        description: `${user.email} — ${user.role}`,
-        category: "Utilisateurs",
-      }));
-
-  const buildReservationResults = (reservations: any[], queryLower: string): SearchResult[] =>
-    reservations
-      .filter((reservation) => {
-        const vehicle = reservation.vehicle || {};
-        const client = reservation.client || {};
-        return [
-          reservation.numeroReservation,
-          reservation.statut,
-          vehicle.modele,
-          vehicle.marque,
-          client.nom,
-          client.prenom,
-          client.email,
-        ]
-          .filter(Boolean)
-          .some((value) => normalize(value).includes(queryLower));
-      })
-      .map((reservation) => ({
-        type: "reservation",
-        title: reservation.numeroReservation || `Réservation ${reservation.id}`,
-        description: `Client: ${reservation.client?.nom || "-"} ${reservation.client?.prenom || ""} — Véhicule: ${reservation.vehicle?.marque || ""} ${reservation.vehicle?.modele || ""}`,
-        category: "Réservations",
-      }));
-
-  const handleSearch = async (event?: React.FormEvent<HTMLFormElement>) => {
-    if (event) event.preventDefault();
-    const queryTrimmed = query.trim();
-    if (!queryTrimmed) {
-      setResults([]);
-      setError(null);
-      return;
-    }
+  const handleSearch = async () => {
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) return;
 
     setLoading(true);
-    setError(null);
+    setResults([]);
 
-    const queryLower = normalize(queryTrimmed);
+    const normalizedQuery = trimmedQuery.toLowerCase();
 
     try {
-      const [vehiclesRes, reservationsRes, usersRes] = await Promise.allSettled([
+      const [vehiclesRes, usersRes, reservationsRes] = await Promise.allSettled([
         getVehicles(),
-        getReservations(),
         getUsers(),
+        getReservations(),
       ]);
 
-      const vehicleResults =
-        vehiclesRes.status === "fulfilled" ? buildVehicleResults(vehiclesRes.value.data, queryLower) : [];
-      const reservationResults =
-        reservationsRes.status === "fulfilled" ? buildReservationResults(reservationsRes.value.data, queryLower) : [];
-      const userResults =
-        usersRes.status === "fulfilled" ? buildUserResults(usersRes.value.data, queryLower) : [];
+      const collectedResults: SearchResult[] = [];
 
-      setResults([...vehicleResults, ...userResults, ...reservationResults]);
-
-      if (vehiclesRes.status === "rejected" && reservationsRes.status === "rejected" && usersRes.status === "rejected") {
-        setError("Impossible de récupérer les données de recherche, veuillez réessayer plus tard.");
+      if (vehiclesRes.status === "fulfilled") {
+        vehiclesRes.value.data
+          .filter((vehicle: Vehicle) =>
+            [vehicle.marque, vehicle.modele, vehicle.immatriculation]
+              .join(" ")
+              .toLowerCase()
+              .includes(normalizedQuery)
+          )
+          .forEach((vehicle: Vehicle) => {
+            collectedResults.push({
+              type: "vehicle",
+              title: `${vehicle.marque} ${vehicle.modele}`,
+              description: `Immatriculation ${vehicle.immatriculation} - ${vehicle.disponible ? "Disponible" : "Indisponible"}`,
+              category: "Véhicules",
+            });
+          });
       }
-    } catch (err) {
-      console.error(err);
-      setError("Une erreur est survenue pendant la recherche.");
+
+      if (usersRes.status === "fulfilled") {
+        usersRes.value.data
+          .filter((user: AdminUser) =>
+            [user.nom, user.prenom, user.email, user.role]
+              .join(" ")
+              .toLowerCase()
+              .includes(normalizedQuery)
+          )
+          .forEach((user: AdminUser) => {
+            collectedResults.push({
+              type: "user",
+              title: `${user.prenom} ${user.nom}`,
+              description: `${user.email} — rôle ${user.role}`,
+              category: "Utilisateurs",
+            });
+          });
+      }
+
+      if (reservationsRes.status === "fulfilled") {
+        reservationsRes.value.data
+          .filter((reservation: Reservation) =>
+            [
+              reservation.numeroReservation,
+              reservation.statut,
+              reservation.vehicle?.modele,
+              reservation.vehicle?.marque,
+              reservation.client?.nom,
+              reservation.client?.prenom,
+              reservation.client?.email,
+            ]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase()
+              .includes(normalizedQuery)
+          )
+          .forEach((reservation: Reservation) => {
+            collectedResults.push({
+              type: "reservation",
+              title: `Réservation #${reservation.numeroReservation}`,
+              description: `Client ${reservation.client.prenom} ${reservation.client.nom} — ${reservation.vehicle.marque} ${reservation.vehicle.modele}`,
+              category: "Réservations",
+            });
+          });
+      }
+
+      setResults(collectedResults);
+    } catch (error) {
+      console.error("Erreur lors de la recherche :", error);
     } finally {
       setLoading(false);
     }
@@ -117,12 +110,9 @@ export default function SearchPage() {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case "vehicle":
-        return IconCar;
-      case "user":
-        return IconUsers;
-      default:
-        return IconFileText;
+      case "vehicle": return IconCar;
+      case "user": return IconUsers;
+      default: return IconFileText;
     }
   };
 
