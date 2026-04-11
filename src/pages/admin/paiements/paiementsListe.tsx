@@ -454,13 +454,13 @@ const exportPDF = () => {
       </div>
 
       {/* Graphiques */}
-      <div className="grid gap-6 lg:gap-4">
+      <div className="grid gap-6">
         {/* Graphique revenu mensuel */}
         <Card className="shadow-md">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg sm:text-xl">Revenu mensuel</CardTitle>
           </CardHeader>
-          <CardContent className="h-64 sm:h-72">
+          <CardContent className="h-64 sm:h-72 lg:h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={monthlyRevenue}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -479,7 +479,7 @@ const exportPDF = () => {
           <CardHeader className="pb-4">
             <CardTitle className="text-lg sm:text-xl">Nombre de paiements par mois</CardTitle>
           </CardHeader>
-          <CardContent className="h-64 sm:h-72">
+          <CardContent className="h-64 sm:h-72 lg:h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthlyPaiements}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -498,21 +498,21 @@ const exportPDF = () => {
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         {/* Graphique camembert */}
         <Card className="shadow-md">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg sm:text-xl">Répartition des paiements</CardTitle>
           </CardHeader>
-          <CardContent className="h-64 sm:h-72">
+          <CardContent className="h-64 sm:h-72 lg:h-80">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={statusDistribution}
                   cx="50%"
                   cy="45%"
-                  innerRadius={50}
-                  outerRadius={80}
+                  innerRadius={40}
+                  outerRadius={70}
                   fill="#4f46e5"
                   dataKey="value"
                   nameKey="name"
@@ -535,7 +535,7 @@ const exportPDF = () => {
           <CardHeader className="pb-4">
             <CardTitle className="text-lg sm:text-xl">Revenu par véhicule</CardTitle>
           </CardHeader>
-          <CardContent className="h-64 sm:h-72">
+          <CardContent className="h-64 sm:h-72 lg:h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={revenueByVehicleChart.slice(0, 8)}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -561,26 +561,38 @@ const exportPDF = () => {
         </CardHeader>
         <CardContent>
           {/* Version mobile - Cartes */}
-          <div className="block md:hidden space-y-4">
+          <div className="block md:hidden space-y-6">
             {paginated.map((p) => (
-              <Card key={p.id} className="p-4 border">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h4 className="font-semibold text-base">{p.nom}</h4>
-                    <p className="text-sm text-gray-600">{p.email}</p>
+              <Card key={p.id} className="p-6 border shadow-sm">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-lg text-gray-900">{p.nom}</h4>
+                    <p className="text-sm text-gray-600 mt-1">{p.email}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg font-bold">{p.montant} €</p>
-                    <Badge variant={p.statut === "reussi" ? "default" : "destructive"} className="text-xs">
+                    <p className="text-2xl font-bold text-gray-900">{p.montant} €</p>
+                    <Badge variant={p.statut === "reussi" ? "default" : "destructive"} className="mt-2 text-xs px-2 py-1">
                       {p.statut === "reussi" ? "Réussi" : "Échoué"}
                     </Badge>
                   </div>
                 </div>
-                <div className="flex justify-between items-center text-sm text-gray-600">
-                  <span>Réservation: {p.reservation?.numeroReservation || "Aucune"}</span>
-                  <span>{new Date(p.createdAt).toLocaleDateString("fr-FR")}</span>
+
+                <div className="border-t pt-4 space-y-2">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">Réservation:</span>
+                    <span className="font-medium">{p.reservation?.numeroReservation || "Aucune"}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">Date:</span>
+                    <span className="font-medium">{new Date(p.createdAt).toLocaleDateString("fr-FR")}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600">Méthode:</span>
+                    <span className="font-medium">{p.methodePaiement}</span>
+                  </div>
                 </div>
-                <div className="mt-3">
+
+                <div className="mt-4 pt-4 border-t">
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -589,45 +601,45 @@ const exportPDF = () => {
                         className="w-full"
                         onClick={() => setSelectedPaiement(p)}
                       >
-                        Voir détails
+                        Voir tous les détails
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-md sm:max-w-2xl mx-4">
+                    <DialogContent className="max-w-sm sm:max-w-md mx-4">
                       <DialogHeader>
                         <DialogTitle className="text-lg">Détails du paiement #{selectedPaiement?.id}</DialogTitle>
                       </DialogHeader>
                       {selectedPaiement && (
                         <div className="space-y-4">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 gap-4">
                             <div>
-                              <h4 className="font-semibold">Client</h4>
-                              <p>{selectedPaiement.nom}</p>
+                              <h4 className="font-semibold text-gray-900">Client</h4>
+                              <p className="text-base">{selectedPaiement.nom}</p>
                               <p className="text-sm text-gray-600">{selectedPaiement.email}</p>
                             </div>
                             <div>
-                              <h4 className="font-semibold">Montant</h4>
-                              <p className="text-2xl font-bold">{selectedPaiement.montant} €</p>
-                              <Badge variant={selectedPaiement.statut === "reussi" ? "default" : "destructive"}>
+                              <h4 className="font-semibold text-gray-900">Montant</h4>
+                              <p className="text-2xl font-bold text-gray-900">{selectedPaiement.montant} €</p>
+                              <Badge variant={selectedPaiement.statut === "reussi" ? "default" : "destructive"} className="mt-2">
                                 {selectedPaiement.statut === "reussi" ? "Réussi" : "Échoué"}
                               </Badge>
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 gap-4">
                             <div>
-                              <h4 className="font-semibold">Méthode de paiement</h4>
+                              <h4 className="font-semibold text-gray-900">Méthode de paiement</h4>
                               <p>{selectedPaiement.methodePaiement}</p>
                             </div>
                             <div>
-                              <h4 className="font-semibold">Date</h4>
+                              <h4 className="font-semibold text-gray-900">Date</h4>
                               <p>{new Date(selectedPaiement.createdAt).toLocaleDateString("fr-FR")}</p>
                             </div>
                           </div>
 
                           {selectedPaiement.reservation && (
                             <div>
-                              <h4 className="font-semibold">Réservation associée</h4>
-                              <p>N° {selectedPaiement.reservation.numeroReservation}</p>
+                              <h4 className="font-semibold text-gray-900">Réservation associée</h4>
+                              <p className="text-base">N° {selectedPaiement.reservation.numeroReservation}</p>
                               <p className="text-sm text-gray-600">
                                 Véhicule: {selectedPaiement.reservation.vehicle?.marque} {selectedPaiement.reservation.vehicle?.modele}
                               </p>
