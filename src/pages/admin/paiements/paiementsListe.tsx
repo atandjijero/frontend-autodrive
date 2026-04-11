@@ -382,127 +382,137 @@ const exportPDF = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10">
+    <div className="max-w-7xl mx-auto space-y-6 px-4 sm:px-6 lg:px-8">
       {/* Dashboard Header */}
-      <div className="flex justify-between items-center">
-  <h1 className="text-3xl font-bold">Dashboard Paiements</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold">Dashboard Paiements</h1>
 
-  <div className="flex gap-3">
-    <Button variant="outline" onClick={exportCSV}>CSV</Button>
-    <Button variant="outline" onClick={exportExcel}>Excel</Button>
-    <Button variant="outline" onClick={exportPDF}>PDF</Button>
-  </div>
-</div>
-
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" onClick={exportCSV} className="text-xs sm:text-sm">
+            CSV
+          </Button>
+          <Button variant="outline" size="sm" onClick={exportExcel} className="text-xs sm:text-sm">
+            Excel
+          </Button>
+          <Button variant="outline" size="sm" onClick={exportPDF} className="text-xs sm:text-sm">
+            PDF
+          </Button>
+        </div>
+      </div>
 
       {/* Filters */}
-      <div className="flex gap-4">
-        <select
-          className="border rounded px-3 py-2"
-          value={dateFilter}
-          onChange={(e) => setDateFilter(e.target.value)}
-        >
-          <option value="all">Toutes les dates</option>
-          <option value="day">Aujourd’hui</option>
-          <option value="week">Cette semaine</option>
-          <option value="month">Ce mois</option>
-          <option value="year">Cette année</option>
-        </select>
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 w-full">
+          <select
+            className="border rounded px-3 py-2 text-sm w-full sm:w-auto"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+          >
+            <option value="all">Toutes les dates</option>
+            <option value="day">Aujourd'hui</option>
+            <option value="week">Cette semaine</option>
+            <option value="month">Ce mois</option>
+            <option value="year">Cette année</option>
+          </select>
 
-        <select
-          className="border rounded px-3 py-2"
-          value={vehicleFilter}
-          onChange={(e) => setVehicleFilter(e.target.value)}
-        >
-          <option value="all">Tous les véhicules</option>
-          {vehicles.map((v) => (
-            <option key={v} value={v}>
-              {v}
-            </option>
-          ))}
-        </select>
+          <select
+            className="border rounded px-3 py-2 text-sm w-full sm:w-auto"
+            value={vehicleFilter}
+            onChange={(e) => setVehicleFilter(e.target.value)}
+          >
+            <option value="all">Tous les véhicules</option>
+            {vehicles.map((v) => (
+              <option key={v} value={v}>
+                {v}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-5 shadow-md">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="p-4 sm:p-5 shadow-md">
           <CardTitle className="text-sm text-gray-500">Revenu total</CardTitle>
-          <p className="text-3xl font-bold mt-2">{formatCurrency(totalRevenue)}</p>
+          <p className="text-2xl sm:text-3xl font-bold mt-2">{formatCurrency(totalRevenue)}</p>
         </Card>
 
-        <Card className="p-5 shadow-md">
+        <Card className="p-4 sm:p-5 shadow-md">
           <CardTitle className="text-sm text-gray-500">Clients uniques</CardTitle>
-          <p className="text-3xl font-bold mt-2">{totalClients}</p>
+          <p className="text-2xl sm:text-3xl font-bold mt-2">{totalClients}</p>
         </Card>
 
-        <Card className="p-5 shadow-md">
+        <Card className="p-4 sm:p-5 shadow-md">
           <CardTitle className="text-sm text-gray-500">Paiements</CardTitle>
-          <p className="text-3xl font-bold mt-2">{totalPaiements}</p>
+          <p className="text-2xl sm:text-3xl font-bold mt-2">{totalPaiements}</p>
         </Card>
 
-        <Card className="p-5 shadow-md">
+        <Card className="p-4 sm:p-5 shadow-md">
           <CardTitle className="text-sm text-gray-500">Moyenne par paiement</CardTitle>
-          <p className="text-3xl font-bold mt-2">{formatCurrency(averagePayment)}</p>
+          <p className="text-2xl sm:text-3xl font-bold mt-2">{formatCurrency(averagePayment)}</p>
         </Card>
       </div>
 
-      {/* Graphique revenu mensuel */}
-      <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle>Revenu mensuel</CardTitle>
-        </CardHeader>
-        <CardContent className="h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={monthlyRevenue}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis tickFormatter={(value) => formatCurrency(value)} />
-              <Tooltip formatter={(value: number) => formatCurrency(value)} />
-              <Legend verticalAlign="top" height={24} />
-              <Line type="monotone" dataKey="revenue" stroke="#4f46e5" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+      {/* Graphiques */}
+      <div className="grid gap-6 lg:gap-4">
+        {/* Graphique revenu mensuel */}
+        <Card className="shadow-md">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg sm:text-xl">Revenu mensuel</CardTitle>
+          </CardHeader>
+          <CardContent className="h-64 sm:h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={monthlyRevenue}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                <YAxis tickFormatter={(value) => formatCurrency(value)} tick={{ fontSize: 12 }} />
+                <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                <Legend verticalAlign="top" height={24} />
+                <Line type="monotone" dataKey="revenue" stroke="#4f46e5" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
-      {/* Graphique nombre de paiements */}
-      <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle>Nombre de paiements par mois</CardTitle>
-        </CardHeader>
-        <CardContent className="h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={monthlyPaiements}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip formatter={(value: number) => `${value} paiements`} />
-              <Legend verticalAlign="top" height={24} />
-              <Bar dataKey="count" fill="#10b981" radius={[10, 10, 0, 0]}>
-                {monthlyPaiements.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "#10b981" : "#22c55e"} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+        {/* Graphique nombre de paiements */}
+        <Card className="shadow-md">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg sm:text-xl">Nombre de paiements par mois</CardTitle>
+          </CardHeader>
+          <CardContent className="h-64 sm:h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={monthlyPaiements}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip formatter={(value: number) => `${value} paiements`} />
+                <Legend verticalAlign="top" height={24} />
+                <Bar dataKey="count" fill="#10b981" radius={[6, 6, 0, 0]}>
+                  {monthlyPaiements.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "#10b981" : "#22c55e"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Graphique camembert */}
         <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle>Répartition des paiements</CardTitle>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg sm:text-xl">Répartition des paiements</CardTitle>
           </CardHeader>
-          <CardContent className="h-72">
+          <CardContent className="h-64 sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={statusDistribution}
                   cx="50%"
                   cy="45%"
-                  innerRadius={60}
-                  outerRadius={90}
+                  innerRadius={50}
+                  outerRadius={80}
                   fill="#4f46e5"
                   dataKey="value"
                   nameKey="name"
@@ -522,18 +532,18 @@ const exportPDF = () => {
 
         {/* Graphique revenu par véhicule */}
         <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle>Revenu par véhicule</CardTitle>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg sm:text-xl">Revenu par véhicule</CardTitle>
           </CardHeader>
-          <CardContent className="h-72">
+          <CardContent className="h-64 sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={revenueByVehicleChart.slice(0, 8)}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="vehicle" height={80} interval={0} tick={{ dy: 8 }} />
-                <YAxis tickFormatter={(value) => formatCurrency(value)} />
+                <XAxis dataKey="vehicle" height={80} interval={0} tick={{ dy: 8, fontSize: 10 }} angle={-45} />
+                <YAxis tickFormatter={(value) => formatCurrency(value)} tick={{ fontSize: 12 }} />
                 <Tooltip formatter={(value: number) => formatCurrency(value)} />
                 <Legend verticalAlign="top" height={24} />
-                <Bar dataKey="revenue" fill="#f59e0b" radius={[10, 10, 0, 0]}>
+                <Bar dataKey="revenue" fill="#f59e0b" radius={[6, 6, 0, 0]}>
                   {revenueByVehicleChart.slice(0, 8).map((_, index) => (
                     <Cell key={`veh-${index}`} fill={index % 2 === 0 ? "#f59e0b" : "#fb923c"} />
                   ))}
@@ -544,13 +554,99 @@ const exportPDF = () => {
         </Card>
       </div>
 
-      {/*  Tableau Paiements */}
+      {/* Tableau Paiements */}
       <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle>Liste des paiements</CardTitle>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg sm:text-xl">Liste des paiements</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto rounded-md border">
+          {/* Version mobile - Cartes */}
+          <div className="block md:hidden space-y-4">
+            {paginated.map((p) => (
+              <Card key={p.id} className="p-4 border">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h4 className="font-semibold text-base">{p.nom}</h4>
+                    <p className="text-sm text-gray-600">{p.email}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold">{p.montant} €</p>
+                    <Badge variant={p.statut === "reussi" ? "default" : "destructive"} className="text-xs">
+                      {p.statut === "reussi" ? "Réussi" : "Échoué"}
+                    </Badge>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center text-sm text-gray-600">
+                  <span>Réservation: {p.reservation?.numeroReservation || "Aucune"}</span>
+                  <span>{new Date(p.createdAt).toLocaleDateString("fr-FR")}</span>
+                </div>
+                <div className="mt-3">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => setSelectedPaiement(p)}
+                      >
+                        Voir détails
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-md sm:max-w-2xl mx-4">
+                      <DialogHeader>
+                        <DialogTitle className="text-lg">Détails du paiement #{selectedPaiement?.id}</DialogTitle>
+                      </DialogHeader>
+                      {selectedPaiement && (
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                              <h4 className="font-semibold">Client</h4>
+                              <p>{selectedPaiement.nom}</p>
+                              <p className="text-sm text-gray-600">{selectedPaiement.email}</p>
+                            </div>
+                            <div>
+                              <h4 className="font-semibold">Montant</h4>
+                              <p className="text-2xl font-bold">{selectedPaiement.montant} €</p>
+                              <Badge variant={selectedPaiement.statut === "reussi" ? "default" : "destructive"}>
+                                {selectedPaiement.statut === "reussi" ? "Réussi" : "Échoué"}
+                              </Badge>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                              <h4 className="font-semibold">Méthode de paiement</h4>
+                              <p>{selectedPaiement.methodePaiement}</p>
+                            </div>
+                            <div>
+                              <h4 className="font-semibold">Date</h4>
+                              <p>{new Date(selectedPaiement.createdAt).toLocaleDateString("fr-FR")}</p>
+                            </div>
+                          </div>
+
+                          {selectedPaiement.reservation && (
+                            <div>
+                              <h4 className="font-semibold">Réservation associée</h4>
+                              <p>N° {selectedPaiement.reservation.numeroReservation}</p>
+                              <p className="text-sm text-gray-600">
+                                Véhicule: {selectedPaiement.reservation.vehicle?.marque} {selectedPaiement.reservation.vehicle?.modele}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                Période: {new Date(selectedPaiement.reservation.dateDebut).toLocaleDateString("fr-FR")} - {new Date(selectedPaiement.reservation.dateFin).toLocaleDateString("fr-FR")}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {/* Version desktop - Table */}
+          <div className="hidden md:block overflow-x-auto rounded-md border">
             <Table className="text-sm">
               <TableHeader>
                 <TableRow>
@@ -580,8 +676,8 @@ const exportPDF = () => {
                     <TableCell className="text-right">
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             variant="outline"
                             onClick={() => setSelectedPaiement(p)}
                           >
@@ -608,7 +704,7 @@ const exportPDF = () => {
                                   </Badge>
                                 </div>
                               </div>
-                              
+
                               <div className="grid grid-cols-2 gap-4">
                                 <div>
                                   <h4 className="font-semibold">Méthode de paiement</h4>
@@ -644,18 +740,20 @@ const exportPDF = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-between mt-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
             <Button
               disabled={page === 1}
               onClick={() => {
                 console.log("Previous button clicked, current page:", page);
                 setPage(page - 1);
               }}
+              size="sm"
+              className="w-full sm:w-auto"
             >
               Précédent
             </Button>
 
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-600 text-center">
               Page {page} sur {Math.ceil(filteredPaiements.length / itemsPerPage)}
             </span>
 
@@ -665,6 +763,8 @@ const exportPDF = () => {
                 console.log("Next button clicked, current page:", page);
                 setPage(page + 1);
               }}
+              size="sm"
+              className="w-full sm:w-auto"
             >
               Suivant
             </Button>
