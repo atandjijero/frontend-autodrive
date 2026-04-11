@@ -6,15 +6,28 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
-import { Loader2, Lock, Unlock } from "lucide-react";
-import { getUsers, blockUser, unblockUser } from "@/api/apiClient";
+import { Loader2, Lock, Unlock, Trash2, AlertTriangle } from "lucide-react";
+import { getUsers, blockUser, unblockUser, deleteUser } from "@/api/apiClient";
 import type { AdminUser } from "@/api/apiClient";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function UsersListe() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<AdminUser | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { user: currentUser } = useAuth();
 
@@ -49,6 +62,31 @@ export default function UsersListe() {
     } finally {
       setActionLoading(null);
     }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!userToDelete) return;
+
+    setActionLoading(userToDelete.id);
+    setError(null);
+    try {
+      await deleteUser(userToDelete.id);
+      setUsers(prev => prev.filter(u => u.id !== userToDelete.id));
+      toast.success("Utilisateur supprimé avec succès.");
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
+    } catch (err: any) {
+      const message = err?.response?.data?.message || "Impossible de supprimer l'utilisateur.";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const openDeleteDialog = (user: AdminUser) => {
+    setUserToDelete(user);
+    setDeleteDialogOpen(true);
   };
 
   return (
@@ -148,39 +186,106 @@ export default function UsersListe() {
                           </TooltipContent>
                         </Tooltip>
                       ) : (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant={user.role === "admin" ? "outline" : user.blocked ? "secondary" : "destructive"}
-                              disabled={actionLoading === user.id || user.role === "admin"}
-                              onClick={() => toggleBlock(user)}
-                              className="transition-all duration-200 hover:scale-105"
-                            >
-                              {actionLoading === user.id ? (
-                                <span className="inline-flex items-center gap-2">
+                        <div className="flex gap-2 justify-end">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant={user.role === "admin" ? "outline" : user.blocked ? "secondary" : "destructive"}
+                                disabled={actionLoading === user.id || user.role === "admin"}
+                                onClick={() => toggleBlock(user)}
+                                className="transition-all duration-200 hover:scale-105"
+                              >
+                                {actionLoading === user.id ? (
+                                  <span className="inline-flex items-center gap-2">
+                                    <Loader2 className="animate-spin h-4 w-4" />
+                                    {user.blocked ? "Déblocage..." : "Blocage..."}
+                                  </span>
+                                ) : user.blocked ? (
+                                  <span className="inline-flex items-center gap-2">
+                                    <Unlock className="h-4 w-4" />
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-2">
+                                    <Lock className="h-4 w-4" />
+                                  </span>
+                                )}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {user.role === "admin"
+                                ? "Impossible de bloquer un administrateur"
+                                : user.blocked
+                                ? "Débloquer l'utilisateur"
+                                : "Bloquer l'utilisateur"}
+                            </TooltipContent>
+                          </Tooltip>
+
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                disabled={actionLoading === user.id || user.role === "admin"}
+                                onClick={() => openDeleteDialog(user)}
+                                className="transition-all duration-200 hover:scale-105"
+                              >
+                                {actionLoading === user.id ? (
                                   <Loader2 className="animate-spin h-4 w-4" />
-                                  {user.blocked ? "Déblocage..." : "Blocage..."}
-                                </span>
-                              ) : user.blocked ? (
-                                <span className="inline-flex items-center gap-2">
-                                  <Unlock className="h-4 w-4" />
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-2">
-                                  <Lock className="h-4 w-4" />
-                                </span>
-                              )}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {user.role === "admin"
-                              ? "Impossible de bloquer un administrateur"
-                              : user.blocked
-                              ? "Débloquer l'utilisateur"
-                              : "Bloquer l'utilisateur"}
-                          </TooltipContent>
-                        </Tooltip>
+                                ) : (
+                                  <Trash2 className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle className="flex items-center gap-2">
+                                  <AlertTriangle className="h-5 w-5 text-destructive" />
+                                  Confirmer la suppression
+                                </AlertDialogTitle>
+                                <AlertDialogDescription className="space-y-3">
+                                  <p>
+                                    Vous êtes sur le point de supprimer le compte de{" "}
+                                    <span className="font-semibold text-foreground">
+                                      {userToDelete?.prenom} {userToDelete?.nom}
+                                    </span>
+                                    .
+                                  </p>
+                                  <div className="bg-muted p-3 rounded-md">
+                                    <p className="text-sm font-medium mb-2">Cette action entraînera :</p>
+                                    <ul className="text-sm space-y-1 text-muted-foreground">
+                                      <li>• La suppression définitive de toutes les données utilisateur</li>
+                                      <li>• L'annulation de toutes les réservations actives</li>
+                                      <li>• La perte permanente de l'accès au système</li>
+                                    </ul>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">
+                                    Cette action ne peut pas être annulée.
+                                  </p>
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel onClick={() => setUserToDelete(null)}>
+                                  Annuler
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={handleDeleteUser}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  disabled={actionLoading === userToDelete?.id}
+                                >
+                                  {actionLoading === userToDelete?.id ? (
+                                    <>
+                                      <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                                      Suppression...
+                                    </>
+                                  ) : (
+                                    "Supprimer définitivement"
+                                  )}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       )}
                     </TableCell>
                   </TableRow>

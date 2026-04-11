@@ -8,11 +8,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getProfile, apiClient } from "@/api/apiClient";
+import { getProfile, apiClient, deleteOwnAccount } from "@/api/apiClient";
 import type { UserProfile } from "@/api/apiClient";
 
 // Icônes lucide-react
-import { Mail, Phone, MapPin, Calendar, Edit2, X } from "lucide-react";
+import { Mail, Phone, MapPin, Calendar, Edit2, X, Trash2, AlertTriangle } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function Profil() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -24,6 +35,8 @@ export default function Profil() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -105,6 +118,26 @@ export default function Profil() {
       setError(err.response?.data?.message || "Erreur lors de la mise à jour du profil.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await deleteOwnAccount();
+      // Déconnexion et redirection
+      localStorage.removeItem("token");
+      localStorage.removeItem("userRole");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userNom");
+      localStorage.removeItem("userPrenom");
+      localStorage.removeItem("userId");
+      window.location.href = "/";
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Erreur lors de la suppression du compte.");
+    } finally {
+      setDeleting(false);
+      setDeleteDialogOpen(false);
     }
   };
 
@@ -196,6 +229,86 @@ export default function Profil() {
                           : "Non disponible"}
                       </p>
                     </div>
+                  </div>
+                </div>
+
+                {/* Section Zone de danger */}
+                <div className="mt-8 pt-6 border-t border-muted">
+                  <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-amber-500" />
+                    Gestion du compte
+                  </h3>
+
+                  <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                    <h4 className="font-medium text-amber-900 dark:text-amber-100 mb-2">Suppression du compte</h4>
+                    <p className="text-sm text-amber-700 dark:text-amber-300 mb-4">
+                      Vous pouvez supprimer votre compte à tout moment. Toutes vos données seront supprimées définitivement.
+                    </p>
+
+                    <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          onClick={() => setDeleteDialogOpen(true)}
+                          disabled={deleting}
+                          variant="outline"
+                          size="sm"
+                          className="gap-2 border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-900/20"
+                        >
+                          {deleting ? (
+                            <>
+                              <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                              Suppression en cours...
+                            </>
+                          ) : (
+                            <>
+                              <Trash2 className="h-4 w-4" />
+                              Supprimer mon compte
+                            </>
+                          )}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5 text-amber-500" />
+                            Confirmer la suppression de votre compte
+                          </AlertDialogTitle>
+                          <AlertDialogDescription className="space-y-3">
+                            <p>
+                              Vous êtes sur le point de supprimer définitivement votre compte AutoDrive.
+                            </p>
+                            <div className="bg-amber-50 dark:bg-amber-900/10 p-3 rounded-md border border-amber-200 dark:border-amber-800">
+                              <p className="text-sm font-medium mb-2 text-amber-900 dark:text-amber-100">Cette action entraînera :</p>
+                              <ul className="text-sm space-y-1 text-amber-800 dark:text-amber-200">
+                                <li>• La suppression de toutes vos données personnelles</li>
+                                <li>• L'annulation de toutes vos réservations en cours</li>
+                                <li>• La perte permanente de l'accès à votre compte</li>
+                              </ul>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              Cette action ne peut pas être annulée. Vous serez automatiquement déconnecté.
+                            </p>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Annuler</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDeleteAccount}
+                            className="bg-amber-600 text-white hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
+                            disabled={deleting}
+                          >
+                            {deleting ? (
+                              <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent mr-2" />
+                                Suppression...
+                              </>
+                            ) : (
+                              "Supprimer mon compte"
+                            )}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </div>

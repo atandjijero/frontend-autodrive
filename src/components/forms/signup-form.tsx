@@ -20,6 +20,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -49,6 +50,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<'success' | 'error' | 'info' | null>(null);
 
   useEffect(() => {
     if (inviteToken) {
@@ -61,13 +63,28 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             role: decoded.role,
           }));
           setMessage("Vous avez été invité à vous inscrire en tant que testeur.");
+          setMessageType('info');
         }
       } catch (err) {
         console.error("Token d'invitation invalide", err);
         setMessage("Token d'invitation invalide.");
+        setMessageType('error');
       }
     }
   }, [inviteToken]);
+
+  useEffect(() => {
+    if (!message) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setMessage(null);
+      setMessageType(null);
+    }, 6000);
+
+    return () => window.clearTimeout(timer);
+  }, [message]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -91,6 +108,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
     if (inputs.motPasse !== inputs.confirmPassword) {
       setMessage("Les mots de passe ne correspondent pas.");
+      setMessageType('error');
       return;
     }
 
@@ -107,11 +125,13 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       if (photoFile) formData.append("photo", photoFile);
 
       const res = await register(formData);
-      setMessage(res.data?.message || "Inscription réussie ! Connectez-vous pour recevoir votre OTP de première connexion.");
+      setMessage(res.data?.message || "Utilisateur créé avec succès. Connectez-vous !");
+      setMessageType('success');
     } catch (err: any) {
       console.error("Erreur:", err.response?.data || err.message);
       const errorMessage = err.response?.data?.message || err.message || "Erreur lors de l'inscription.";
-      setMessage(`Erreur: ${errorMessage}`);
+      setMessage(`Erreur : ${errorMessage}`);
+      setMessageType('error');
     }
   };
 
@@ -189,25 +209,44 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               </Field>
             </div>
 
-            {/* Quatrième ligne : Rôle (plein largeur) */}
-            <div className="grid grid-cols-1 gap-4">
-              <Field>
-                <FieldLabel>Rôle</FieldLabel>
-                <Select
-                  value={inputs.role}
-                  onValueChange={(value) => setInputs((prev) => ({ ...prev, role: value }))}
-                >
-                    <SelectTrigger className="w-full">
-                    <SelectValue placeholder={"Sélectionnez un rôle"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="client">Client</SelectItem>
-                    <SelectItem value="entreprise">Entreprise</SelectItem>
-                    <SelectItem value="tourist">Touriste</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-            </div>
+            {/* Quatrième ligne : Rôle (plein largeur) - Masqué si invitation */}
+            {!inviteToken && (
+              <div className="grid grid-cols-1 gap-4">
+                <Field>
+                  <FieldLabel>Rôle</FieldLabel>
+                  <Select
+                    value={inputs.role}
+                    onValueChange={(value) => setInputs((prev) => ({ ...prev, role: value }))}
+                  >
+                      <SelectTrigger className="w-full">
+                      <SelectValue placeholder={"Sélectionnez un rôle"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="client">Client</SelectItem>
+                      <SelectItem value="entreprise">Entreprise</SelectItem>
+                      <SelectItem value="tourist">Touriste</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+              </div>
+            )}
+
+            {/* Rôle assigné par invitation - Lecture seule */}
+            {inviteToken && (
+              <div className="grid grid-cols-1 gap-4">
+                <Field>
+                  <FieldLabel>Rôle assigné</FieldLabel>
+                  <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-700">
+                    <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                      {inputs.role === "testeur" ? "👤 Testeur" : 
+                       inputs.role === "client" ? "👤 Client" :
+                       inputs.role === "entreprise" ? "🏢 Entreprise" :
+                       inputs.role === "tourist" ? "✈️ Touriste" : inputs.role}
+                    </p>
+                  </div>
+                </Field>
+              </div>
+            )}
 
             {/* Cinquième ligne : Mots de passe */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -225,11 +264,21 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             <Field>
               <Button type="submit" className="w-full text-sm py-2">S'inscrire</Button>
               {message && (
-                <div className={`text-center text-xs mt-2 whitespace-pre-line ${
-                  message.startsWith("Inscription réussie") ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
-                }`}>
-                  {message}
-                </div>
+                <Alert
+                  variant={messageType === 'error' ? 'destructive' : 'default'}
+                  className={
+                    messageType === 'success'
+                      ? 'mt-4 border border-green-200 bg-green-50 text-green-900 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200'
+                      : messageType === 'info'
+                      ? 'mt-4 border border-blue-200 bg-blue-50 text-blue-900 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200'
+                      : 'mt-4'
+                  }
+                >
+                  <AlertTitle>
+                    {messageType === 'success' ? 'Succès' : messageType === 'error' ? 'Erreur' : 'Information'}
+                  </AlertTitle>
+                  <AlertDescription>{message}</AlertDescription>
+                </Alert>
               )}
               <FieldDescription className="px-4 text-center text-xs">
                 Vous avez déjà un compte ?{" "}

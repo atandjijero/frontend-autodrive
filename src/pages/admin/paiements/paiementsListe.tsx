@@ -33,7 +33,17 @@ import {
   Bar,
   PieChart,
   Pie,
+  Cell,
+  Legend,
 } from "recharts";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 
 export default function PaiementsList() {
@@ -63,22 +73,77 @@ export default function PaiementsList() {
   // Vehicles list
   const [vehicles, setVehicles] = useState<string[]>([]);
 
+  // Modal state
+  const [selectedPaiement, setSelectedPaiement] = useState<Paiement | null>(null);
+
+  const monthOrder = [
+    "janv.",
+    "févr.",
+    "mars",
+    "avr.",
+    "mai",
+    "juin",
+    "juil.",
+    "août",
+    "sept.",
+    "oct.",
+    "nov.",
+    "déc.",
+  ];
+
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0,
+    }).format(value);
+
+  const [statusDistribution, setStatusDistribution] = useState<any[]>([]);
+  const [averagePayment, setAveragePayment] = useState(0);
+
+  const statusColors = ["#22c55e", "#f59e0b", "#ef4444"];
+
   useEffect(() => {
     const fetchPaiements = async () => {
       try {
         const res = await getPaiements();
         const data = res.data;
+        
+        // Debug: Log the actual structure
+        console.log("Raw API Response:", data);
+        if (data && data.length > 0) {
+          console.log("First paiement:", data[0]);
+          console.log("First reservation:", data[0].reservation);
+          console.log("First client:", data[0].reservation?.client);
+        }
 
-        setPaiements(data);
-        setFilteredPaiements(data);
-        setTotalPaiements(data.length);
+        // Enhance paiements with client info - now stored directly on paiement
+        const enhancedData: Paiement[] = data.map((p) => {
+          // Use direct fields from paiement record, fallback to nested if needed
+          const nom = p.nom || p.reservation?.client?.nom || "Client inconnu";
+          const email = p.email || p.reservation?.client?.email || "";
+          
+          return {
+            ...p,
+            nom,
+            email,
+          } as Paiement;
+        });
 
-        // Clients uniques
-        const uniqueClients = new Set(data.map((p) => p.email));
+        setPaiements(enhancedData);
+        setFilteredPaiements(enhancedData);
+        setTotalPaiements(enhancedData.length);
+
+        // Clients uniques - count unique non-empty emails
+        const uniqueClients = new Set(
+          enhancedData
+            .map((p) => p.email)
+            .filter((email) => email && email.trim() !== "" && email !== "Client inconnu")
+        );
         setTotalClients(uniqueClients.size);
 
         // Total revenue
-        const revenue = data
+        const revenue = enhancedData
           .filter((p) => p.statut === "reussi")
           .reduce((sum, p) => sum + p.montant, 0);
         setTotalRevenue(revenue);
@@ -86,11 +151,11 @@ export default function PaiementsList() {
         // List of vehicles
         const vehList = Array.from(
           new Set(
-            data
-              .filter((p) => p.reservationId?.vehicle)
+            enhancedData
+              .filter((p) => p.reservation?.vehicle)
               .map(
                 (p) =>
-                  `${p.reservationId.vehicle.marque} ${p.reservationId.vehicle.modele}`
+                  `${p.reservation.vehicle.marque} ${p.reservation.vehicle.modele}`
               )
           )
         );
@@ -101,7 +166,7 @@ export default function PaiementsList() {
         const paiementsByMonth: any = {};
         const revenueByVehicle: any = {};
 
-        data.forEach((p) => {
+        enhancedData.forEach((p) => {
           const date = new Date(p.createdAt);
           const month = date.toLocaleString("fr-FR", { month: "short" });
 
@@ -115,8 +180,8 @@ export default function PaiementsList() {
           paiementsByMonth[month] += 1;
 
           // Revenu par véhicule
-          if (p.statut === "reussi" && p.reservationId?.vehicle) {
-            const veh = p.reservationId.vehicle;
+          if (p.statut === "reussi" && p.reservation?.vehicle) {
+            const veh = p.reservation.vehicle;
             const key = `${veh.marque} ${veh.modele}`;
 
             if (!revenueByVehicle[key]) revenueByVehicle[key] = 0;
@@ -125,25 +190,38 @@ export default function PaiementsList() {
         });
 
         setMonthlyRevenue(
-          Object.keys(revenueByMonth).map((m) => ({
-            month: m,
-            revenue: revenueByMonth[m],
-          }))
+          Object.keys(revenueByMonth)
+            .sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b))
+            .map((m) => ({
+              month: m,
+              revenue: revenueByMonth[m],
+            }))
         );
 
         setMonthlyPaiements(
-          Object.keys(paiementsByMonth).map((m) => ({
-            month: m,
-            count: paiementsByMonth[m],
-          }))
+          Object.keys(paiementsByMonth)
+            .sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b))
+            .map((m) => ({
+              month: m,
+              count: paiementsByMonth[m],
+            }))
         );
 
         setRevenueByVehicleChart(
-          Object.keys(revenueByVehicle).map((v) => ({
-            vehicle: v,
-            revenue: revenueByVehicle[v],
-          }))
+          Object.keys(revenueByVehicle)
+            .sort((a, b) => revenueByVehicle[b] - revenueByVehicle[a])
+            .map((v) => ({
+              vehicle: v,
+              revenue: revenueByVehicle[v],
+            }))
         );
+
+        setStatusDistribution([
+          { name: "Réussi", value: enhancedData.filter((p) => p.statut === "reussi").length },
+          { name: "Échoué", value: enhancedData.filter((p) => p.statut === "echoue").length },
+        ]);
+
+        setAveragePayment(enhancedData.length > 0 ? Math.round(revenue / enhancedData.length) : 0);
       } catch (err) {
         setError("Impossible de charger les paiements.");
       } finally {
@@ -190,7 +268,7 @@ export default function PaiementsList() {
     // Filter by vehicle
     if (vehicleFilter !== "all") {
       filtered = filtered.filter((p) => {
-        const veh = p.reservationId?.vehicle;
+        const veh = p.reservation?.vehicle;
         if (!veh) return false;
         const name = `${veh.marque} ${veh.modele}`;
         return name === vehicleFilter;
@@ -205,6 +283,16 @@ export default function PaiementsList() {
   const start = (page - 1) * itemsPerPage;
   const paginated = filteredPaiements.slice(start, start + itemsPerPage);
 
+  console.log("Pagination debug:", {
+    page,
+    itemsPerPage,
+    start,
+    filteredPaiementsLength: filteredPaiements.length,
+    paginatedLength: paginated.length,
+    hasNextPage: start + itemsPerPage < filteredPaiements.length,
+    hasPrevPage: page > 1
+  });
+
   // Export CSV
   const exportCSV = () => {
     const rows = filteredPaiements.map((p) => ({
@@ -212,7 +300,7 @@ export default function PaiementsList() {
       Email: p.email,
       Montant: p.montant,
       Statut: p.statut,
-      Reservation: p.reservationId?.numeroReservation || "Aucune",
+      Reservation: p.reservation?.numeroReservation || "Aucune",
       Date: new Date(p.createdAt).toLocaleDateString("fr-FR"),
     }));
 
@@ -237,7 +325,7 @@ const exportExcel = () => {
     Email: p.email,
     Montant: p.montant,
     Statut: p.statut,
-    Reservation: p.reservationId?.numeroReservation || "Aucune",
+    Reservation: p.reservation?.numeroReservation || "Aucune",
     Date: new Date(p.createdAt).toLocaleDateString("fr-FR"),
   }));
 
@@ -268,7 +356,7 @@ const exportPDF = () => {
     p.email,
     p.montant + " €",
     p.statut,
-    p.reservationId?.numeroReservation || "Aucune",
+    p.reservation?.numeroReservation || "Aucune",
     new Date(p.createdAt).toLocaleDateString("fr-FR"),
   ]);
 
@@ -336,10 +424,10 @@ const exportPDF = () => {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="p-5 shadow-md">
           <CardTitle className="text-sm text-gray-500">Revenu total</CardTitle>
-          <p className="text-3xl font-bold mt-2">{totalRevenue} €</p>
+          <p className="text-3xl font-bold mt-2">{formatCurrency(totalRevenue)}</p>
         </Card>
 
         <Card className="p-5 shadow-md">
@@ -350,6 +438,11 @@ const exportPDF = () => {
         <Card className="p-5 shadow-md">
           <CardTitle className="text-sm text-gray-500">Paiements</CardTitle>
           <p className="text-3xl font-bold mt-2">{totalPaiements}</p>
+        </Card>
+
+        <Card className="p-5 shadow-md">
+          <CardTitle className="text-sm text-gray-500">Moyenne par paiement</CardTitle>
+          <p className="text-3xl font-bold mt-2">{formatCurrency(averagePayment)}</p>
         </Card>
       </div>
 
@@ -363,9 +456,10 @@ const exportPDF = () => {
             <LineChart data={monthlyRevenue}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="revenue" stroke="#4f46e5" strokeWidth={3} />
+              <YAxis tickFormatter={(value) => formatCurrency(value)} />
+              <Tooltip formatter={(value: number) => formatCurrency(value)} />
+              <Legend verticalAlign="top" height={24} />
+              <Line type="monotone" dataKey="revenue" stroke="#4f46e5" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
@@ -382,63 +476,79 @@ const exportPDF = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
-              <Tooltip />
-              <Bar dataKey="count" fill="#10b981" />
+              <Tooltip formatter={(value: number) => `${value} paiements`} />
+              <Legend verticalAlign="top" height={24} />
+              <Bar dataKey="count" fill="#10b981" radius={[10, 10, 0, 0]}>
+                {monthlyPaiements.map((_, index) => (
+                  <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "#10b981" : "#22c55e"} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
-      {/* Graphique camembert */}
-      <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle>Répartition des paiements</CardTitle>
-        </CardHeader>
-        <CardContent className="h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={[
-                  { name: "Réussi", value: paiements.filter(p => p.statut === "reussi").length },
-                  { name: "Échoué", value: paiements.filter(p => p.statut === "echoue").length },
-                ]}
-                cx="50%"
-                cy="50%"
-                outerRadius={90}
-                fill="#4f46e5"
-                dataKey="value"
-                label
-              />
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* Graphique camembert */}
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle>Répartition des paiements</CardTitle>
+          </CardHeader>
+          <CardContent className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={statusDistribution}
+                  cx="50%"
+                  cy="45%"
+                  innerRadius={60}
+                  outerRadius={90}
+                  fill="#4f46e5"
+                  dataKey="value"
+                  nameKey="name"
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  labelLine={false}
+                >
+                  {statusDistribution.map((_, index) => (
+                    <Cell key={`slice-${index}`} fill={statusColors[index % statusColors.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value: number) => `${value} paiements`} />
+                <Legend verticalAlign="bottom" height={36} />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
-      {/*  Graphique revenu par véhicule */}
-      <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle>Revenu par véhicule</CardTitle>
-        </CardHeader>
-        <CardContent className="h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={revenueByVehicleChart}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="vehicle" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="revenue" fill="#f59e0b" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+        {/* Graphique revenu par véhicule */}
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle>Revenu par véhicule</CardTitle>
+          </CardHeader>
+          <CardContent className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={revenueByVehicleChart.slice(0, 8)}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="vehicle" height={80} interval={0} tick={{ dy: 8 }} />
+                <YAxis tickFormatter={(value) => formatCurrency(value)} />
+                <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                <Legend verticalAlign="top" height={24} />
+                <Bar dataKey="revenue" fill="#f59e0b" radius={[10, 10, 0, 0]}>
+                  {revenueByVehicleChart.slice(0, 8).map((_, index) => (
+                    <Cell key={`veh-${index}`} fill={index % 2 === 0 ? "#f59e0b" : "#fb923c"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
 
       {/*  Tableau Paiements */}
       <Card className="shadow-md">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Liste des paiements</CardTitle>
+          <CardTitle>Liste des paiements</CardTitle>
         </CardHeader>
-
         <CardContent>
           <div className="overflow-x-auto rounded-md border">
             <Table className="text-sm">
@@ -465,10 +575,67 @@ const exportPDF = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {p.reservationId?.numeroReservation || "Aucune"}
+                      {p.reservation?.numeroReservation || "Aucune"}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button size="sm" variant="outline">Voir</Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => setSelectedPaiement(p)}
+                          >
+                            Voir
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>Détails du paiement #{selectedPaiement?.id}</DialogTitle>
+                          </DialogHeader>
+                          {selectedPaiement && (
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <h4 className="font-semibold">Client</h4>
+                                  <p>{selectedPaiement.nom}</p>
+                                  <p className="text-sm text-gray-600">{selectedPaiement.email}</p>
+                                </div>
+                                <div>
+                                  <h4 className="font-semibold">Montant</h4>
+                                  <p className="text-2xl font-bold">{selectedPaiement.montant} €</p>
+                                  <Badge variant={selectedPaiement.statut === "reussi" ? "default" : "destructive"}>
+                                    {selectedPaiement.statut === "reussi" ? "Réussi" : "Échoué"}
+                                  </Badge>
+                                </div>
+                              </div>
+                              
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <h4 className="font-semibold">Méthode de paiement</h4>
+                                  <p>{selectedPaiement.methodePaiement}</p>
+                                </div>
+                                <div>
+                                  <h4 className="font-semibold">Date</h4>
+                                  <p>{new Date(selectedPaiement.createdAt).toLocaleDateString("fr-FR")}</p>
+                                </div>
+                              </div>
+
+                              {selectedPaiement.reservation && (
+                                <div>
+                                  <h4 className="font-semibold">Réservation associée</h4>
+                                  <p>N° {selectedPaiement.reservation.numeroReservation}</p>
+                                  <p className="text-sm text-gray-600">
+                                    Véhicule: {selectedPaiement.reservation.vehicle?.marque} {selectedPaiement.reservation.vehicle?.modele}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    Période: {new Date(selectedPaiement.reservation.dateDebut).toLocaleDateString("fr-FR")} - {new Date(selectedPaiement.reservation.dateFin).toLocaleDateString("fr-FR")}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </DialogContent>
+                      </Dialog>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -480,14 +647,24 @@ const exportPDF = () => {
           <div className="flex justify-between mt-4">
             <Button
               disabled={page === 1}
-              onClick={() => setPage(page - 1)}
+              onClick={() => {
+                console.log("Previous button clicked, current page:", page);
+                setPage(page - 1);
+              }}
             >
               Précédent
             </Button>
 
+            <span className="text-sm text-gray-600">
+              Page {page} sur {Math.ceil(filteredPaiements.length / itemsPerPage)}
+            </span>
+
             <Button
               disabled={start + itemsPerPage >= filteredPaiements.length}
-              onClick={() => setPage(page + 1)}
+              onClick={() => {
+                console.log("Next button clicked, current page:", page);
+                setPage(page + 1);
+              }}
             >
               Suivant
             </Button>

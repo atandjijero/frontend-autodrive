@@ -310,8 +310,10 @@ export const updateUserRole = (id: number, role: string) =>
   apiClient.patch<AdminUser>(`/auth/users/${id}/role`, { role });
 export const inviteTester = (email: string) =>
   apiClient.post("/auth/invite-tester", { email });
-
-// ---------------- VEHICULES ----------------
+export const deleteUser = (id: string | number) =>
+  apiClient.delete(`/auth/users/${id}`);
+export const deleteOwnAccount = () =>
+  apiClient.delete("/auth/profile");
 export interface CreateVehicleDto {
   carrosserie: string;
   modele: string;
@@ -453,7 +455,7 @@ export interface CreatePaiementDto {
 
 export interface Paiement {
   id: number;
-  reservationId: Reservation;
+  reservation: Reservation;
   nom: string;
   email: string;
   montant: number;
