@@ -37,7 +37,7 @@ export function NavUser({
     name: string
     email: string
     avatar: string
-    role?: "admin" | "client" | "entreprise" | "tourist"
+    role?: "admin" | "client" | "entreprise" | "tourist" | "testeur"
   }
   unreadCount?: number
 }) {

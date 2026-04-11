@@ -47,7 +47,7 @@ export default function DownloadRedirect() {
         // Fallback: fetch active agency if not found by ID
         if (!agency) {
           try {
-            const activeRes = await apiClient.get('/agencies/agencies/active/all?limit=1');
+            const activeRes = await apiClient.get('/agencies/active/all?limit=1');
             if ((activeRes as any).data && (activeRes as any).data.length) {
               agency = (activeRes as any).data[0];
             }

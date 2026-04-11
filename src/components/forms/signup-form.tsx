@@ -21,13 +21,18 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Link } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import { register } from "@/api/apiClient";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 // translations removed: using static french strings
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   // const { t } = useTranslation();
+
+  const [searchParams] = useSearchParams();
+  const inviteToken = searchParams.get('invite');
 
   const [inputs, setInputs] = useState({
     prenom: "",
@@ -44,6 +49,25 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (inviteToken) {
+      try {
+        const decoded: any = jwtDecode(inviteToken);
+        if (decoded.type === 'invite' && decoded.role) {
+          setInputs(prev => ({
+            ...prev,
+            email: decoded.email || "",
+            role: decoded.role,
+          }));
+          setMessage("Vous avez été invité à vous inscrire en tant que testeur.");
+        }
+      } catch (err) {
+        console.error("Token d'invitation invalide", err);
+        setMessage("Token d'invitation invalide.");
+      }
+    }
+  }, [inviteToken]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;

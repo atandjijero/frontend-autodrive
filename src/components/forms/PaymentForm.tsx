@@ -112,6 +112,7 @@ export default function PaymentForm() {
     const r = role?.toLowerCase() || "client";
     const redirectMap: Record<string, string> = {
       admin: "/admin/dashboard",
+      testeur: "/admin/dashboard",
       client: "/client/dashboard",
       tourist: "/touriste/dashboard",
       touriste: "/touriste/dashboard",

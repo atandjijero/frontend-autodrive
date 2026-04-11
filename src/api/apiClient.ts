@@ -11,7 +11,7 @@ export interface CreateUserDto {
   telephone: string;
   telephoneSecondaire?: string;
   adresse?: string;
-  role?: "admin" | "client" | "entreprise" | "tourist";
+  role?: "admin" | "client" | "entreprise" | "tourist" | "testeur";
 }
 
 export interface LoginDto {
@@ -44,7 +44,7 @@ export interface UserProfile {
   adresse?: string;
   photo?: string;
   avatar?: string;
-  role: "admin" | "client" | "entreprise" | "tourist";
+  role: "admin" | "client" | "entreprise" | "tourist" | "testeur";
   dateInscription?: string;
 }
 
@@ -284,8 +284,32 @@ export const resetPassword = (data: ResetPasswordDto) =>
 export const verifyEmail = (token: string) =>
   apiClient.post<{ message: string }>("/auth/verify-email", { token });
 
+export interface AdminUser {
+  id: number;
+  nom: string;
+  prenom: string;
+  email: string;
+  telephone?: string;
+  role: "admin" | "client" | "entreprise" | "tourist" | "testeur";
+  isVerified: boolean;
+  blocked: boolean;
+  photo?: string;
+  dateInscription?: string;
+  updatedAt?: string;
+}
+
 export const getProfile = () =>
   apiClient.get<UserProfile>("/auth/profil");
+
+export const getUsers = () => apiClient.get<AdminUser[]>("/auth/users");
+export const blockUser = (id: string | number) =>
+  apiClient.patch<AdminUser>(`/auth/users/${id}/block`);
+export const unblockUser = (id: string | number) =>
+  apiClient.patch<AdminUser>(`/auth/users/${id}/unblock`);
+export const updateUserRole = (id: number, role: string) =>
+  apiClient.patch<AdminUser>(`/auth/users/${id}/role`, { role });
+export const inviteTester = (email: string) =>
+  apiClient.post("/auth/invite-tester", { email });
 
 // ---------------- VEHICULES ----------------
 export interface CreateVehicleDto {
@@ -362,7 +386,7 @@ export interface ReservationVehicle {
 
 export interface ReservationClient {
   id: number;
-  role: "client" | "admin" | "entreprise" | "tourist";
+  role: "client" | "admin" | "entreprise" | "tourist" | "testeur";
   nom: string;
   prenom: string;
   email: string;
@@ -485,7 +509,7 @@ export interface DashboardResponse {
     nom: string;
     prenom: string;
     email: string;
-    role: "admin" | "client" | "entreprise" | "tourist";
+    role: "admin" | "client" | "entreprise" | "tourist" | "testeur";
   };
   reservations: Reservation[];
   paiements: Paiement[];
@@ -745,7 +769,7 @@ export const getAgencyById = (id: string | number) =>
   apiClient.get<Agency>(`/agencies/${id}`);
 
 export const getActiveAgencies = (params?: { page?: number; limit?: number; q?: string }) =>
-  apiClient.get<AgenciesListResponseDto>('/agencies/agencies/active/all', { params });
+  apiClient.get<AgenciesListResponseDto>('/agencies/active/all', { params });
 
 export const getNearbyAgencies = (params: { longitude: number; latitude: number; maxDistance?: number; limit?: number }) =>
   apiClient.get<Agency[]>('/agencies/nearby', { params });

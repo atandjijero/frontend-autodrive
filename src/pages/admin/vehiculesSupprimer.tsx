@@ -11,10 +11,12 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { AlertTriangle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function VehiculesSupprimer() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
 
   const [vehicle, setVehicle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -22,6 +24,13 @@ export default function VehiculesSupprimer() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    // Vérifier si l'utilisateur est un testeur
+    if (currentUser?.role === 'testeur') {
+      toast.error("Vous n'avez pas les permissions pour supprimer des véhicules.");
+      navigate('/admin/dashboard');
+      return;
+    }
+
     const fetchVehicle = async () => {
       try {
         const res = await getVehicleById(id!);
@@ -35,7 +44,7 @@ export default function VehiculesSupprimer() {
     };
 
     fetchVehicle();
-  }, [id]);
+  }, [id, currentUser, navigate]);
 
   const handleDelete = async () => {
     if (!vehicle) return;

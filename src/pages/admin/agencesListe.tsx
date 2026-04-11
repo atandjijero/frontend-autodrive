@@ -31,11 +31,13 @@ import {
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function AgencesListe() {
   const [agencies, setAgencies] = useState<Agency[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user: currentUser } = useAuth();
 
   const fetchAgencies = () => {
     getAgencies()
@@ -345,14 +347,18 @@ export default function AgencesListe() {
                       <IconDownload className="h-4 w-4 mr-2" />
                       Exporter PDF
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => handleDelete(agency)}
-                      className="text-destructive focus:text-destructive"
-                    >
-                      <IconTrash className="h-4 w-4 mr-2" />
-                      Supprimer
-                    </DropdownMenuItem>
+                    {currentUser?.role !== 'testeur' && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => handleDelete(agency)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <IconTrash className="h-4 w-4 mr-2" />
+                          Supprimer
+                        </DropdownMenuItem>
+                      </>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>

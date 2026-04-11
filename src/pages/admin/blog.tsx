@@ -282,7 +282,9 @@ export default function AdminBlog() {
                       <Button onClick={() => handlePublish(post.id!)} variant="outline">
                         {post.status === "published" ? "Dépublier" : "Publier"}
                       </Button>
-                      <Button onClick={() => handleDelete(post.id!)} variant="destructive">Supprimer</Button>
+                      {user?.role !== 'testeur' && (
+                        <Button onClick={() => handleDelete(post.id!)} variant="destructive">Supprimer</Button>
+                      )}
                     </>
                   )}
                 </div>

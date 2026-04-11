@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 import {
@@ -17,7 +17,7 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 
-import { Home, Calendar, CreditCard, MessageSquare, User, LogOut, Settings, FileText, Plus } from "lucide-react";
+import { Home, Calendar, CreditCard, MessageSquare, User, LogOut, Settings, FileText, Plus, HelpCircle, Search } from "lucide-react";
 
 const navItemsByRole = {
   client: [
@@ -25,6 +25,8 @@ const navItemsByRole = {
     { label: "Réservations", icon: Calendar, href: "/client/dashboard" },
     { label: "Paiements", icon: CreditCard, href: "/client/dashboard" },
     { label: "Témoignages", icon: MessageSquare, href: "/client/temoignages" },
+    { label: "Aide", icon: HelpCircle, href: "/client/help" },
+    { label: "Recherche", icon: Search, href: "/client/search" },
     //{ label: "Profil", icon: User, href: "/client/profil" },
   ],
   entreprise: [
@@ -34,12 +36,16 @@ const navItemsByRole = {
     { label: "Paiements", icon: CreditCard, href: "/entreprise/dashboard" },
     { label: "Contrats", icon: FileText, href: "/entreprise/contrats" },
     { label: "Nouveau contrat", icon: Plus, href: "/entreprise/contrats/nouveau" },
+    { label: "Aide", icon: HelpCircle, href: "/entreprise/help" },
+    { label: "Recherche", icon: Search, href: "/entreprise/search" },
   ],
   touriste: [
     { label: "Dashboard", icon: Home, href: "/touriste/dashboard" },
     { label: "Réservations", icon: Calendar, href: "/touriste/dashboard" },
     { label: "Paiements", icon: CreditCard, href: "/touriste/dashboard" },
     { label: "Témoignages", icon: MessageSquare, href: "/touriste/temoignages" },
+    { label: "Aide", icon: HelpCircle, href: "/touriste/help" },
+    { label: "Recherche", icon: Search, href: "/touriste/search" },
     //{ label: "Profil", icon: User, href: "/touriste/profil" },
   ],
 };
@@ -73,10 +79,10 @@ export function Sidebar({ role = "client" }: { role?: "client" | "entreprise" | 
             {navItems.map(({ label, icon: Icon, href }) => (
               <SidebarMenuItem key={label}>
                 <SidebarMenuButton asChild>
-                  <a href={href} className="flex items-center gap-3 w-full">
+                  <Link to={href} className="flex items-center gap-3 w-full">
                     <Icon className="w-5 h-5 text-muted-foreground" />
                     <span className="truncate">{label}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

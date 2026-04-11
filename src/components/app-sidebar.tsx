@@ -9,8 +9,6 @@ import {
   IconMapPin,
   IconSettings,
   IconUsers,
-  IconHelp,
-  IconSearch,
   IconPlus,
   IconEye,
   IconX,
@@ -109,7 +107,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   React.useEffect(() => {
     const fetchUnread = async () => {
       try {
-        if (!user || user.role !== 'admin') return;
+        if (!user || (user.role !== 'admin' && user.role !== 'testeur')) return;
         const res = await getUnreadNotifications();
         setUnreadCount(res.data?.length || 0);
       } catch (e) {
@@ -161,6 +159,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: "Liste des clients",
         url: "/admin/clients/liste",
+        icon: IconEye,
+      },
+    ],
+  },
+  {
+    title: "Utilisateurs",
+    url: "/admin/utilisateurs",
+    icon: IconUsers,
+    children: [
+      {
+        title: "Liste des utilisateurs",
+        url: "/admin/utilisateurs/liste",
         icon: IconEye,
       },
     ],
@@ -324,10 +334,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
 
         <NavSecondary
-          items={[
-            { title: "Aide", url: "/help", icon: IconHelp },
-            { title: "Recherche", url: "/search", icon: IconSearch },
-          ]}
+          items={[]}
           className="mt-auto"
         />
       </SidebarContent>

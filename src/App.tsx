@@ -53,6 +53,12 @@ import AgencesAjout from "./pages/admin/agencesAjout";
 import AgencesModif from "./pages/admin/agencesModif";
 import AgencesImport from "./pages/admin/agencesImport";
 import AdminBlog from "@/pages/admin/blog";
+import UsersListe from "./pages/admin/usersListe";
+import AdminSettings from "./pages/admin/settings";
+import VehiculesIndisponible from "./pages/admin/vehiculesIndisponible";
+import VehiculesDisponible from "./pages/admin/vehiculesDisponible";
+import HelpWithLayout from "./pages/HelpWithLayout";
+import SearchWithLayout from "./pages/SearchWithLayout";
 import ContratsEntreprise from "@/pages/entreprise/contrats";
 import ContratsNouveau from "@/pages/entreprise/contratsNouveau";
 import ContratsAdmin from "@/pages/admin/contrats/ContratsAdmin";
@@ -123,6 +129,8 @@ function App() {
                   <Route path="reservations/liste" element={<ReservationList />} />
                   <Route path="paiements/liste" element={<PaiementsList />} />
                   <Route path="clients/liste" element={<ClientsListe />} />
+                  <Route path="utilisateurs/liste" element={<UsersListe />} />
+                  <Route path="settings" element={<AdminSettings />} />
                   <Route path="dashboard" element={<DashboardPage />} />
 
                   {/*  Routes Promotions */}
@@ -142,8 +150,19 @@ function App() {
                   <Route path="contrats/liste" element={<ContratsAdmin />} />
                   <Route path="contrats/pending" element={<ContratsAdmin />} />
                   <Route path="contrats/approved" element={<ContratsAdmin />} />
+
+                  {/* Routes Véhicules Disponibilité */}
+                  <Route path="vehicules/indisponible" element={<VehiculesIndisponible />} />
+                  <Route path="vehicules/disponible" element={<VehiculesDisponible />} />
                 </Route>
 
+                {/* Role-specific help/search pages inside dashboards */}
+                <Route path="/client/help" element={<HelpWithLayout role="client" title="Centre d'Aide" />} />
+                <Route path="/client/search" element={<SearchWithLayout role="client" title="Recherche" />} />
+                <Route path="/entreprise/help" element={<HelpWithLayout role="entreprise" title="Centre d'Aide" />} />
+                <Route path="/entreprise/search" element={<SearchWithLayout role="entreprise" title="Recherche" />} />
+                <Route path="/touriste/help" element={<HelpWithLayout role="touriste" title="Centre d'Aide" />} />
+                <Route path="/touriste/search" element={<SearchWithLayout role="touriste" title="Recherche" />} />
 
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<Article />} />

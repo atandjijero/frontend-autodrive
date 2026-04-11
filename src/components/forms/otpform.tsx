@@ -60,6 +60,7 @@ export function OtpForm() {
     } else {
       switch (role) {
         case "admin":
+        case "testeur":
           navigate("/admin/dashboard");
           break;
         case "client":

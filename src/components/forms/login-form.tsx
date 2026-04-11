@@ -73,6 +73,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         } else {
           switch (role) {
             case "admin":
+            case "testeur":
               navigate("/admin/dashboard");
               break;
             case "client":

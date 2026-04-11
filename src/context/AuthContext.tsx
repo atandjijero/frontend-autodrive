@@ -6,7 +6,7 @@ type User = {
   email: string;
   nom: string;
   prenom: string;
-  role: "admin" | "client" | "entreprise" | "tourist";
+  role: "admin" | "client" | "entreprise" | "tourist" | "testeur";
   token: string;
 };
 
