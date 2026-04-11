@@ -26,7 +26,6 @@ export default function UsersListe() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<AdminUser | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { user: currentUser } = useAuth();
@@ -73,7 +72,6 @@ export default function UsersListe() {
       await deleteUser(userToDelete.id);
       setUsers(prev => prev.filter(u => u.id !== userToDelete.id));
       toast.success("Utilisateur supprimé avec succès.");
-      setDeleteDialogOpen(false);
       setUserToDelete(null);
     } catch (err: any) {
       const message = err?.response?.data?.message || "Impossible de supprimer l'utilisateur.";
@@ -86,7 +84,6 @@ export default function UsersListe() {
 
   const openDeleteDialog = (user: AdminUser) => {
     setUserToDelete(user);
-    setDeleteDialogOpen(true);
   };
 
   return (
