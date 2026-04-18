@@ -172,6 +172,12 @@ export function resolveUrl(input?: unknown) {
     if (path.startsWith("/")) {
       return `${apiClient.defaults.baseURL}${path}`;
     }
+    
+    // If it contains "uploads/" but doesn't start with it, it's likely a path that needs baseURL prefixing
+    if (path.includes("uploads/")) {
+      return `${apiClient.defaults.baseURL}/${path}`;
+    }
+
     // Pour les noms de fichiers d'agences (sans / au début), ajouter le préfixe uploads/agencies/
     // Cela couvre les cas où le backend retourne juste le filename
     return `${apiClient.defaults.baseURL}/uploads/agencies/${path}`;
