@@ -11,11 +11,9 @@ import { Helmet } from "react-helmet-async";
 import { 
   Loader2, 
   Calendar, 
-  User, 
   ChevronLeft, 
   Share2, 
   Clock, 
-  ArrowRight,
   Bookmark,
   Check
 } from "lucide-react";
