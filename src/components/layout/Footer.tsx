@@ -17,27 +17,27 @@ export function Footer() {
               <h3 className="text-3xl font-black tracking-tight">AutoDrive</h3>
             </div>
             <p className="text-slate-400 leading-relaxed font-medium">
-              Votre partenaire de confiance pour la location de véhicules premium. Service de qualité, tarifs compétitifs, assurance totale.
+              {t('footer.desc')}
             </p>
           </div>
           <div>
-            <h4 className="text-lg font-bold mb-6 text-slate-100">Services Rapides</h4>
+            <h4 className="text-lg font-bold mb-6 text-slate-100">{t('footer.quick_services')}</h4>
             <ul className="space-y-4 text-slate-400 font-medium">
-              <li><Link to="/vehicules" className="hover:text-blue-400 transition-colors flex items-center"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>Location automobile</Link></li>
-              <li><Link to="/vehicules" className="hover:text-blue-400 transition-colors flex items-center"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>Offres spéciales</Link></li>
-              <li><Link to="/blog" className="hover:text-blue-400 transition-colors flex items-center"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>Blog & Actualités</Link></li>
+              <li><Link to="/vehicules" className="hover:text-blue-400 transition-colors flex items-center"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>{t('footer.car_rental')}</Link></li>
+              <li><Link to="/vehicules" className="hover:text-blue-400 transition-colors flex items-center"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>{t('footer.special_offers')}</Link></li>
+              <li><Link to="/blog" className="hover:text-blue-400 transition-colors flex items-center"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>{t('footer.blog_news')}</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-lg font-bold mb-6 text-slate-100">Navigation</h4>
+            <h4 className="text-lg font-bold mb-6 text-slate-100">{t('footer.navigation')}</h4>
             <ul className="space-y-4 text-slate-400 font-medium">
-              <li><Link to="/about" className="hover:text-blue-400 transition-colors flex items-center"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>À propos de nous</Link></li>
-              <li><Link to="/faq" className="hover:text-blue-400 transition-colors flex items-center"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>Foire aux questions</Link></li>
-              <li><Link to="/contact" className="hover:text-blue-400 transition-colors flex items-center"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>Nous contacter</Link></li>
+              <li><Link to="/about" className="hover:text-blue-400 transition-colors flex items-center"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>{t('footer.about_us')}</Link></li>
+              <li><Link to="/faq" className="hover:text-blue-400 transition-colors flex items-center"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>{t('footer.faq_title')}</Link></li>
+              <li><Link to="/contact" className="hover:text-blue-400 transition-colors flex items-center"><span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>{t('footer.contact_us')}</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-lg font-bold mb-6 text-slate-100">Contact</h4>
+            <h4 className="text-lg font-bold mb-6 text-slate-100">{t('footer.contact_title')}</h4>
             <div className="space-y-4 text-slate-400 font-medium">
               <p className="flex items-center"><span className="mr-3 bg-slate-800 p-2 rounded-lg">📧</span> contact@autodrive.com</p>
               <p className="flex items-center"><span className="mr-3 bg-slate-800 p-2 rounded-lg">📞</span> +228 22 22 67 89</p>
@@ -50,7 +50,7 @@ export function Footer() {
         
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 mt-8">
           <p className="text-slate-500 text-sm font-medium text-center md:text-left">
-            © {new Date().getFullYear()} AutoDrive. Tous droits réservés. {t('footer.copyright')}
+            © {new Date().getFullYear()} AutoDrive. {t('footer.all_rights')}
           </p>
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
             <Link to="/about" className="text-slate-500 hover:text-slate-300 transition-colors text-sm font-medium">{t('footer.about')}</Link>

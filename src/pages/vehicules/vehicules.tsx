@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { PanelLeftIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 import { getVehicles } from "@/api/apiClient";
 import type { Vehicle } from "@/api/apiClient";
@@ -25,6 +26,7 @@ function VehiculesContent({
 }) {
   const { isMobile, toggleSidebar } = useSidebar();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <div className="flex w-full">
@@ -45,11 +47,11 @@ function VehiculesContent({
           <div className="mb-4 fixed top-16 left-0 w-full bg-background z-40 p-4 border-b">
             <Button variant="outline" size="default" onClick={toggleSidebar}>
               <PanelLeftIcon className="mr-2 h-4 w-4" />
-              Filtres
+              {t('vehicles.filter_button')}
             </Button>
           </div>
         )}
-        <h1 className="text-2xl font-bold">Véhicules disponibles</h1>
+        <h1 className="text-2xl font-bold">{t('vehicles.available_title')}</h1>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {dispos.map((dispo) => (
@@ -69,9 +71,9 @@ function VehiculesContent({
                   className="mt-2 h-40 w-full object-cover rounded-md"
                 />
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Carrosserie: {dispo.carrosserie}
-                  <br /> Transmission: {dispo.transmission}
-                  <br /> Prix: {dispo.prix} €
+                  {t('vehicles.labels.carrosserie')} {t(`vehicles.specs.carrosserie.${dispo.carrosserie.toLowerCase()}`, dispo.carrosserie)}
+                  <br /> {t('vehicles.labels.transmission')} {t(`vehicles.specs.transmission.${dispo.transmission.toLowerCase()}`, dispo.transmission)}
+                  <br /> {t('vehicles.labels.price')} {dispo.prix} € {t('home.promo.per_day')}
                 </p>
 
                 {/* Bouton Réserver → redirection ou Déjà réservée */}
@@ -87,9 +89,9 @@ function VehiculesContent({
                     asChild
                   >
                     {user ? (
-                      <Link to={`/reservation/${dispo.id}`}>Réserver</Link>
+                      <Link to={`/reservation/${dispo.id}`}>{t('vehicles.buttons.reserve')}</Link>
                     ) : (
-                      <Link to={`/connexion?redirect=/reservation/${dispo.id}`}>Se connecter pour réserver</Link>
+                      <Link to={`/connexion?redirect=/reservation/${dispo.id}`}>{t('vehicles.buttons.login_to_reserve')}</Link>
                     )}
                   </Button>
                 ) : (
@@ -101,7 +103,7 @@ function VehiculesContent({
                     "
                     disabled
                   >
-                    Déjà réservée
+                    {t('vehicles.buttons.already_reserved')}
                   </Button>
                 )}
               </CardContent>
@@ -115,9 +117,10 @@ function VehiculesContent({
 
 export default function Vehicules() {
   const [dispos, setDispos] = useState<Vehicle[]>([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
-    document.title = "Véhicules – AutoDrive";
+    document.title = `${t('nav.home')} – AutoDrive`;
     getVehicles()
       .then((res) =>
         setDispos(

@@ -9,7 +9,10 @@
   },
   "hero": {
     "title": "Welcome to AutoDrive",
-    "subtitle": "Easily rent your vehicle for business trips, vacations or getaways."
+    "subtitle": "Easily rent your vehicle for business trips, vacations or getaways.",
+    "view_vehicles": "View Vehicles",
+    "contact_us": "Contact Us",
+    "badge": "✨ Premium Car Rental"
   },
   "services": {
     "title": "Our Services",
@@ -31,10 +34,62 @@
   },
   "vehicles": {
     "available_heading": "Vehicles available today",
-    "promo_heading": "Promoted vehicles"
+    "promo_heading": "Promoted vehicles",
+    "available_title": "Available vehicles",
+    "filter_button": "Filters",
+    "loading": "Loading...",
+    "no_image": "No image available",
+    "detail_title": "Details",
+    "yes": "Yes",
+    "no": "No",
+    "reserve_now_text": "Reserve this vehicle now.",
+    "login_to_reserve_text": "Log in to reserve this vehicle.",
+    "status": {
+      "available": "Available",
+      "unavailable": "Unavailable"
+    },
+    "specs": {
+      "transmission": {
+        "automatique": "Automatic",
+        "manuelle": "Manual"
+      },
+      "carrosserie": {
+        "berline": "Sedan",
+        "suv": "SUV",
+        "utilitaire": "Utility",
+        "luxe": "Luxury",
+        "sport": "Sport",
+        "compacte": "Compact"
+      }
+    },
+    "labels": {
+      "carrosserie": "Body style:",
+      "transmission": "Transmission:",
+      "price": "Price:",
+      "marque": "Brand:",
+      "modele": "Model:",
+      "plates": "License plate:",
+      "availability": "Availability:"
+    },
+    "buttons": {
+      "reserve": "Reserve now",
+      "login_to_reserve": "Log in to reserve",
+      "already_reserved": "Already reserved",
+      "reserve_this": "Reserve this vehicle"
+    }
   },
   "footer": {
-    "copyright": "All rights reserved.",
+    "desc": "Your trusted partner for premium vehicle rentals. Quality service, competitive rates, total insurance.",
+    "quick_services": "Quick Services",
+    "car_rental": "Car Rental",
+    "special_offers": "Special Offers",
+    "blog_news": "Blog & News",
+    "navigation": "Navigation",
+    "about_us": "About Us",
+    "faq_title": "Frequently Asked Questions",
+    "contact_us": "Contact Us",
+    "contact_title": "Contact",
+    "all_rights": "All rights reserved.",
     "about": "About",
     "contact": "Contact",
     "faq": "FAQ"
@@ -222,5 +277,50 @@
     "error": "Error sending reset link.",
     "alert_error": "Error",
     "alert_success": "Success"
+  },
+  "home": {
+    "status": {
+      "starting": "Starting the service",
+      "initializing": "We are initializing our platform for you. This may take a few seconds.",
+      "connecting": "Connecting to server...",
+      "loading_vehicles": "Loading vehicles...",
+      "searching_agencies": "Searching..."
+    },
+    "errors": {
+      "loading_title": "Loading Error",
+      "retry": "Retry",
+      "gps_unsupported": "Geolocation is not supported by this browser",
+      "gps_denied": "Please allow access to your location to find nearby agencies",
+      "gps_unavailable": "Position unavailable. Check your GPS connection",
+      "gps_timeout": "Geolocation timeout. Try again later",
+      "gps_generic": "Error getting your position",
+      "agencies_api_error": "Error searching for nearby agencies"
+    },
+    "services": {
+      "subtitle": "Discover our comprehensive services for an exceptional rental experience"
+    },
+    "agencies": {
+      "find_nearby": "Find nearby agencies",
+      "nearby_title": "Nearby agencies:"
+    },
+    "testimonials": {
+      "badge": "Customer Reviews",
+      "subtitle": "Discover what our customers say about their experience with AutoDrive"
+    },
+    "vehicles": {
+      "badge": "AutoDrive Fleet",
+      "subtitle": "Choose from our premium selection",
+      "view_all": "View all catalog",
+      "promo_badge_alt": "Promo"
+    },
+    "promo": {
+      "badge": "🔥 Limited Offers",
+      "subtitle": "Take advantage of our exceptional promotional offers before they expire",
+      "code_label": "Promo Code:",
+      "view_offer": "View Offer",
+      "per_day": "/ day"
+    }
   }
 }
+
+

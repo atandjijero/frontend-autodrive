@@ -9,7 +9,10 @@
   },
   "hero": {
     "title": "Bienvenue sur AutoDrive",
-    "subtitle": "Louez facilement votre véhicule pour vos voyages d’affaires, vacances ou escapades."
+    "subtitle": "Louez facilement votre véhicule pour vos voyages d’affaires, vacances ou escapades.",
+    "view_vehicles": "Voir les véhicules",
+    "contact_us": "Nous contacter",
+    "badge": "✨ Location de voiture Premium"
   },
   "services": {
     "title": "Nos Services",
@@ -31,10 +34,62 @@
   },
   "vehicles": {
     "available_heading": "Véhicules disponibles aujourd'hui",
-    "promo_heading": "Véhicules en promotion"
+    "promo_heading": "Véhicules en promotion",
+    "available_title": "Véhicules disponibles",
+    "filter_button": "Filtres",
+    "loading": "Chargement...",
+    "no_image": "Pas d'image disponible",
+    "detail_title": "Détails",
+    "yes": "Oui",
+    "no": "Non",
+    "reserve_now_text": "Réservez ce véhicule maintenant.",
+    "login_to_reserve_text": "Connectez-vous pour pouvoir réserver ce véhicule.",
+    "status": {
+      "available": "Disponible",
+      "unavailable": "Indisponible"
+    },
+    "specs": {
+      "transmission": {
+        "automatique": "Automatique",
+        "manuelle": "Manuelle"
+      },
+      "carrosserie": {
+        "berline": "Berline",
+        "suv": "SUV",
+        "utilitaire": "Utilitaire",
+        "luxe": "Luxe",
+        "sport": "Sport",
+        "compacte": "Compacte"
+      }
+    },
+    "labels": {
+      "carrosserie": "Carrosserie :",
+      "transmission": "Transmission :",
+      "price": "Prix :",
+      "marque": "Marque :",
+      "modele": "Modèle :",
+      "plates": "Immatriculation :",
+      "availability": "Disponibilité :"
+    },
+    "buttons": {
+      "reserve": "Réserver",
+      "login_to_reserve": "Se connecter pour réserver",
+      "already_reserved": "Déjà réservée",
+      "reserve_this": "Réserver ce véhicule"
+    }
   },
   "footer": {
-    "copyright": "Tous droits réservés.",
+    "desc": "Votre partenaire de confiance pour la location de véhicules premium. Service de qualité, tarifs compétitifs, assurance totale.",
+    "quick_services": "Services Rapides",
+    "car_rental": "Location automobile",
+    "special_offers": "Offres spéciales",
+    "blog_news": "Blog & Actualités",
+    "navigation": "Navigation",
+    "about_us": "À propos de nous",
+    "faq_title": "Foire aux questions",
+    "contact_us": "Nous contacter",
+    "contact_title": "Contact",
+    "all_rights": "Tous droits réservés.",
     "about": "À propos",
     "contact": "Contact",
     "faq": "FAQ"
@@ -222,5 +277,50 @@
     "error": "Erreur lors de l'envoi du lien.",
     "alert_error": "Erreur",
     "alert_success": "Succès"
+  },
+  "home": {
+    "status": {
+      "starting": "Démarrage du service",
+      "initializing": "Nous initialisons notre plateforme pour vous. Cela peut prendre quelques secondes.",
+      "connecting": "Connexion au serveur en cours",
+      "loading_vehicles": "Chargement des véhicules...",
+      "searching_agencies": "Recherche en cours..."
+    },
+    "errors": {
+      "loading_title": "Erreur de chargement",
+      "retry": "Réessayer",
+      "gps_unsupported": "La géolocalisation n'est pas supportée par ce navigateur",
+      "gps_denied": "Veuillez autoriser l'accès à votre position pour trouver les agences proches",
+      "gps_unavailable": "Position indisponible. Vérifiez votre connexion GPS",
+      "gps_timeout": "Timeout de géolocalisation. Réessayez plus tard",
+      "gps_generic": "Erreur lors de l'obtention de votre position",
+      "agencies_api_error": "Erreur lors de la recherche d'agences proches"
+    },
+    "services": {
+      "subtitle": "Découvrez nos services complets pour une expérience de location exceptionnelle"
+    },
+    "agencies": {
+      "find_nearby": "Trouver les agences proches",
+      "nearby_title": "Agences proches :"
+    },
+    "testimonials": {
+      "badge": "Avis Clients",
+      "subtitle": "Découvrez ce que nos clients disent de leur expérience avec AutoDrive"
+    },
+    "vehicles": {
+      "badge": "Flotte AutoDrive",
+      "subtitle": "Choisissez parmi notre sélection premium",
+      "view_all": "Voir tout le catalogue",
+      "promo_badge_alt": "Promo"
+    },
+    "promo": {
+      "badge": "🔥 Offres Limitées",
+      "subtitle": "Profitez de nos offres promotionnelles exceptionnelles avant qu'elles n'expirent",
+      "code_label": "Code Promo :",
+      "view_offer": "Voir l'Offre",
+      "per_day": "/ j"
+    }
   }
 }
+
+

@@ -75,7 +75,7 @@ export default function HomePage() {
           const isNetwork = isNetworkError(err);
           setErrors(prev => ({
             ...prev,
-            vehicules: isNetwork ? null : "Impossible de charger les véhicules."
+            vehicules: isNetwork ? null : t('home.errors.loading_title')
           }));
           setLoading(prev => ({ ...prev, vehicules: isNetwork })); // Keep loading if network error
           
@@ -110,7 +110,7 @@ export default function HomePage() {
           const isNetwork = isNetworkError(err);
           setErrors(prev => ({
             ...prev,
-            promotions: isNetwork ? null : "Impossible de charger les promotions."
+            promotions: isNetwork ? null : t('home.errors.loading_title')
           }));
           setLoading(prev => ({ ...prev, promotions: isNetwork }));
           
@@ -149,7 +149,7 @@ export default function HomePage() {
           console.error("❌ Erreur chargement témoignages:", err.message);
           setErrors(prev => ({
             ...prev,
-            temoignages: isNetwork ? null : "Impossible de charger les témoignages."
+            temoignages: isNetwork ? null : t('home.errors.loading_title')
           }));
           setLoading(prev => ({ ...prev, temoignages: isNetwork }));
           
@@ -189,7 +189,7 @@ export default function HomePage() {
   // Fonction pour trouver les agences proches
   const findNearbyAgencies = async () => {
     if (!navigator.geolocation) {
-      setErrors(prev => ({ ...prev, general: "La géolocalisation n'est pas supportée par ce navigateur" }));
+      setErrors(prev => ({ ...prev, general: t('home.errors.gps_unsupported') }));
       return;
     }
 
@@ -217,7 +217,7 @@ export default function HomePage() {
         setErrors(prev => ({ ...prev, general: null })); // Clear any previous errors on success
       } catch (apiError: any) {
         console.error("Erreur API agences:", apiError);
-        setErrors(prev => ({ ...prev, general: "Erreur lors de la recherche d'agences proches" }));
+        setErrors(prev => ({ ...prev, general: t('home.errors.agencies_api_error') }));
       }
     } catch (geoError: any) {
       // Only log if it's not a permission denied error (which is expected)
@@ -227,10 +227,10 @@ export default function HomePage() {
       
       setErrors(prev => ({
         ...prev,
-        general: geoError.code === 1 ? "Veuillez autoriser l'accès à votre position pour trouver les agences proches" :
-          geoError.code === 2 ? "Position indisponible. Vérifiez votre connexion GPS" :
-          geoError.code === 3 ? "Timeout de géolocalisation. Réessayez plus tard" :
-          "Erreur lors de l'obtention de votre position"
+        general: geoError.code === 1 ? t('home.errors.gps_denied') :
+          geoError.code === 2 ? t('home.errors.gps_unavailable') :
+          geoError.code === 3 ? t('home.errors.gps_timeout') :
+          t('home.errors.gps_generic')
       }));
     } finally {
       setGpsLoading(false);
@@ -254,15 +254,15 @@ export default function HomePage() {
             </div>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-            Démarrage du service
+            {t('home.status.starting')}
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-            Nous initialisons notre plateforme pour vous. Cela peut prendre quelques secondes.
+            {t('home.status.initializing')}
           </p>
           <div className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center justify-center gap-2">
               <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" />
-              <span>Connexion au serveur en cours</span>
+              <span>{t('home.status.connecting')}</span>
             </div>
           </div>
         </div>
@@ -280,7 +280,7 @@ export default function HomePage() {
             </div>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-            Erreur de chargement
+            {t('home.errors.loading_title')}
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             {errors.vehicules || errors.promotions || errors.temoignages}
@@ -289,7 +289,7 @@ export default function HomePage() {
             onClick={() => window.location.reload()}
             className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8"
           >
-            Réessayer
+            {t('home.errors.retry')}
           </Button>
         </div>
       </div>
@@ -301,7 +301,7 @@ export default function HomePage() {
     return (
       <div className="flex justify-center items-center h-64">
         <p className="text-lg font-semibold text-muted-foreground">
-          Chargement des véhicules...
+          {t('home.status.loading_vehicles')}
         </p>
       </div>
     );
@@ -314,11 +314,11 @@ export default function HomePage() {
   return (
     <>
       <Helmet>
-        <title>AutoDrive - Location de Véhicules | Louez Facilement</title>
-        <meta name="description" content="Louez facilement votre véhicule pour vos voyages d'affaires, vacances ou escapades avec AutoDrive. Service de location de voitures fiable, GPS intégré, assurance complète." />
-        <meta name="keywords" content="location voiture, location véhicule, AutoDrive, location vacances, location affaires, GPS intégré, assurance complète, assistance 24/7" />
-        <meta property="og:title" content="AutoDrive - Location de Véhicules" />
-        <meta property="og:description" content="Louez facilement votre véhicule pour vos voyages d'affaires, vacances ou escapades avec AutoDrive." />
+        <title>{t('hero.title')} - AutoDrive</title>
+        <meta name="description" content={t('hero.subtitle')} />
+        <meta name="keywords" content="location voiture, location véhicule, AutoDrive, car rental, car hire, Autovermietung" />
+        <meta property="og:title" content={t('hero.title')} />
+        <meta property="og:description" content={t('hero.subtitle')} />
         <meta property="og:image" content="/vite.svg" />
         <meta property="og:url" content="https://autodrive.com" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -331,7 +331,7 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/60 to-slate-950/95 backdrop-blur-[2px]"></div>
           </div>
           <div className="relative z-10 text-center px-6 max-w-6xl mx-auto w-full pt-10">
-            <Badge className="mb-6 bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border border-blue-500/30 px-4 py-1.5 text-sm rounded-full backdrop-blur-md">✨ Premium Car Rental</Badge>
+            <Badge className="mb-6 bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border border-blue-500/30 px-4 py-1.5 text-sm rounded-full backdrop-blur-md">{t('hero.badge')}</Badge>
             <h1 className="text-6xl md:text-8xl font-black mb-8 leading-[1.1] tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-50 to-blue-500 drop-shadow-lg">
               {t('hero.title')}
             </h1>
@@ -343,13 +343,13 @@ export default function HomePage() {
                 to="/vehicules"
                 className="inline-flex items-center justify-center h-14 px-10 text-lg bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-full shadow-[0_0_40px_-10px_rgba(37,99,235,0.8)] hover:shadow-[0_0_60px_-10px_rgba(37,99,235,1)] transition-all duration-300 transform hover:-translate-y-1"
               >
-                Voir les véhicules
+                {t('hero.view_vehicles')}
               </Link>
               <Link
                 to="/contact"
                 className="inline-flex items-center justify-center h-14 px-10 text-lg border-2 border-white/20 bg-white/5 backdrop-blur-md text-white hover:bg-white hover:text-slate-900 font-bold rounded-full transition-all duration-300 transform hover:-translate-y-1"
               >
-                Nous contacter
+                {t('hero.contact_us')}
               </Link>
             </div>
           </div>
@@ -365,7 +365,7 @@ export default function HomePage() {
             <div className="text-center mb-20">
               <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight">{t('services.title')}</h2>
               <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto font-medium">
-                Découvrez nos services complets pour une expérience de location exceptionnelle
+                {t('home.services.subtitle')}
               </p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -403,12 +403,12 @@ export default function HomePage() {
                       {gpsLoading ? (
                         <>
                           <Loader2 className="mr-3 h-5 w-5 animate-spin" />
-                          Recherche en cours...
+                          {t('home.status.searching_agencies')}
                         </>
                       ) : (
                         <>
                           <MapPin className="mr-3 h-5 w-5" />
-                          Trouver les agences proches
+                          {t('home.agencies.find_nearby')}
                         </>
                       )}
                     </Button>
@@ -439,7 +439,7 @@ export default function HomePage() {
 
                     {nearbyAgencies.length > 0 && (
                       <div className="space-y-3 pt-4 text-left">
-                        <h4 className="font-semibold text-sm text-gray-900 dark:text-white px-2">Agences proches :</h4>
+                        <h4 className="font-semibold text-sm text-gray-900 dark:text-white px-2">{t('home.agencies.nearby_title')}</h4>
                         <div className="space-y-3 max-h-[220px] overflow-y-auto pr-2 custom-scrollbar">
                           {nearbyAgencies.map((agency) => (
                             <div key={agency.id} className="group/agency flex items-center gap-3 p-4 border border-gray-100 dark:border-gray-800 rounded-2xl bg-gray-50/50 dark:bg-gray-800/30 hover:bg-white dark:hover:bg-gray-800 transition-colors shadow-sm">
@@ -515,10 +515,10 @@ export default function HomePage() {
         <div className="py-24 bg-white dark:bg-slate-900 relative">
           <div className="max-w-[1920px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-20">
             <div className="text-center mb-20">
-              <Badge className="mb-4 bg-teal-500/10 text-teal-600 dark:text-teal-400 hover:bg-teal-500/20 border-teal-500/20 px-4 py-1.5 rounded-full">Avis Clients</Badge>
+              <Badge className="mb-4 bg-teal-500/10 text-teal-600 dark:text-teal-400 hover:bg-teal-500/20 border-teal-500/20 px-4 py-1.5 rounded-full">{t('home.testimonials.badge')}</Badge>
               <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight">{t('testimonials.heading')}</h2>
               <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto font-medium">
-                Découvrez ce que nos clients disent de leur expérience avec AutoDrive
+                {t('home.testimonials.subtitle')}
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -560,10 +560,10 @@ export default function HomePage() {
         <div className="py-24 bg-white dark:bg-slate-900 relative">
           <div className="max-w-[1920px] w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-20">
             <div className="flex flex-col items-center text-center mb-16">
-              <Badge className="mb-4 bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 border-blue-500/20 px-4 py-1.5 rounded-full">Flotte AutoDrive</Badge>
+              <Badge className="mb-4 bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 border-blue-500/20 px-4 py-1.5 rounded-full">{t('home.vehicles.badge')}</Badge>
               <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight">{t('vehicles.available_heading')}</h2>
               <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto font-medium">
-                Choisissez parmi notre sélection premium
+                {t('home.vehicles.subtitle')}
               </p>
             </div>
             
@@ -588,17 +588,17 @@ export default function HomePage() {
                         </h3>
                       </div>
                       {vehicule.prix < 50 && (
-                        <Badge variant="destructive" className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 shadow-lg px-3 py-1 font-bold">Promo</Badge>
+                        <Badge variant="destructive" className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 shadow-lg px-3 py-1 font-bold">{t('home.vehicles.promo_badge_alt')}</Badge>
                       )}
                     </div>
                     
                     <CardContent className="flex-1 p-6 flex flex-col justify-between">
                       <div className="grid grid-cols-2 gap-4 mb-6 text-sm text-gray-600 dark:text-gray-400">
                         <div className="flex items-center font-medium capitalize bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-lg justify-center">
-                          {vehicule.transmission}
+                          {t(`vehicles.specs.transmission.${vehicule.transmission.toLowerCase()}`, vehicule.transmission)}
                         </div>
                         <div className="flex items-center font-medium capitalize bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-lg justify-center">
-                          {vehicule.carrosserie}
+                          {t(`vehicles.specs.carrosserie.${vehicule.carrosserie.toLowerCase()}`, vehicule.carrosserie)}
                         </div>
                       </div>
                       
@@ -607,7 +607,7 @@ export default function HomePage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-3xl font-black text-blue-600 dark:text-blue-400">
-                            {vehicule.prix} € <span className="text-sm font-medium text-gray-500 dark:text-gray-400">/ jour</span>
+                            {vehicule.prix} € <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('home.promo.per_day')}</span>
                           </p>
                         </div>
                         <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
@@ -623,7 +623,7 @@ export default function HomePage() {
             <div className="mt-12 flex justify-center">
               <Link to="/vehicules">
                 <Button variant="outline" className="rounded-full px-10 py-6 text-base font-bold flex items-center gap-3 border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-500 dark:hover:text-blue-400 transition-all duration-300 shadow-[0_5px_20px_-10px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_30px_-10px_rgba(37,99,235,0.3)]">
-                  Voir tout le catalogue <span>→</span>
+                  {t('home.vehicles.view_all')} <span>→</span>
                 </Button>
               </Link>
             </div>
@@ -637,10 +637,10 @@ export default function HomePage() {
             <div className="absolute bottom-0 left-0 -m-32 w-64 h-64 bg-purple-400/20 rounded-full blur-3xl"></div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="text-center mb-20">
-                <Badge className="mb-4 bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 border-purple-500/20 px-4 py-1.5 rounded-full text-sm">🔥 Offres Limitées</Badge>
+                <Badge className="mb-4 bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 border-purple-500/20 px-4 py-1.5 rounded-full text-sm">{t('home.promo.badge')}</Badge>
                 <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight">{t('vehicles.promo_heading')}</h2>
                 <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto font-medium">
-                  Profitez de nos offres promotionnelles exceptionnelles avant qu'elles n'expirent
+                  {t('home.promo.subtitle')}
                 </p>
               </div>
 
@@ -678,7 +678,7 @@ export default function HomePage() {
                               if (allCodes.length > 0) {
                                 return (
                                   <div className="mt-3 p-3 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/50 rounded-xl inline-block w-full">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">Code Promo :</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">{t('home.promo.code_label')}</p>
                                     <p className="font-mono font-bold text-lg text-purple-700 dark:text-purple-400">{allCodes.join(', ')}</p>
                                   </div>
                                 );
@@ -689,10 +689,10 @@ export default function HomePage() {
                           
                           <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
                             <p className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400">
-                              {vehicule.prix} € <span className="text-sm font-medium text-gray-500 dark:text-gray-400">/ j</span>
+                              {vehicule.prix} € <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('home.promo.per_day')}</span>
                             </p>
                             <Button className="rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 hover:scale-105 transition-transform duration-300">
-                              Voir l'Offre
+                              {t('home.promo.view_offer')}
                             </Button>
                           </div>
                         </CardContent>

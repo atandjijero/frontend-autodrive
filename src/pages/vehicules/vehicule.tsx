@@ -20,11 +20,13 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function Vehicule() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [vehicule, setVehicule] = useState<Vehicle | null>(null);
   const [zoom, setZoom] = useState(false);
 
@@ -42,7 +44,7 @@ export default function Vehicule() {
   }, [id]);
 
   if (!vehicule)
-    return <p className="text-center text-muted-foreground">Chargement...</p>;
+    return <p className="text-center text-muted-foreground">{t('vehicles.loading')}</p>;
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -59,7 +61,7 @@ export default function Vehicule() {
           </div>
         ) : (
           <p className="p-4 text-muted-foreground text-center">
-            Pas d'image disponible
+            {t('vehicles.no_image')}
           </p>
         )}
 
@@ -69,7 +71,7 @@ export default function Vehicule() {
           </CardTitle>
           <div className="flex justify-center items-center gap-2 mt-2">
             <Badge variant={vehicule.disponible ? "default" : "destructive"}>
-              {vehicule.disponible ? "Disponible" : "Indisponible"}
+              {vehicule.disponible ? t('vehicles.status.available') : t('vehicles.status.unavailable')}
             </Badge>
           </div>
         </CardHeader>
@@ -84,20 +86,20 @@ export default function Vehicule() {
           >
             <AccordionItem value="item-2">
               <AccordionTrigger className="text-lg font-semibold">
-                Détails
+                {t('vehicles.detail_title')}
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-2 p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p><b>Marque :</b> {vehicule.marque}</p>
-                    <p><b>Modèle :</b> {vehicule.modele}</p>
-                    <p><b>Carrosserie :</b> {vehicule.carrosserie}</p>
-                    <p><b>Transmission :</b> {vehicule.transmission}</p>
+                    <p><b>{t('vehicles.labels.marque')}</b> {vehicule.marque}</p>
+                    <p><b>{t('vehicles.labels.modele')}</b> {vehicule.modele}</p>
+                    <p><b>{t('vehicles.labels.carrosserie')}</b> {t(`vehicles.specs.carrosserie.${vehicule.carrosserie.toLowerCase()}`, vehicule.carrosserie)}</p>
+                    <p><b>{t('vehicles.labels.transmission')}</b> {t(`vehicles.specs.transmission.${vehicule.transmission.toLowerCase()}`, vehicule.transmission)}</p>
                   </div>
                   <div>
-                    <p><b>Immatriculation :</b> {vehicule.immatriculation}</p>
-                    <p><b>Prix :</b> {vehicule.prix} € / jour</p>
-                    <p><b>Disponibilité :</b> {vehicule.disponible ? "Oui" : "Non"}</p>
+                    <p><b>{t('vehicles.labels.plates')}</b> {vehicule.immatriculation}</p>
+                    <p><b>{t('vehicles.labels.price')}</b> {vehicule.prix} € {t('home.promo.per_day')}</p>
+                    <p><b>{t('vehicles.labels.availability')}</b> {vehicule.disponible ? t('vehicles.yes') : t('vehicles.no')}</p>
                   </div>
                 </div>
               </AccordionContent>
@@ -111,27 +113,27 @@ export default function Vehicule() {
             {user ? (
               <>
                 <p className="mb-4 text-sm text-muted-foreground">
-                  Réservez ce véhicule maintenant.
+                  {t('vehicles.reserve_now_text')}
                 </p>
                 <Button
                   size="lg"
                   className="mx-auto block font-semibold px-6 bg-blue-600 hover:bg-blue-700 text-white"
                   onClick={() => navigate(`/reservation/${id}`)}
                 >
-                  Réserver ce véhicule
+                  {t('vehicles.buttons.reserve_this')}
                 </Button>
               </>
             ) : (
               <>
                 <p className="mb-4 text-sm text-muted-foreground">
-                  Connectez-vous pour pouvoir réserver ce véhicule.
+                  {t('vehicles.login_to_reserve_text')}
                 </p>
                 <Link to={`/connexion?redirect=/reservation/${id}`}>
                   <Button
                     size="lg"
                     className="mx-auto block font-semibold px-6 bg-gray-600 hover:bg-gray-700 text-white"
                   >
-                    Se connecter pour réserver
+                    {t('vehicles.buttons.login_to_reserve')}
                   </Button>
                 </Link>
               </>
@@ -145,7 +147,7 @@ export default function Vehicule() {
         <DialogContent className="max-w-5xl flex flex-col items-center bg-black">
           {/* Titre obligatoire pour l’accessibilité */}
           <VisuallyHidden>
-            <DialogTitle>Aperçu du véhicule</DialogTitle>
+            <DialogTitle>{t('vehicles.detail_title')} - {vehicule.marque}</DialogTitle>
           </VisuallyHidden>
 
           <DialogDescription className="text-gray-400 mb-4">

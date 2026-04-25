@@ -9,7 +9,10 @@
   },
   "hero": {
     "title": "Willkommen bei AutoDrive",
-    "subtitle": "Mieten Sie Ihr Fahrzeug einfach für Geschäftsreisen, Urlaub oder Kurztrips."
+    "subtitle": "Mieten Sie Ihr Fahrzeug einfach für Geschäftsreisen, Urlaub oder Kurztrips.",
+    "view_vehicles": "Fahrzeuge ansehen",
+    "contact_us": "Kontaktieren Sie uns",
+    "badge": "✨ Premium Mietwagen"
   },
   "services": {
     "title": "Unsere Dienstleistungen",
@@ -31,10 +34,62 @@
   },
   "vehicles": {
     "available_heading": "Heute verfügbare Fahrzeuge",
-    "promo_heading": "Fahrzeuge in Aktion"
+    "promo_heading": "Fahrzeuge in Aktion",
+    "available_title": "Verfügbare Fahrzeuge",
+    "filter_button": "Filter",
+    "loading": "Ladevorgang...",
+    "no_image": "Kein Bild verfügbar",
+    "detail_title": "Details",
+    "yes": "Ja",
+    "no": "Nein",
+    "reserve_now_text": "Reservieren Sie dieses Fahrzeug jetzt.",
+    "login_to_reserve_text": "Melden Sie sich an, um dieses Fahrzeug zu reservieren.",
+    "status": {
+      "available": "Verfügbar",
+      "unavailable": "Nicht verfügbar"
+    },
+    "specs": {
+      "transmission": {
+        "automatique": "Automatik",
+        "manuelle": "Manuell"
+      },
+      "carrosserie": {
+        "berline": "Limousine",
+        "suv": "SUV",
+        "utilitaire": "Nutzfahrzeug",
+        "luxe": "Luxus",
+        "sport": "Sport",
+        "compacte": "Kompakt"
+      }
+    },
+    "labels": {
+      "carrosserie": "Karosserie:",
+      "transmission": "Getriebe:",
+      "price": "Preis:",
+      "marque": "Marke:",
+      "modele": "Modell:",
+      "plates": "Kennzeichen:",
+      "availability": "Verfügbarkeit:"
+    },
+    "buttons": {
+      "reserve": "Jetzt reservieren",
+      "login_to_reserve": "Anmelden zum Reservieren",
+      "already_reserved": "Bereits reserviert",
+      "reserve_this": "Dieses Fahrzeug reservieren"
+    }
   },
   "footer": {
-    "copyright": "Alle Rechte vorbehalten.",
+    "desc": "Ihr vertrauenswürdiger Partner für Premium-Fahrzeugmieten. Qualitätsservice, wettbewerbsfähige Preise, Vollkaskoversicherung.",
+    "quick_services": "Schnellzugriff",
+    "car_rental": "Autovermietung",
+    "special_offers": "Sonderangebote",
+    "blog_news": "Blog & Neuigkeiten",
+    "navigation": "Navigation",
+    "about_us": "Über uns",
+    "faq_title": "Häufig gestellte Fragen",
+    "contact_us": "Kontaktieren Sie uns",
+    "contact_title": "Kontakt",
+    "all_rights": "Alle Rechte vorbehalten.",
     "about": "Über uns",
     "contact": "Kontakt",
     "faq": "FAQ"
@@ -221,5 +276,50 @@
     "error": "Fehler beim Senden des Links.",
     "alert_error": "Fehler",
     "alert_success": "Erfolg"
+  },
+  "home": {
+    "status": {
+      "starting": "Dienst wird gestartet",
+      "initializing": "Wir initialisieren unsere Plattform für Sie. Dies kann einige Sekunden dauern.",
+      "connecting": "Verbindung zum Server wird hergestellt...",
+      "loading_vehicles": "Fahrzeuge werden geladen...",
+      "searching_agencies": "Suche..."
+    },
+    "errors": {
+      "loading_title": "Ladefehler",
+      "retry": "Wiederholen",
+      "gps_unsupported": "Geolocation wird von diesem Browser nicht unterstützt",
+      "gps_denied": "Bitte erlauben Sie den Zugriff auf Ihren Standort, um Agenturen in der Nähe zu finden",
+      "gps_unavailable": "Position nicht verfügbar. Überprüfen Sie Ihre GPS-Verbindung",
+      "gps_timeout": "Geolocation-Zeitüberschreitung. Versuchen Sie es später erneut",
+      "gps_generic": "Fehler beim Abrufen Ihrer Position",
+      "agencies_api_error": "Fehler bei der Suche nach Agenturen in der Nähe"
+    },
+    "services": {
+      "subtitle": "Entdecken Sie unsere umfassenden Dienstleistungen für ein außergewöhnliches Mietwagenerlebnis"
+    },
+    "agencies": {
+      "find_nearby": "Agenturen in der Nähe finden",
+      "nearby_title": "Agenturen in der Nähe:"
+    },
+    "testimonials": {
+      "badge": "Kundenbewertungen",
+      "subtitle": "Entdecken Sie, was unsere Kunden über ihre Erfahrungen mit AutoDrive sagen"
+    },
+    "vehicles": {
+      "badge": "AutoDrive Flotte",
+      "subtitle": "Wählen Sie aus unserer Premium-Auswahl",
+      "view_all": "Gesamten Katalog ansehen",
+      "promo_badge_alt": "Angebot"
+    },
+    "promo": {
+      "badge": "🔥 Limitierte Angebote",
+      "subtitle": "Nutzen Sie unsere außergewöhnlichen Werbeangebote, bevor sie ablaufen",
+      "code_label": "Gutscheincode:",
+      "view_offer": "Angebot ansehen",
+      "per_day": "/ Tag"
+    }
   }
 }
+
+
